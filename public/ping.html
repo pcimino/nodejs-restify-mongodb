@@ -1,0 +1,56 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Mongo DB Ping</h3>
+
+<p><a href="#" id="pingLink1">Ping Nodejs Test</a></p>
+<p><a href="#" id="pingLink2">Ping MongoDB Test</a></p>
+
+<p><a href="/public/index.html">Home</a></p>
+<ol>
+<li>Ping returns "Success"</li>
+<li>Stop MongoDB</li>
+<li>Ping Nodejs works</li>
+<li>Ping MongoDB times out</li>
+</ol>
+
+</p>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#pingLink1').click(function() { ping('api'); });
+      $('#pingLink2').click(function() { ping('db'); });
+   });
+
+   function ping(server) {
+		var target = "http://localhost:3000/" + server;
+		
+         $.ajax({
+         type: "GET",
+         url: target,
+		 timeout: 2000,
+         success: function(data) {
+            alert("Success");
+         },
+         error: function(x, t, m) {
+		 console.log(x);
+		 console.log(t);
+		 console.log(m);
+        if(t==="timeout") {
+            alert("Connection timed out.");
+        } else {
+            alert(t);
+        }
+    },
+         dataType: 'json'
+      });
+   }
+</script>
+
+</body>

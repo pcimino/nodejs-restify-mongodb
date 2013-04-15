@@ -1,0 +1,217 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Login Test</h3>
+
+<p>
+<form name="selectForm" id="selectForm">
+      <select name="userSelectList" id="userSelectList">
+      </select>
+</form>
+</p>
+<form name="inputForm" id="inputForm">
+<table>
+   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
+   <tr><td>Password:</td><td><input class="input" type="text" size="25" name="password"></td></tr>
+   <tr><td>Role:</td><td><div id='role'/></td></tr>
+   <tr><td>
+   <tr>
+      <td>
+         <input id="formButton" type="button" value="Login">
+		 <input id="formButton2" type="button" value="Logout">
+      </td>
+
+     <td>
+         <input id="clearFormButton" type="button" value="Clear Form">
+      </td>
+   </tr>
+</table>
+</form>
+<form name="postLoginForm" id="postLoginForm">
+<table>
+   <tr>
+      <td>
+        <input type="hidden" name="id" id="objectId"/>
+         <input id="formButton3" type="button" style="color:white;background-color: blue;" value="Verify Login Status">
+      </td><td>
+       <input id="formButton4" type="button" style="color:white;background-color: blue;" value="Is User?">
+       <input id="formButton5" type="button" style="color:white;background-color: blue;" value="Is Subscriber?">
+       <input id="formButton6" type="button" style="color:white;background-color: blue;" value="Is Admin?">
+      </td>
+   </tr>
+</table>
+</form>
+<p><a href="/public/index.html">Home</a></p>
+<p>
+<ol>
+<li>Create a user wqith a password</li>
+<li>Try the blue buttons, all return "Forbidden"</li>
+<li>Login with the user</li>
+<li>Verify works</li>
+<li>If user is an Admin, then all "Is ?" buttons should return "Success"</li>
+<li>Logout</li>
+<li>All blue buttons return "Forbidden"</li>
+</ol>
+</p>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#formButton').click(function() { formSubmit(); });
+     $('#formButton2').click(function() { formSubmit2(); });
+     $('#formButton3').click(function() { formSubmit3(); });
+     $('#formButton4').click(function() { checkRole('User'); });
+     $('#formButton5').click(function() { checkRole('Subscriber'); });
+     $('#formButton6').click(function() { checkRole('Admin'); });
+      $('#selectForm').change(function() { setupForm(); });
+      $('#clearFormButton').click(function() { clearForm(); });
+      loadData();
+   });
+   
+   function loadData() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/userlist",
+         data: {sortField:'username'},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               $('input[name="pages"]').val(data.pageCount);
+               //console.log(data);
+               buildSelectList(data.users);
+            }
+         },
+         error:function(err) { 
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function formSubmit() {
+      $.ajax({
+         type: "POST",
+         url: "http://localhost:3000/api/v1/session/login",
+         data: $('#inputForm').serialize(),
+       timeout: 2000,
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+            alert("Welcome " + data.name);
+               console.log(data);
+            }
+         },
+         error:function(err) {
+            alert(err.statusText);
+         },
+         dataType: 'json'
+      });
+   }
+   function formSubmit2() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/session/logout",
+         data: {},
+         timeout: 2000,
+         success: function(data) {
+            alert("Logged out");
+         },
+         error:function(err) {
+            alert(err.statusText);
+         },
+         dataType: 'json'
+      });
+   }
+   function formSubmit3() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/auth",
+         data: $('#postLoginForm').serialize(),
+       timeout: 2000,
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+            alert(data.message);
+               console.log(data);
+            }
+         },
+         error:function(err) {
+            alert(err.statusText);
+         },
+         dataType: 'json'
+      });
+   }
+
+   function checkRole(role) {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/roles/access",
+         data: {'id':$('#userSelectList').val(), 'role' : role},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+            alert(data.message);
+               //console.log(data);
+            }
+         },
+         error:function(err) {
+       console.log(err);
+            alert(err.statusText);
+         },
+         dataType: 'json'
+      });
+   }
+
+   function buildSelectList(dataArr) {
+      $('#userSelectList').empty();
+      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
+      for (i = 0; i < dataArr.length; i++) {
+         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
+      }
+      $('#userSelectList').val(null);
+      $('#inputForm')[0].reset();
+     $('#role').empty();
+   }
+
+   function setupForm() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/user",
+         data: {'id':$('#userSelectList').val()},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               console.log(data);
+               $('input[name="username"]').val(data.username);
+               $('input[name="email"]').val(data.email);
+            $('#role').html(data.role);
+            }
+         },
+         error:function(err) { 
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+   
+   function clearForm() {
+      $('#selectForm')[0].reset();
+      $('#inputForm')[0].reset();
+      $('#userSelectList').val(null);
+     $('#role').empty();
+   }
+</script>
+
+</body>

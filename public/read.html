@@ -1,0 +1,81 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Read a User</h3>
+
+<form name="inputForm" id="inputForm" method="get">
+<table>
+   <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id"></td></tr>
+   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
+   <tr><td></td><td><hr></td></tr>
+   <tr><td></td><td><font size="2" color="blue">Read only.</font></td></tr>
+   <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name" readonly></td></tr>
+   <tr><td>Role:</td><td><input class="input" type="text" size="25" name="role" readonly></td></tr>
+   <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email" readonly></td></tr>
+   <tr><td>Hashed Password:</td><td><input class="input" type="text" size="50" name="password" readonly></td></tr>
+   <tr><td>
+   <tr><td>
+      <input id="formButton" type="button" value="Search">
+      </td><td>
+      <input id="clearFormButton" type="button" value="Clear Form">
+   </td></tr>
+</table>
+
+</form>
+<p><a href="/public/index.html">Home</a></p>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#formButton').click(function() { formSubmit(); });
+      $('#clearFormButton').click(function() { clearForm(); });
+      $('input').keyup(function() { disableFields(); });
+   });
+   
+   function formSubmit() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/user",
+         data: $('#inputForm').serialize(),
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               console.log(data);
+               $('input[name="id"]').val(data._id);
+               $('input[name="name"]').val(data.name);
+			   $('input[name="role"]').val(data.role);
+               $('input[name="username"]').val(data.username);
+               $('input[name="email"]').val(data.email);
+			   $('input[name="password"]').val(data.hashed_password);
+            }
+         },
+         error:function(err) { 
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+   
+   function disableFields() {
+      if ($("*:focus").val() == '') {
+         $('input').removeAttr("disabled");
+      } else {
+         $('.input').attr("disabled", "disabled");
+         $("*:focus").removeAttr("disabled");
+      }
+   }
+   function clearForm() {
+      $('#inputForm')[0].reset();
+      $('input').removeAttr("disabled");
+   }
+
+</script>
+
+</body>

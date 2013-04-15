@@ -1,0 +1,22 @@
+{
+    "name": "REST-Test"
+  , "description": "A Nodejs app demonstration Restify, Mongoose and Passport"
+  , "version": "1.0.0"
+  , "private": false
+  , "author": "Paul Cimino(https://github.com/pcimino)"
+  , "engines": {
+        "node": "0.8.20"
+      , "npm": "1.2.11"
+    }
+  , "dependencies": {
+      "restify": "latest"
+    , "mongoose": "latest"
+    , "mongo": "latest"
+    , "passport": "latest"
+    , "passport-local": "latest"
+    , "passport-facebook": "latest"
+    , "passport-twitter": "latest"
+    , "passport-github": "latest"
+    , "passport-google-oauth": "latest"
+  }
+}

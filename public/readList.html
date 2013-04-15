@@ -1,0 +1,128 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Read a List of Users</h3>
+<table>
+<tr><td>
+   <form name="inputForm" id="inputForm" method="get">
+   <table>
+      <tr><td>Records per Page:</td><td><input class="input" type="text" size="5" name="itemsPerPage" value="-1"><font size="2" color="blue">-1 unlimited unless overridden by start/end.</font></td></tr>
+      <tr><td>Page Number:</td><td><input class="input" type="text" size="5" name="pageNumber"></td></tr>
+      <tr><td>Total Pages Avail:</td><td><input class="input" type="text" size="5" disabled='disabled' name="pages"></td></tr>
+      <tr><td><font size="2" color="blue">Optional search terms.</font></td><td><font size="2" color="blue">Partial matching (Username: GO can return GO, igot, Good, etc.)</font></td></tr>
+     <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
+      <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name"></td></tr>
+      <tr><td>Role:</td><td><input class="input" type="text" size="25" name="role"></td></tr>
+      <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email"></td></tr>
+      <tr><td>
+     <tr><td>
+      <select name="sortField" id="sortField">
+         <option value=''>Select a Sort Field</option>
+         <option value="username">Username</option>
+         <option value="name">Name</option>
+         <option value="email">Email</option>
+      </select> 
+     </td></tr>
+     <tr><td>
+      <select name="ascendingSortFlag" id="ascendingSortFlag">
+         <option value="true">Ascending Order</option>
+         <option value="false">Descending Order</option>
+      </select> 
+     </td></tr>
+      <tr><td>
+         <input id="formButton" type="button" value="Search">
+         </td><td>
+         <input id="clearFormButton" type="button" value="Clear Form">
+      </td></tr>
+   </table>
+   </form>
+
+</td><td>
+   <div id="dynamicTable">
+   </div>
+</td></tr>
+</table>
+
+<p><a href="/public/index.html">Home</a></p>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#formButton').click(function() { formSubmit(); });
+      $('#clearFormButton').click(function() { clearForm(); });
+   });
+   
+   function formSubmit() {
+   if ($('input[name="itemsPerPage"]').val() >= 1) {
+      if ($('input[name="pageNumber"]').val() == '') {
+         $('input[name="pageNumber"]').val('1')
+      }
+   }
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/userlist",
+         data: $('#inputForm').serialize(),
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               $('input[name="pages"]').val(data.pageCount);
+               //console.log(data);
+               buildTable(data.users)
+               /*
+               var userArr = data.users;
+               for (i = 0; i < userArr.length; i++) {
+                  console.log(i + ":" + userArr[i]);
+               }
+               */
+            }
+         },
+         error:function(err) { 
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function buildTable(dataArr) {
+      $("#dynamicTable").empty();
+      $("#dynamicTable").append("<table>");
+      $("#dynamicTable").append("<caption>User Table</caption>");
+      $("#dynamicTable").append("<thead>");
+      $("#dynamicTable").append("<tr>");
+      $("#dynamicTable").append("<th>ObjectId</th>");
+      $("#dynamicTable").append("<th>Username</th>");
+      $("#dynamicTable").append("<th>Name</th>");
+     $("#dynamicTable").append("<th>Role</th>");
+      $("#dynamicTable").append("<th>Email</th>");
+      $("#dynamicTable").append("</tr>");
+      $("#dynamicTable").append("</thead>");
+      
+      $("#dynamicTable").append("<tbody>");
+
+      for (i = 0; i < dataArr.length; i++) {
+         $("#dynamicTable").append("<tr>");
+         $("#dynamicTable").append("<td>" + dataArr[i]._id + "</td>");
+         $("#dynamicTable").append("<td>" + dataArr[i].username + "</td>");
+         $("#dynamicTable").append("<td>" + dataArr[i].name + "</td>");
+       $("#dynamicTable").append("<td>" + dataArr[i].role + "</td>");
+         $("#dynamicTable").append("<td>" + dataArr[i].email + "</td>");
+         $("#dynamicTable").append("</tr>");
+      }
+      
+      $("#dynamicTable").append("</tbody>");
+      $("#dynamicTable").append("</table>");
+   }
+   
+   function clearForm() {
+      $('#inputForm')[0].reset();
+   }
+</script>
+
+</body>

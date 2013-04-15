@@ -47,26 +47,18 @@ var validatePresenceOf = function (value) {
 
 //TODO Why aren't the custom messages working?
 UserSchema.path('name').validate(function (name) {
-  // if you are authenticating by any of the oauth strategies, don't validate
-  if (authTypes.indexOf(this.provider) !== -1) return true
   return validatePresenceOf(name);
 }, 'Name cannot be blank')
 
 UserSchema.path('email').validate(function (email) {
-  // if you are authenticating by any of the oauth strategies, don't validate
-  if (authTypes.indexOf(this.provider) !== -1) return true
   return validatePresenceOf(email);
 }, 'Email cannot be blank')
 
 UserSchema.path('username').validate(function (username) {
-  // if you are authenticating by any of the oauth strategies, don't validate
-  if (authTypes.indexOf(this.provider) !== -1) return true
   return validatePresenceOf(username);
 }, 'Username cannot be blank')
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
-  // if you are authenticating by any of the oauth strategies, don't validate
-  if (authTypes.indexOf(this.provider) !== -1) return true
   return validatePresenceOf(hashed_password);
 }, 'Password cannot be blank')
 
@@ -76,7 +68,7 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
 
 UserSchema.pre('save', function(next) {
   if (!this.isNew) return next();
-  if (!validatePresenceOf(this.password) && authTypes.indexOf(this.provider) === -1) {
+  if (!validatePresenceOf(this.password)) {
     next(new restify.MissingParameterError('Invalid password'));
   }
   next();

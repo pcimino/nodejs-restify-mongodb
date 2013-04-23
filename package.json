@@ -12,11 +12,6 @@
       "restify": "latest"
     , "mongoose": "latest"
     , "mongo": "latest"
-    , "passport": "latest"
-    , "passport-local": "latest"
-    , "passport-facebook": "latest"
-    , "passport-twitter": "latest"
-    , "passport-github": "latest"
-    , "passport-google-oauth": "latest"
+    , "client-sessions": "latest"
   }
 }

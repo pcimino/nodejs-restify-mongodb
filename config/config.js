@@ -3,7 +3,7 @@ module.exports = {
     development: {
       root: require('path').normalize(__dirname + '/..'),
       app: {
-        name: 'Nodejs Express Mongoose Demo'
+        name: 'Nodejs Restify Mongoose Demo'
       },
 	  host: 'localhost',
 	  port: '3000',
@@ -11,6 +11,8 @@ module.exports = {
 	  db_port: '27017',
 	  db_database: 'test_database',
 	  version: '1.0.0',
+	  // TODO wiring in Passport, although tried a couple of times, probably
+      // need to go to Express to get Passport to work correctly
 	  facebook: {
           clientID: "APP_ID"
         , clientSecret: "APP_SECRET"

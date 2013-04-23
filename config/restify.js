@@ -3,7 +3,10 @@
  * Module dependencies.
  */
 
-var restify = require('restify');
+var restify = require('restify')
+   , mongoose = require('mongoose')
+   , SessionKey = mongoose.model('SessionKey')
+   , clientSessions = require("client-sessions");
 
 module.exports = function (app, config) {
    app.use(restify.acceptParser(app.acceptable));
@@ -18,7 +21,21 @@ module.exports = function (app, config) {
    // http://stackoverflow.com/questions/14338683/how-can-i-support-cors-when-using-restify
    app.use(restify.CORS());
    app.use(restify.fullResponse());
+
+   //new Buffer("Hello World").toString('base64')
+   //findOne SessionKey
+   // if not found create one and use it's key
    
+   app.use(clientSessions({
+      cookieName: 'session',    // defaults to session_state
+      secret: (new mongoose.Types.ObjectId()).toString(),
+      // true session duration:
+      // will expire after duration (ms)
+      // from last session.reset() or
+      // initial cookieing.
+      duration: 24 * 60 * 60 * 1000, // defaults to 1 day
+   }));
+
    app.use(restify.throttle({
      burst: 100,
      rate: 50,

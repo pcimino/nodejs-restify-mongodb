@@ -1,5 +1,4 @@
 var restify = require('restify')
-   , Cookies  = require('Cookies')
    , mongoose = require('mongoose')
    , User = mongoose.model('User');
 
@@ -8,11 +7,13 @@ var restify = require('restify')
  */
 
 exports.requiresLogin = function(req, res, next) {
-   var cookies = new Cookies(req, res);
-   var id = cookies.get('session-id');
+   var id = "-1";
+   if (req.session.user) {
+      id = req.session.user;
+   }
    User.findById(id, function (err, user) {
       if (!err) {
-         if (user && user._id) {
+         if (user && user) {
             return next({});
          } else {
             return next(new restify.NotAuthorizedError("Access restricted."));
@@ -25,8 +26,10 @@ exports.requiresLogin = function(req, res, next) {
 
 // See if the user has the allowed access
 exports.access = function(req, res, next) {
-   var cookies = new Cookies(req, res);
-   var id = cookies.get('session-id');
+   var id = "-1";
+   if (req.session.user) {
+      id = req.session.user;
+   }
    User.findById(id, function (err, user) {
       if (!err) {
          if (user && user.allowAccess(req.params.role)) {

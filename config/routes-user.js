@@ -32,8 +32,8 @@ module.exports = function (app, config) {
             }
          }
          
-         // NOTE This sort query is really inefficient, always queries the three columns
-            var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
+        // NOTE This sort query is really inefficient, always queries the three columns
+        var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
          
          if (sortStr.length > 0) {
             query = query.sort(sortStr)

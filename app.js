@@ -1,8 +1,3 @@
-/*todo
-https://npmjs.org/package/client-sessions
-https://hacks.mozilla.org/2012/12/using-secure-client-side-sessions-to-build-simple-and-scalable-node-js-applications-a-node-js-holiday-season-part-3/
-https://github.com/fmarier/node-client-sessions-sample/blob/master/demo.js
-*/
 // Modules
 var restify = require("restify")
   , mongoose = require('mongoose')

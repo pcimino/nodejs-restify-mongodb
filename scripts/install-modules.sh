@@ -4,4 +4,4 @@ cd $SERVER_HOME
 npm install restify 
 npm install mongo 
 npm install mongoose 
-npm install cookies
+npm install client-sessions

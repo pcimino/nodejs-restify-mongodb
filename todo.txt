@@ -2,6 +2,10 @@ http://www.nodemailer.com/
 https://npmjs.org/package/addressparser
 https://npmjs.org/package/mail-preview
 
+https://github.com/superjoe30/swig-email-templates
+
+
+
 
 https://github.com/niftylettuce/node-email-templates
 

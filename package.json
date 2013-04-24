@@ -1,6 +1,6 @@
 {
     "name": "REST-Test"
-  , "description": "A Nodejs app demonstration Restify, Mongoose and Passport"
+  , "description": "A Nodejs app demonstration Restify, Mongoose, Client Sessions, Mail and (maybe) Web sockets?"
   , "version": "1.0.0"
   , "private": false
   , "author": "Paul Cimino(https://github.com/pcimino)"
@@ -13,5 +13,9 @@
     , "mongoose": "latest"
     , "mongo": "latest"
     , "client-sessions": "latest"
+    , "nodemailer" : "latetst"
+    , "swig-email-templates" : "latest"
+    , "mail-preview" : "latest"
+    , "addressparser" : "latest"
   }
 }

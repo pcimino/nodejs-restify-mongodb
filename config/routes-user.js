@@ -4,8 +4,13 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , UserList = mongoose.model('UserList')
   , restify = require('restify');
+  
+var mailHelper = {};
 
-module.exports = function (app, config) {
+module.exports = function (app, config, smtpTransport) {
+   mailHelper.transport = smtpTransport;
+    mailHelper.mailSettings = config.mailSettings;
+
    // This function is responsible for searching and returning multiple users
    function searchUsers(req, res, next) {
       var userList = new UserList(req.params);
@@ -63,6 +68,17 @@ module.exports = function (app, config) {
       if (user.username != null && user.username != '') {
          user.save(function (err, user) {
             if (!err) {
+               mailHelper.transport.sendMail({from : mailHelper.mailSettings.mailFrom, to : user.email, subject : 'test subject', text : 'test text'}, function(error, response){
+                   if (error) {
+                       console.log(error);
+                   } else {
+                       console.log("Message sent");
+                       // preview doesn't get a response
+                       if (response && response.message) {
+                        console.log(response.message);
+                       }
+                   }
+                });
                res.send(user);
                return next();
             } else {

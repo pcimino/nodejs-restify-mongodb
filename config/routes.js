@@ -3,7 +3,7 @@ var restify = require('restify')
   , fs = require('fs')
   , mongoose = require('mongoose');
 
-module.exports = function (app, config, auth) {
+module.exports = function (app, config, auth, smtpTransport) {
    var config_path = config.root + '/config'
 
    app.pre(function(req, res, next) {
@@ -51,7 +51,7 @@ module.exports = function (app, config, auth) {
       }); 
    });
    
-   require(config_path + '/routes-user.js')(app, config);
+   require(config_path + '/routes-user.js')(app, config, smtpTransport);
    require(config_path + '/routes-auth.js')(app, config, auth)
 
 }

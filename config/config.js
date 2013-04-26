@@ -10,6 +10,13 @@ module.exports = {
 	  db_prefix: 'mongodb',
 	  db_port: '27017',
 	  db_database: 'test_database',
+      mailSettings : {
+          mailFrom: 'test@gmail.com',
+          mailService: "Gmail",
+          mailAuth: {user: "test@gmail.com", pass: "testpass"},
+          sendEmail: false,
+          browserPreview: true
+      },
 	  version: '1.0.0',
 	  // TODO wiring in Passport, although tried a couple of times, probably
       // need to go to Express to get Passport to work correctly

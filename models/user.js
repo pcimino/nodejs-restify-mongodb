@@ -51,8 +51,8 @@ UserSchema.path('name').validate(function (name) {
 }, 'Name cannot be blank')
 
 UserSchema.path('email').validate(function (email) {
-  return validatePresenceOf(email);
-}, 'Email cannot be blank')
+  return (validatePresenceOf(email) && (email.indexOf('@') > 0));
+}, 'Email must be a valid address')
 
 UserSchema.path('username').validate(function (username) {
   return validatePresenceOf(username);

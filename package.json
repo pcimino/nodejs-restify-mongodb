@@ -13,9 +13,8 @@
     , "mongoose": "latest"
     , "mongo": "latest"
     , "client-sessions": "latest"
-    , "nodemailer" : "latetst"
+    , "nodemailer" : "0.4.1"
     , "swig-email-templates" : "latest"
     , "mail-preview" : "latest"
-    , "addressparser" : "latest"
   }
 }

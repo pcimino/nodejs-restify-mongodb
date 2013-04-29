@@ -4,6 +4,7 @@ var path = require('path')
   
 // create reusable transport method (opens pool of SMTP connections)
 var transport = null;
+var transportErrorLog = null;
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
@@ -16,10 +17,10 @@ var mailOptions = {
     auth: {}
 }
 
-var templateOptions = {
+emailTemplates.init({
   root: path.join(__dirname, "templates"),
   // any other swig options allowed here
-};
+});
 
 /**
  * <p>Generates a MailHelper object which is the main 'hub' for managing the
@@ -61,6 +62,8 @@ MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
     transport.sendMail(sendOptions, function(error, response){
         if (error) {
             console.log(error);
+            // email failed, send to the error log directory
+            transportErrorLog.sendMail(sendOptions);
         } else {
             console.log("Message sent: " + response.message);
         }
@@ -68,11 +71,16 @@ MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
 };
   
 // close the connection
-MailHelper.prototype.closeConnection = function(){
+MailHelper.prototype.closeConnection = function() {
     if (null != transport) {
         transport.close(); // shut down the connection pool, no more messages
     }
     transport = null;
+    
+    if (null != transportErrorLog) {
+        transportErrorLog.close(); // shut down the connection pool, no more messages
+    }
+    transportErrorLog = null;
 };
 
 // create the transport
@@ -80,6 +88,7 @@ MailHelper.prototype.createTransport = function() {
     if (null != transport) {
         this.closeConnection();
     }
+    require('mail-preview');
     if (config.mailSettings.sendEmail) {
         transport = nodemailer.createTransport("SMTP",{
             service: config.mailSettings.mailService,
@@ -87,14 +96,21 @@ MailHelper.prototype.createTransport = function() {
         });
     } else {
         // For email previews
-        require('mail-preview');
         var tmpdir = path.join(__dirname, 'tmp', 'nodemailer');
 
-         transport = nodemailer.createTransport('MailPreview', {
-           dir: tmpdir,  // defaults to ./tmp/nodemailer
-           browser: config.mailSettings.browserPreview // open sent email in browser (mac only, defaults to true)
-         });
+        transport = nodemailer.createTransport('MailPreview', {
+            dir: tmpdir,  // defaults to ./tmp/nodemailer
+            browser: config.mailSettings.browserPreview // open sent email in browser (mac only, defaults to true)
+        });
     }
+
+    // For email error logging
+    var tmpErr = path.join(__dirname, 'emailErr', 'nodemailer');
+
+    transportErrorLog = nodemailer.createTransport('MailPreview', {
+        dir: tmpErr,  // defaults to ./tmp/nodemailer
+        browser: config.mailSettings.browserPreview // open sent email in browser (mac only, defaults to true)
+    });
 }
   
 // Export MailHelper constructor

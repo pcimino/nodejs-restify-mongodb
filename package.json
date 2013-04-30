@@ -14,7 +14,6 @@
     , "mongo": "latest"
     , "client-sessions": "latest"
     , "nodemailer" : "0.4.1"
-    , "swig-email-templates" : "latest"
     , "mail-preview" : "latest"
   }
 }

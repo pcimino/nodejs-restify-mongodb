@@ -1,6 +1,5 @@
 var path = require('path')
-    , nodemailer = require('nodemailer')
-    , emailTemplates = require('swig-email-templates'); // https://github.com/superjoe30/swig-email-templates
+    , nodemailer = require('nodemailer');
   
 // create reusable transport method (opens pool of SMTP connections)
 var transport = null;
@@ -16,11 +15,6 @@ var mailOptions = {
     service: {},
     auth: {}
 }
-
-emailTemplates.init({
-  root: path.join(__dirname, "templates"),
-  // any other swig options allowed here
-});
 
 /**
  * <p>Generates a MailHelper object which is the main 'hub' for managing the

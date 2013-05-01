@@ -1,0 +1,131 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Email Test</h3>
+
+<p>
+<form name="selectForm" id="selectForm" method="get">
+      <select name="userSelectList" id="userSelectList">
+      </select>
+</form>
+</p>
+<form name="inputForm" id="inputForm" method="get">
+<table>
+   <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id" readonly></td></tr>
+   <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name" readonly></td></tr>
+   <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email" readonly></td></tr>
+   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username" readonly></td></tr>
+   <tr><td>
+   <tr><td>Message text:</td><td><input class="input" type="text" name="message"></td></tr>
+
+   <tr><td>
+      <input id="formButton" type="button" value="Send Email">
+      </td><td>
+      <input id="clearFormButton" type="button" value="Clear Form">
+   </td></tr>
+</table>
+</form>
+<p><a href="/public/index.html">Home</a></p>
+<p>Default email configuration uses the Preview module to save emails in the [server home]/tmp/nodemailer directory</p>
+<p>To change email settings in <b>config.js</b>, look at <a href="https://npmjs.org/package/nodemailer" target="_blank">Node Mailer</a></p>
+<script type="text/javascript">
+   $(document).ready(function() {
+      $('#formButton').click(function() { formSubmit(); });
+      $('#selectForm').change(function() { setupForm(); });
+
+      $('#clearFormButton').click(function() { clearForm(); });
+      loadData();
+   });
+
+   function loadData() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/userlist",
+         data: {sortField:'username'},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               $('input[name="pages"]').val(data.pageCount);
+               //console.log(data);
+               buildSelectList(data.users);
+            }
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function formSubmit() {
+      $.ajax({
+         type: "POST",
+         url: "http://localhost:3000/api/v1/email",
+        data: {to : $('input[name="email"]').val(), subject:'Test email', message: $('input[name="message"]').val()},
+         success: function(data) {
+            alert("Email sent.");
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function buildSelectList(dataArr) {
+      $('#userSelectList').empty();
+      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
+      for (i = 0; i < dataArr.length; i++) {
+         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
+      }
+      $('#userSelectList').val(null);
+      $('#inputForm')[0].reset();
+   }
+
+   function setupForm() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/user",
+         data: {'id':$('#userSelectList').val()},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               console.log(data);
+               $('input[name="id"]').val(data._id);
+               $('input[name="name"]').val(data.name);
+
+			   $("select option").filter(function() {
+					return $(this).text() == data.role;
+				}).prop('selected', true);
+
+               $('input[name="username"]').val(data.username);
+               $('input[name="email"]').val(data.email);
+            }
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function clearForm() {
+      $('#selectForm')[0].reset();
+      $('#inputForm')[0].reset();
+      $('#userSelectList').val(null);
+   }
+</script>
+
+</body>

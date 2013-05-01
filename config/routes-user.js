@@ -4,7 +4,7 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , UserList = mongoose.model('UserList')
   , restify = require('restify');
-  
+
 var mail = {};
 
 module.exports = function (app, config, mailHelper) {
@@ -16,13 +16,13 @@ module.exports = function (app, config, mailHelper) {
 
       var pageNum = userList.pageNumber;
       var itemsPerPage = userList.itemsPerPage;
-     
+
       if (itemsPerPage <= 0 || pageNum <= 0) {
          itemsPerPage = 999999999999;
          pageNum = 1;
       }
       pageNum = pageNum - 1;
-      
+
       User.count({}, function(err, count) {
            if (!err) {
             userList.pageCount = Math.ceil(count / itemsPerPage);
@@ -35,10 +35,10 @@ module.exports = function (app, config, mailHelper) {
                sortStr = userList.sortField;
             }
          }
-         
+
         // NOTE This sort query is really inefficient, always queries the three columns
         var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
-         
+
          if (sortStr.length > 0) {
             query = query.sort(sortStr)
          }
@@ -60,14 +60,14 @@ module.exports = function (app, config, mailHelper) {
       });
      return;
    }
-   
+
    // Create a new user model, fill it up and save it to Mongodb
    function postUser(req, res, next) {
       var user = new User(req.params);
       if (user.username != null && user.username != '') {
          user.save(function (err, user) {
             if (!err) {
-mail.sendMail(user.email, 'test subject', 'test text', true);
+              mail.sendMail(user.email, 'test subject', 'test text', true);
                res.send(user);
                return next();
             } else {
@@ -78,7 +78,7 @@ mail.sendMail(user.email, 'test subject', 'test text', true);
          return next(new restify.MissingParameterError('Username required.'));
       }
    }
-   
+
    // Search by ID or username
    function getUser(req, res, next) {
       if (req.params.id != null && req.params.id != '') {
@@ -89,7 +89,7 @@ mail.sendMail(user.email, 'test subject', 'test text', true);
          } else {
             return next(new restify.MissingParameterError('No search params sent.'));
          }
-      }    
+      }
    }
    // Search by ID
    function getUserById(req, res, next) {
@@ -147,9 +147,9 @@ mail.sendMail(user.email, 'test subject', 'test text', true);
          });
       } else {
          return next(new restify.MissingParameterError('Username required.'));
-      } 
+      }
    }
-   
+
     // Find a user and modify, then save it
    function putUser(req, res, next) {
       User.findById(req.params.id, function (err, user) {
@@ -174,7 +174,7 @@ mail.sendMail(user.email, 'test subject', 'test text', true);
    }
 
    // Delete the user
-   function deleteUser(req, res, next) { 
+   function deleteUser(req, res, next) {
       User.findById(req.params.id).remove(function (err) {
         if (!err) {
          res.send({});
@@ -186,29 +186,29 @@ mail.sendMail(user.email, 'test subject', 'test text', true);
    }
 
 
-   // Set up routes 
-   
+   // Set up routes
+
    // I looked at versioning via header. Lots of arguments pro/con regarding different types of versioning
    // I like the embedded version (self documenting) so stuck with that instead
    // apt.get({path: 'api/user:id', version: '1.0.0'}, getUser_V1);
    // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
-   
-   
+
+
    // Create
    app.post('api/v1/user', postUser);
-   
+
    // Read
    app.get('/api/v1/user/username/exists', checkUsername);
    app.get('/api/v1/userlist', searchUsers);
-   
-   // TODO Need to figure out the explicit REST URI 
+
+   // TODO Need to figure out the explicit REST URI
    // confused, specified gets by id or username, seemed to be working
    // then started getting 405 GET not allowed ??
    //       app.get('/api/v1/user/:id', getUserById);
    //       app.get('/api/v1/user/:username', getUserByUsername);
    // so went back to a generic path
    app.get('/api/v1/user', getUser);
-   
+
 
    // Update
    app.put('/api/v1/user', putUser);

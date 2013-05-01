@@ -33,12 +33,12 @@ module.exports = function (app, config, auth, smtpTransport) {
    app.get('/api', function (req, res) {
       res.send({'message':'Success'});
    });
-   
+
       //
    // I looked at header based API versioning, not a fan, but also when I tried this, the atatic resource GETs hang
    //    app.get({path : '/db', version : '1.0.0'}, ...
    //    app.get({path : '/db', version : '2.0.0'}, ...
-   
+
    // Is database alive ping
    app.get('/db', function (req, res) {
       var result = '';
@@ -48,10 +48,11 @@ module.exports = function (app, config, auth, smtpTransport) {
          } else {
             res.send(err);
          }
-      }); 
+      });
    });
-   
+
    require(config_path + '/routes-user.js')(app, config, smtpTransport);
+   require(config_path + '/routes-email.js')(app, config, smtpTransport);
    require(config_path + '/routes-auth.js')(app, config, auth)
 
 }

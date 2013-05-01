@@ -15,7 +15,7 @@
    <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id"></td></tr>
    <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name"></td></tr>
    <tr><td>Role:</td><td><select name="role" id="roleSelectList"></select></td></tr>
-           
+
    <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email"></td></tr>
    <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"><a href="#" id="usernameLink">Username available?</a></td></tr>
    <tr><td>Password:</td><td><input class="input" type="text" size="25" name="password"></td></tr>
@@ -36,7 +36,7 @@
       $('#usernameLink').click(function() { checkUsername(); });
 	  loadRoles();
    });
-   
+
    function loadRoles() {
       $.ajax({
          type: "GET",
@@ -50,14 +50,14 @@
                buildRolesSelectList(data);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
          dataType: 'json'
       });
    }
-   
+
    function buildRolesSelectList(dataArr) {
       $('#roleSelectList').empty();
       for (i = 0; i < dataArr.length; i++) {
@@ -110,9 +110,9 @@
          },
          dataType: 'json'
       });
-      
+
    }
-   
+
    function clearForm() {
       $('#inputForm')[0].reset();
    }

@@ -1,48 +1,37 @@
-var net = require('net')
-  , ws = require('ws');
+var WebSocketServer = require('ws').Server
+  , net = require('net');
+
+
+
 
 /**
- * Generates a SocketHelper
- *
- * @constructor
- * @param {Object} options
- */
-var SocketHelper = function(config) {
-    this.initialize(config);
+* Generates a SocketHelper
+*
+* @constructor
+* @param {Object} options
+*/
+var SocketHelper = function(app, config) {
+    this.initialize(app, config);
 }
 
-
 /**
- * Initializes properties
- *
- * @constructor
- * @param {Object} options
- */
-SocketHelper.prototype.initialize = function(appConfig) {
-    var WebSocketServer = require('ws').Server;
-    var wss = new WebSocketServer({port: appConfig.socket_port_ws});
+* Initializes properties
+*
+* @constructor
+* @param {Object} options
+*/
+SocketHelper.prototype.initialize = function(app, appConfig) {
+  var wss = new WebSocketServer({server: app});
   console.log("WS Web socket listening on port " + appConfig.socket_port_ws);
   wss.on('connection', function(ws) {
-    console.log("Connection established");
-      ws.on('message', function(message) {
-        console.log(message);
-          var isRunning = false;
-          var streatTimeout;
-
-            if (message.command == 'start') {
-                if (!isRunning) {
-                    isRunning = true;
-                    streamInterval = setInterval(function() {
-                        socket.sendMessage(new Date());
-                    }, 1000);
-                }
-            } else if (message.command == 'stop') {
-                if (isRunning) {
-                    isRunning = false;
-                    clearInterval(streamInterval);
-                }
-            }
-      });
+    var id = setInterval(function() {
+      ws.send(JSON.stringify(new Date()), function() { /* ignore errors */ });
+    }, 500);
+    console.log('started client interval');
+    ws.on('close', function() {
+      console.log('stopping client interval');
+      clearInterval(id);
+    })
   });
 };
 

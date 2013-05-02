@@ -68,10 +68,8 @@ MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
     sendOptions.subject = subject;
 
     if (true == htmlFlag) {
-      console.log(5);
         sendOptions.html = body;
     } else {
-      console.log(6);
         sendOptions.text = body;
     }
 

@@ -10,8 +10,7 @@ module.exports = {
 	  db_prefix: 'mongodb',
 	  db_port: '27017',
 	  db_database: 'test_database',
-      socket_port_ws: '9999',
-      socket_port_json: '9998',
+      socket_port_ws: '3000',
       socket_port_io: '9997',
       mailSettings : {
           mailFrom: 'test@gmail.com',

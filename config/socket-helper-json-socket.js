@@ -1,5 +1,4 @@
-var sockets = require('json-sockets')
-  , net = require('net')
+var net = require('net')
   , JsonSocket = require('json-socket');
 
 var server = net.createServer();
@@ -20,17 +19,16 @@ var SocketHelper = function(config) {
  * @constructor
  * @param {Object} options
  */
-
-
 SocketHelper.prototype.initialize = function(appConfig) {
-  server.listen(appConfig.socket_port);
-  console.log("Web socket listening on port " + appConfig.socket_port);
+  server.listen(appConfig.socket_port_json);
+  console.log("JSON Socket listening on port " + appConfig.socket_port_json);
   server.on('connection', function(socket) { //This is a standard net.Socket
       socket = new JsonSocket(socket); //Now we've decorated the net.Socket to be a JsonSocket
       socket.on('message', function(message) {
           var isRunning = false;
           var streatTimeout;
-          socket.on('message', function(message) {
+console.log("JSON Socket");
+console.log(message);
             if (message.command == 'start') {
                 if (!isRunning) {
                     isRunning = true;
@@ -44,16 +42,8 @@ SocketHelper.prototype.initialize = function(appConfig) {
                     clearInterval(streamInterval);
                 }
             }
-          });
       });
   });
-  /* json-sockets
-    sockets.listen(appConfig.socket_port, function(socket) {
-        socket.on('message', function(message) {
-            socket.send(message); // echo
-        });
-    });
-    */
 };
 
 

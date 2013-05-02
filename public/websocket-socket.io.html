@@ -32,40 +32,29 @@
 </ol>
 </p>
 <script type="text/javascript">
-var socket;
+  var ws;
    $(document).ready(function() {
      $('#formButton').click(function() { formSubmit(); });
      $('#formButton2').click(function() { formSubmit2(); });
- 
-    socket = $.WebSocket('ws://127.0.0.1:9997');
-  
-    alert('Socket Status: '+socket.readyState);  
+   });
 
-    socket.onopen = function(){  
-         alert('Socket Status: '+socket.readyState+' (open)');  
-    }  
 
-    socket.onmessage = function(msg){  
-         alert('Received: '+msg.data);  
-    }  
+  function updateStats(dateStr) {
+    document.getElementById('output').innerHTML = dateStr;
+  }
 
-    socket.onclose = function(){  
-         alert('Socket Status: '+socket.readyState+' (Closed)');  
-    }             
-  
+  function formSubmit() {
+    var host = window.document.location.host.replace(/:.*/, '');
+    ws = new WebSocket('ws://' + host + ':9997');
+    ws.onmessage = function (event) {
+      updateStats(JSON.parse(event.data));
+    };
+  }
+  function formSubmit2() {
+    ws.close();
+  }
 
-});
 
-   function formSubmit() {
-
-    socket.send({command:'start'});
-        //$('#output').text(dateTime.toString());
-
-   }
-   function formSubmit2() {
-     socket.send({command: 'stop'});
-        $('#output').text('');
-   }
 </script>
 
 </body>

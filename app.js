@@ -6,7 +6,7 @@ var restify = require("restify")
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
   , config = require('./config/config')[env];
-  
+
 // Paths
 var models_path = config.root + '/models'
 var config_path = config.root + '/config'
@@ -49,9 +49,7 @@ require(config_path + '/routes')(app, config, auth, new MailHelper(config));
 
 // configure Socket Server
 var SocketHelper_WS = require(config_path + '/socket-helper-ws.js').SocketHelper;
-new SocketHelper_WS(config);
-var SocketHelper_JSON = require(config_path + '/socket-helper-json-socket.js').SocketHelper;
-new SocketHelper_JSON(config);
+new SocketHelper_WS(app, config);
 var SocketHelper_IO = require(config_path + '/socket-helper-socket-io.js').SocketHelper;
 new SocketHelper_IO(config);
 

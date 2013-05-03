@@ -48,10 +48,8 @@ var MailHelper = require(config_path + '/mail-helper.js').MailHelper;
 require(config_path + '/routes')(app, config, auth, new MailHelper(config));
 
 // configure Socket Server
-var SocketHelper_WS = require(config_path + '/socket-helper-ws.js').SocketHelper;
-new SocketHelper_WS(app, config);
 var SocketHelper_IO = require(config_path + '/socket-helper-socket-io.js').SocketHelper;
-new SocketHelper_IO(config);
+new SocketHelper_IO(app, config);
 
 // Start the app by listening on <port>
 var port = process.env.PORT || config.port;

@@ -7,8 +7,8 @@ var net = require('net')
  * @constructor
  * @param {Object} options
  */
-var SocketHelper = function(config) {
-    this.initialize(config);
+var SocketHelper = function(app, config) {
+    this.initialize(app, config);
 }
 
 /**
@@ -17,20 +17,19 @@ var SocketHelper = function(config) {
  * @constructor
  * @param {Object} options
  */
-SocketHelper.prototype.initialize = function(appConfig) {
+SocketHelper.prototype.initialize = function(app, appConfig) {
 
   // This would allow Socket.IO to listen on the same port as the server, but WS is already doing that
-  // SocketIo = require('socket.io').listen(app);;
+  SocketIo = require('socket.io').listen(app);
 
   // note, io.listen(<port>) will create a http server for you
-  SocketIo = require('socket.io').listen(parseInt(appConfig.socket_port_io));
+  //SocketIo = require('socket.io').listen(parseInt(appConfig.socket_port_io));
   console.log("Socket.IO listening on port " + appConfig.socket_port_io);
 
   SocketIo.sockets.on('connection', function(socket) {
     var id = setInterval(function() {
-      socket.send(JSON.stringify(new Date()), function() {  }); // ignore errors
+      socket.volatile.emit('timestamp', JSON.stringify(new Date()), function() {  }); // ignore errors
     }, 500);
-    console.log('started client interval');
     socket.on('close', function() {
       console.log('stopping client interval');
       clearInterval(id);

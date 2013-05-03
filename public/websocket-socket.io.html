@@ -2,7 +2,7 @@
 <head>
 <script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
   <script type="text/javascript" src="/public/jquery.url-0.0.1.js"></script>
-  <script type="text/javascript" src="/public/jquery.WebSocket.js"></script>
+  <script type="text/javascript" src="/socket.io/socket.io.js"></script>
 </head>
 <body style="margin-left:100px;">
 <h2>
@@ -43,18 +43,26 @@
     document.getElementById('output').innerHTML = dateStr;
   }
 
-  function formSubmit() {
-    var host = window.document.location.host.replace(/:.*/, '');
-    ws = new WebSocket('ws://' + host + ':9997');
-    ws.onmessage = function (event) {
-      updateStats(JSON.parse(event.data));
-    };
+   function formSubmit() {
+      var host = window.document.location.host.replace(/:.*/, '');
+      ws = io.connect('ws://' + host + ':3000');
+     ws.on('connect', function(){
+      ws.on('timestamp', function (data) {
+        updateStats(JSON.parse(data));
+      });
+    });
+
   }
   function formSubmit2() {
-    ws.close();
+    ws.emit('close');
   }
 
 
 </script>
+<!--
+https://github.com/LearnBoost/socket.io-client
 
+http://socket.io/#how-to-use
+http://stackoverflow.com/questions/6634940/websocket-problem-cannot-connect-to-node-js-server
+-->
 </body>

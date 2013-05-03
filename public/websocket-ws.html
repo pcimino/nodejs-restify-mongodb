@@ -45,7 +45,7 @@
 
    function formSubmit() {
       var host = window.document.location.host.replace(/:.*/, '');
-      ws = new WebSocket('ws://' + host + ':3000');
+      ws = new WebSocket('ws://' + host + ':9998');
       ws.onmessage = function (event) {
         updateStats(JSON.parse(event.data));
       };

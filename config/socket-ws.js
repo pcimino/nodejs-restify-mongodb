@@ -1,29 +1,26 @@
 var WebSocketServer = require('ws').Server
   , net = require('net');
 
-
-
-
 /**
-* Generates a SocketHelper
-*
-* @constructor
-* @param {Object} options
-*/
+ * Generates a SocketHelper
+ *
+ * @constructor
+ * @param {Object} options
+ */
 var SocketHelper = function(app, config) {
     this.initialize(app, config);
 }
 
 /**
-* Initializes properties
-*
-* @constructor
-* @param {Object} options
-*/
+ * Initializes properties
+ *
+ * @constructor
+ * @param {Object} options
+ */
+
+
 SocketHelper.prototype.initialize = function(app, appConfig) {
-  // var wss = new WebSocketServer({server: app});
-  var wss = new WebSocketServer({port: appConfig.socket_port_ws});
-  console.log("WS Web socket listening on port " + appConfig.socket_port_ws);
+  var wss = new WebSocketServer({server: app});
   wss.on('connection', function(ws) {
     var id = setInterval(function() {
       ws.send(JSON.stringify(new Date()), function() { /* ignore errors */ });

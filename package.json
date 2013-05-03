@@ -15,7 +15,7 @@
     , "client-sessions": "latest"
     , "nodemailer" : "0.4.1"
     , "mail-preview" : "latest"
-    , "ws": "latest"
     , "socket.io": "latest"
+    , "socket.io-client": "latest"
   }
 }

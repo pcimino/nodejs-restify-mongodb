@@ -2,7 +2,7 @@
 <head>
 <script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
 </head>
-<body style="margin-left:100px;">
+<body style="margin-left:100px;" bgcolor="white">
 <h2>
    <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
       <img src="/public/translunar.png" align="middle"/>REST Test
@@ -28,13 +28,13 @@
          <option value="username">Username</option>
          <option value="name">Name</option>
          <option value="email">Email</option>
-      </select> 
+      </select>
      </td></tr>
      <tr><td>
       <select name="ascendingSortFlag" id="ascendingSortFlag">
          <option value="true">Ascending Order</option>
          <option value="false">Descending Order</option>
-      </select> 
+      </select>
      </td></tr>
       <tr><td>
          <input id="formButton" type="button" value="Search">
@@ -56,7 +56,7 @@
       $('#formButton').click(function() { formSubmit(); });
       $('#clearFormButton').click(function() { clearForm(); });
    });
-   
+
    function formSubmit() {
    if ($('input[name="itemsPerPage"]').val() >= 1) {
       if ($('input[name="pageNumber"]').val() == '') {
@@ -82,7 +82,7 @@
                */
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
@@ -103,7 +103,7 @@
       $("#dynamicTable").append("<th>Email</th>");
       $("#dynamicTable").append("</tr>");
       $("#dynamicTable").append("</thead>");
-      
+
       $("#dynamicTable").append("<tbody>");
 
       for (i = 0; i < dataArr.length; i++) {
@@ -115,11 +115,11 @@
          $("#dynamicTable").append("<td>" + dataArr[i].email + "</td>");
          $("#dynamicTable").append("</tr>");
       }
-      
+
       $("#dynamicTable").append("</tbody>");
       $("#dynamicTable").append("</table>");
    }
-   
+
    function clearForm() {
       $('#inputForm')[0].reset();
    }

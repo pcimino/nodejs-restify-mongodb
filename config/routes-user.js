@@ -7,7 +7,7 @@ var mongoose = require('mongoose')
 
 var mail = {};
 
-module.exports = function (app, config, mailHelper) {
+module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
 
    // This function is responsible for searching and returning multiple users
@@ -126,30 +126,6 @@ module.exports = function (app, config, mailHelper) {
       }
    }
 
-   // Search for existing username
-   // based on this post
-   //    https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
-   // I probably should be using the validator the way it's demonstratated but for now I'm just borrowing the query
-   function checkUsername(req, res, next) {
-      if (req.params.username != null && req.params.username != '') {
-         var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
-         query.count(function(err, count) {
-            if (!err) {
-               if (count === 0) {
-                  res.send({});
-                  return next();
-               } else {
-                  return next(new restify.InternalError('Username already in use.'));
-               }
-            } else {
-              return next(new restify.InternalError(err));
-            }
-         });
-      } else {
-         return next(new restify.MissingParameterError('Username required.'));
-      }
-   }
-
     // Find a user and modify, then save it
    function putUser(req, res, next) {
       User.findById(req.params.id, function (err, user) {
@@ -194,12 +170,11 @@ module.exports = function (app, config, mailHelper) {
    // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
 
 
-   // Create
-   app.post('api/v1/user', postUser);
+   // Create a user other than self while logged in
+   app.post('api/v1/admin/user', postUser); // TODO lockdown , auth.adminAccess
 
    // Read
-   app.get('/api/v1/user/username/exists', checkUsername);
-   app.get('/api/v1/userlist', searchUsers);
+   app.get('/api/v1/userlist', searchUsers); // needs to be locked down auth.requiresLogin,
 
    // TODO Need to figure out the explicit REST URI
    // confused, specified gets by id or username, seemed to be working
@@ -207,13 +182,13 @@ module.exports = function (app, config, mailHelper) {
    //       app.get('/api/v1/user/:id', getUserById);
    //       app.get('/api/v1/user/:username', getUserByUsername);
    // so went back to a generic path
-   app.get('/api/v1/user', getUser);
+   app.get('/api/v1/user', getUser); // TODO lockdown , auth.requiresLogin
 
 
    // Update
-   app.put('/api/v1/user', putUser);
+   app.put('/api/v1/user', putUser); // TODO lockdown , auth.requiresLogin
 
    // Delete
    // 405 ? app.del('/api/v1/user/:id', deleteUser);
-   app.del('/api/v1/user', deleteUser);
+   app.del('/api/v1/user', deleteUser); // TODO lockdown , auth.adminAccess
 }

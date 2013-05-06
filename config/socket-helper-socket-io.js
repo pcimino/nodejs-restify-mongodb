@@ -4,6 +4,8 @@ var net = require('net')
 /**
  * Generates a SocketHelper
  *
+ * https://github.com/LearnBoost/Socket.IO/wiki/Configuring-Socket.IO
+ *
  * @constructor
  * @param {Object} options
  */
@@ -19,12 +21,9 @@ var SocketHelper = function(app, config) {
  */
 SocketHelper.prototype.initialize = function(app, appConfig) {
 
-  // This would allow Socket.IO to listen on the same port as the server, but WS is already doing that
-  SocketIo = require('socket.io').listen(app);
-
-  // note, io.listen(<port>) will create a http server for you
-  //SocketIo = require('socket.io').listen(parseInt(appConfig.socket_port_io));
-  console.log("Socket.IO listening on port " + appConfig.socket_port_io);
+  // This would allow Socket.IO to listen on the same port as the server
+  SocketIo = require('socket.io').listen(app, {'log level': appConfig.socket_loglevel});
+  console.log("Socket.IO listening on port " + appConfig.port);
 
   SocketIo.sockets.on('connection', function(socket) {
     var id = setInterval(function() {

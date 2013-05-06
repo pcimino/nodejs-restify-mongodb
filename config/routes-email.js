@@ -4,7 +4,7 @@ var restify = require('restify');
 
 var mail = {};
 
-module.exports = function (app, config, mailHelper) {
+module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
 
 
@@ -29,6 +29,6 @@ module.exports = function (app, config, mailHelper) {
 
 
    // Create
-   app.post('api/v1/email', postEmail);
+   app.post('api/v1/email', postEmail); // TODO lock down auth.requiresLogin,
 
 }

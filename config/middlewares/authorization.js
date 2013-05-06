@@ -42,3 +42,41 @@ exports.access = function(req, res, next) {
       }
    });
 };
+
+// See if the user has admin allowed access
+exports.adminAccess = function(req, res, next) {
+   var id = "-1";
+   if (req.session.user) {
+      id = req.session.user;
+   }
+   User.findById(id, function (err, user) {
+      if (!err) {
+         if (user && user.allowAccess('Admin')) {
+            return next({});
+         } else {
+            return next(new restify.NotAuthorizedError("Access restricted."));
+         }
+      } else {
+         return next(new restify.NotAuthorizedError("Access restricted."));
+      }
+   });
+};
+
+// See if the user has subscriber access
+exports.subscriberAccess = function(req, res, next) {
+   var id = "-1";
+   if (req.session.user) {
+      id = req.session.user;
+   }
+   User.findById(id, function (err, user) {
+      if (!err) {
+         if (user && user.allowAccess('Subscriber')) {
+            return next({});
+         } else {
+            return next(new restify.NotAuthorizedError("Access restricted."));
+         }
+      } else {
+         return next(new restify.NotAuthorizedError("Access restricted."));
+      }
+   });
+};

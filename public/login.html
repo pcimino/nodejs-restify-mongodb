@@ -2,7 +2,7 @@
 <head>
 <script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
 </head>
-<body style="margin-left:100px;">
+<body style="margin-left:100px;" bgcolor="white">
 <h2>
    <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
       <img src="/public/translunar.png" align="middle"/>REST Test
@@ -72,7 +72,7 @@
       $('#clearFormButton').click(function() { clearForm(); });
       loadData();
    });
-   
+
    function loadData() {
       $.ajax({
          type: "GET",
@@ -87,7 +87,7 @@
                buildSelectList(data.users);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
@@ -106,7 +106,7 @@
                alert("No data found.");
             } else {
             alert("Welcome " + data.name);
-               console.log(data);
+            $('input[name="password"]').val('');
             }
          },
          error:function(err) {
@@ -195,17 +195,18 @@
                console.log(data);
                $('input[name="username"]').val(data.username);
                $('input[name="email"]').val(data.email);
+              $('input[name="password"]').val('');
             $('#role').html(data.role);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
          dataType: 'json'
       });
    }
-   
+
    function clearForm() {
       $('#selectForm')[0].reset();
       $('#inputForm')[0].reset();

@@ -2,7 +2,7 @@
 <head>
 <script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
 </head>
-<body style="margin-left:100px;">
+<body style="margin-left:100px;" bgcolor="white">
 <h2>
    <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
       <img src="/public/translunar.png" align="middle"/>REST Test
@@ -56,14 +56,14 @@
                buildRolesSelectList(data);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
          dataType: 'json'
       });
    }
-   
+
    function buildRolesSelectList(dataArr) {
       $('#roleSelectList').empty();
       for (i = 0; i < dataArr.length; i++) {
@@ -72,7 +72,7 @@
 	  $('#roleSelectList').val('Admin');
       clearForm();
    }
-   
+
    function loadData() {
       $.ajax({
          type: "GET",
@@ -87,7 +87,7 @@
                buildSelectList(data.users);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
@@ -108,7 +108,7 @@
                loadData();
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },
@@ -138,18 +138,18 @@
                console.log(data);
                $('input[name="id"]').val(data._id);
                $('input[name="name"]').val(data.name);
-			   
+
 			   $("select option").filter(function() {
-					return $(this).text() == data.role; 
+					return $(this).text() == data.role;
 				}).prop('selected', true);
 				$('input[name="role"]').val(data.role);
-				
+
                $('input[name="username"]').val(data.username);
                $('input[name="email"]').val(data.email);
 			   $('input[name="password"]').val(data.hashed_password);
             }
          },
-         error:function(err) { 
+         error:function(err) {
             console.log(err);
             alert(JSON.parse(err.responseText).message)
          },

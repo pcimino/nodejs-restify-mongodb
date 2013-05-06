@@ -43,30 +43,33 @@ var validatePresenceOf = function (value) {
   return value && value.length
 }
 
-// the below 4 validations only apply if you are signing up traditionally
-
-//TODO Why aren't the custom messages working?
-UserSchema.path('name').validate(function (name) {
-  return validatePresenceOf(name);
-}, 'Name cannot be blank')
-
-UserSchema.path('email').validate(function (email) {
-  return (validatePresenceOf(email) && (email.indexOf('@') > 0));
-}, 'Email must be a valid address')
-
-UserSchema.path('username').validate(function (username) {
-  return validatePresenceOf(username);
-}, 'Username cannot be blank')
-
-UserSchema.path('hashed_password').validate(function (hashed_password) {
-  return validatePresenceOf(hashed_password);
-}, 'Password cannot be blank')
+// tried these formats, always get the generic message
+//UserSchema.path('name').validate(function (name) {
+//  return validatePresenceOf(name)
+//}, 'Name cannot be blank')
 
 /**
  * Pre-save hook
  */
 
 UserSchema.pre('save', function(next) {
+  if (!validatePresenceOf(this.username)) {
+    next(new restify.MissingParameterError('Username cannot be blank'));
+  }
+  if (!validatePresenceOf(this.name)) {
+    next(new restify.MissingParameterError('Name cannot be blank'));
+  }
+  if (!validatePresenceOf(this.role)) {
+    next(new restify.MissingParameterError('Role cannot be blank'));
+  }
+  if (!validatePresenceOf(this.email)) {
+    next(new restify.MissingParameterError('Email cannot be blank'));
+  }
+  if (this.email.indexOf('@') <= 0) {
+    next(new restify.MissingParameterError('Email address must be valid'));
+  }
+
+  // password not blank when creating, otherwise skip
   if (!this.isNew) return next();
   if (!validatePresenceOf(this.password)) {
     next(new restify.MissingParameterError('Invalid password'));
@@ -102,7 +105,7 @@ UserSchema.methods = {
       if (!password) return ''
       return crypto.createHmac('sha1', this._id.toString()).update(password).digest('hex'); // using the ObjectId as the salt
    },
-  
+
   /**
    * allowAccess
    *

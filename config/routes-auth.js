@@ -41,6 +41,10 @@ module.exports = function (app, config, auth) {
       res.send({});
    }
 
+   function verifyCode(req, res, next) {
+    console.log('test verify');
+     res.send({message:'Test'});
+   }
    // Set up routes
 
    // Ping but with user authentication
@@ -55,6 +59,9 @@ module.exports = function (app, config, auth) {
 
    // Get the available roles
    app.get('/api/v1/roles', roles);
+
+   // Get the verify a code a link
+   app.get('/api/v1/verify', verifyCode);
 
    // Check user access
    app.get('/api/v1/roles/access', auth.access, function (req, res) {

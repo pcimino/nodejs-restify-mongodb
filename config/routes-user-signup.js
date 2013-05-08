@@ -2,6 +2,7 @@
 // - User creates initial information
 // - Email sent with verification code
 // - Verification code sets email to validated state
+// http://mcavage.github.io/node-restify/#Content-Negotiation
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , VerifyCode = mongoose.model('VerifyCode')
@@ -15,13 +16,10 @@ module.exports = function (app, config, mailHelper) {
 
    // Create a new user model, fill it up and save it to Mongodb
    function postUser(req, res, next) {
-     console.log(req.url);
-     //console.log(req.protocol);
-     //console.log(req.host);
-     //console.log(req.port);
-     console.log(req.getPath());
-     console.log(req.params);
-      var user = new User(req.params);
+     if (req.params.password != req.params.vPassword) {
+       return next(new restify.MissingParameterError('Password and Verify Password must match.'));
+     }
+     var user = new User(req.params);
       if (user.username != null && user.username != '') {
          user.save(function (err, user) {
             if (!err) {
@@ -46,7 +44,10 @@ module.exports = function (app, config, mailHelper) {
      verifyCode.save(function (err, user) {
        if (!err) {
          // create a verification code
-         var fullURL = 'test';//req.protocol + "://" + req.host + ":" + req.port + req.path + "?v=" + verifyCode.key;
+         var refer = req.toString().substring(req.toString().indexOf('referer'));
+         var host = req.header('Host');
+         refer = refer.substring(0, refer.indexOf(host) + host.length);
+         var fullURL = req.protocol + "://" + refer + "/api/v1/verify?v=" + verifyCode.key;
          var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
          messageBody = messageBody + "<a href='" + fullURL + "'>Activate your account</a>"
 console.log("Email " + messageBody);

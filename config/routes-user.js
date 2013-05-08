@@ -61,24 +61,6 @@ module.exports = function (app, config, auth, mailHelper) {
      return;
    }
 
-   // Create a new user model, fill it up and save it to Mongodb
-   function postUser(req, res, next) {
-      var user = new User(req.params);
-      if (user.username != null && user.username != '') {
-         user.save(function (err, user) {
-            if (!err) {
-              mail.sendMail(user.email, 'test subject', 'test text', true);
-               res.send(user);
-               return next();
-            } else {
-               return next(err);
-            }
-         });
-      } else {
-         return next(new restify.MissingParameterError('Username required.'));
-      }
-   }
-
    // Search by ID or username
    function getUser(req, res, next) {
       if (req.params.id != null && req.params.id != '') {
@@ -170,11 +152,8 @@ module.exports = function (app, config, auth, mailHelper) {
    // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
 
 
-   // Create a user other than self while logged in
-   app.post('api/v1/admin/user', postUser); // TODO lockdown , auth.adminAccess
-
    // Read
-   app.get('/api/v1/userlist', searchUsers); // needs to be locked down auth.requiresLogin,
+   app.get('/api/v1/userlist', auth.requiresLogin, searchUsers);
 
    // TODO Need to figure out the explicit REST URI
    // confused, specified gets by id or username, seemed to be working
@@ -182,13 +161,13 @@ module.exports = function (app, config, auth, mailHelper) {
    //       app.get('/api/v1/user/:id', getUserById);
    //       app.get('/api/v1/user/:username', getUserByUsername);
    // so went back to a generic path
-   app.get('/api/v1/user', getUser); // TODO lockdown , auth.requiresLogin
+   app.get('/api/v1/user', auth.requiresLogin, getUser);
 
 
    // Update
-   app.put('/api/v1/user', putUser); // TODO lockdown , auth.requiresLogin
+   app.put('/api/v1/user', auth.requiresLogin, putUser);
 
    // Delete
    // 405 ? app.del('/api/v1/user/:id', deleteUser);
-   app.del('/api/v1/user', deleteUser); // TODO lockdown , auth.adminAccess
+   app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }

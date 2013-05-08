@@ -1,9 +1,12 @@
-// NOTE : All of these routes are exposed (unprotected) See routes-auth.js for examples of authorized routes
-
+// Routes for the user signup flow:
+// - User creates initial information
+// - Email sent with verification code
+// - Verification code sets email to validated state
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
-  , UserList = mongoose.model('UserList')
-  , restify = require('restify');
+  , VerifyCode = mongoose.model('VerifyCode')
+  , restify = require('restify')
+  , ObjectId = mongoose.Types.ObjectId;
 
 var mail = {};
 
@@ -12,13 +15,18 @@ module.exports = function (app, config, mailHelper) {
 
    // Create a new user model, fill it up and save it to Mongodb
    function postUser(req, res, next) {
+     console.log(req.url);
+     //console.log(req.protocol);
+     //console.log(req.host);
+     //console.log(req.port);
+     console.log(req.getPath());
+     console.log(req.params);
       var user = new User(req.params);
       if (user.username != null && user.username != '') {
          user.save(function (err, user) {
             if (!err) {
-              mail.sendMail(user.email, 'test subject', 'test text', true);
-               res.send(user);
-               return next();
+              // create a verification code
+              generateVerifyCode(req, res, next, user);
             } else {
                return next(err);
             }
@@ -26,6 +34,30 @@ module.exports = function (app, config, mailHelper) {
       } else {
          return next(new restify.MissingParameterError('Username required.'));
       }
+   }
+// http://stackoverflow.com/questions/6287297/reading-content-from-url-with-node-js
+  //http://expressjs.com/api.html#req.params
+
+  // create the verification code and send the email
+   function generateVerifyCode(req, res, next, user) {
+     var verifyCode = new VerifyCode();
+     verifyCode.userObjectId = user._id;
+     verifyCode.key = (new ObjectId()).toString();
+     verifyCode.save(function (err, user) {
+       if (!err) {
+         // create a verification code
+         var fullURL = 'test';//req.protocol + "://" + req.host + ":" + req.port + req.path + "?v=" + verifyCode.key;
+         var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
+         messageBody = messageBody + "<a href='" + fullURL + "'>Activate your account</a>"
+console.log("Email " + messageBody);
+         mail.sendMail(user.email, 'Account Validation Email', messageBody, true);
+         res.send(user);
+         return next();
+       } else {
+         return next(err);
+       }
+     });
+
    }
 
    // Search for existing username

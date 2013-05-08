@@ -7,14 +7,16 @@ var transportErrorLog = null; // this uses preview to save failed emails to a di
 
 // setup e-mail data with unicode symbols
 var mailOptions = {
-    from: "", // sender address
-    to: "", // list of receivers
-    subject: "", // Subject line
-    text: "", // plaintext body
-    html: "", // html body
-    service: {},
-    auth: {},
-    sendEmail: false
+  from: "", // sender address
+  to: "", // list of receivers
+  subject: "", // Subject line
+  text: "", // plaintext body
+  html: "", // html body
+  service: {},
+  auth: {},
+  sendEmail: false,
+  previewDir: '../mailLog/testPreview',
+  errDir: '../mailLog/error'
 }
 
 /**
@@ -45,7 +47,14 @@ MailHelper.prototype.initialize = function(appConfig){
     mailOptions.service = appConfig.mailSettings.service;
     mailOptions.auth = appConfig.mailSettings.auth;
     mailOptions.sendEmail = appConfig.mailSettings.sendEmail;
-    mailOptions.browserPreview = appConfig.mailSettings.browserPreview
+    mailOptions.browserPreview = appConfig.mailSettings.browserPreview;
+
+    if (appConfig.mailSettings.previewDir) {
+      mailOptions.previewDir = appConfig.mailSettings.previewDir;
+    }
+    if (appConfig.mailSettings.errDir) {
+      mailOptions.errDir = appConfig.mailSettings.errDir;
+    }
 };
 
 /**
@@ -57,7 +66,6 @@ MailHelper.prototype.initialize = function(appConfig){
  * @param htmlFlag if true, body is html
  */
 MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
-  console.log(1);
     if (null === transport) {
         this.createTransport();
     }
@@ -79,7 +87,7 @@ MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
             // email failed, send to the error log directory
             transportErrorLog.sendMail(sendOptions);
         } else {
-            // if (response) console.log("Message sent: " + response.message);
+            if (response) console.log("Message sent: " + response.message);
         }
     });
 };
@@ -114,7 +122,7 @@ MailHelper.prototype.createTransport = function() {
         });
     } else {
         // For email previews
-        var tmpdir = path.join(__dirname, 'tmp', 'nodemailer');
+        var tmpdir = path.join(__dirname, mailOptions.previewDir, 'nodemailer');
 
         transport = nodemailer.createTransport('MailPreview', {
             dir: tmpdir,  // defaults to ./tmp/nodemailer
@@ -123,7 +131,7 @@ MailHelper.prototype.createTransport = function() {
     }
 
     // For email error logging
-    var tmpErr = path.join(__dirname, 'emailErr', 'nodemailer');
+    var tmpErr = path.join(__dirname, mailOptions.errDir, 'nodemailer');
 
     transportErrorLog = nodemailer.createTransport('MailPreview', {
         dir: tmpErr,  // defaults to ./tmp/nodemailer

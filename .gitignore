@@ -1,5 +1,4 @@
 node_modules/
-tmp/
-emailErr/
+mailLog/
 npm-debug.log
 todo.txt

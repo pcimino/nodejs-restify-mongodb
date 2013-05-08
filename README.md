@@ -1,4 +1,4 @@
-# Node+Mongoose+Restify (and eventually Passport)#
+# Node+Mongoose+Restify #
 
 This is a basic Node.js setup demonstrating:  
 
@@ -20,7 +20,7 @@ If you're new to Node.js and/or Mongo DB, these steps will get you started. Adva
 8. Start the Node.js server: **start-node.bat/.sh**
 0. Point your browser to [http://localhost:3000](http://localhost:3000)
 
-The demo page loads and you can use the forms to call the REST APIs.
+[The demo page loads and you can use the forms to call the REST APIs.](https://github.com/pcimino/nodejs-restify-mongodb/wiki/APITest)
 
 The **stop-mongo.bat/.sh** scripts shutdown the database server in an orderly fashion. Interrupting the process can lock and even corrupt the database. For this demo you can always delete the lock file and the contents of **%MONGODB%\data\db** (**$MONGODB/data/db**) but it is recommened to simply shut things down properly.
 

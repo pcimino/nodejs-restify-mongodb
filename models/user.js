@@ -2,7 +2,6 @@
 /**
  * Module dependencies.
  */
-
 var mongoose = require('mongoose')
   , Schema = mongoose.Schema
   , ObjectId = Schema.ObjectId
@@ -12,11 +11,12 @@ var mongoose = require('mongoose')
 /**
  * User Schema
  */
-
 var UserSchema = new Schema({
   id: ObjectId,
   name: { type: String, trim: true },
   email: { type: String, trim: true },
+  newEmail: { type: String, trim: true, default: '' },
+  emailValidatedFlag: { type: Boolean, default: false },
   username: { type: String, trim: true },
   role: { type: String, enum: ['User', 'Subscriber', 'Admin'], default: 'User' },
   hashed_password: { type: String, trim: true },
@@ -26,7 +26,6 @@ var UserSchema = new Schema({
 /**
  * Virtuals
  */
-
 UserSchema
   .virtual('password')
   .set(function(password) {
@@ -38,7 +37,6 @@ UserSchema
 /**
  * Validations
  */
-
 var validatePresenceOf = function (value) {
   return value && value.length
 }
@@ -51,7 +49,6 @@ var validatePresenceOf = function (value) {
 /**
  * Pre-save hook
  */
-
 UserSchema.pre('save', function(next) {
   if (!validatePresenceOf(this.username)) {
     next(new restify.MissingParameterError('Username cannot be blank'));

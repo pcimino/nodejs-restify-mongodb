@@ -28,7 +28,7 @@ var validatePresenceOf = function (value) {
 
 //TODO Why aren't the custom messages working?
 SessionKeySchema.path('key').validate(function (name) {
-  return validatePresenceOf(key);
+  return validatePresenceOf(this.key);
 }, 'Key must be 12 characters or longer')
 
 /**

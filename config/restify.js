@@ -5,10 +5,10 @@
 
 var restify = require('restify')
    , mongoose = require('mongoose')
-   , SessionKey = mongoose.model('SessionKey')
    , clientSessions = require("client-sessions");
 
-module.exports = function (app, config) {
+module.exports = function (app, config, sessionKey) {
+
    app.use(restify.acceptParser(app.acceptable));
    app.use(restify.authorizationParser());
    app.use(restify.dateParser());
@@ -22,30 +22,32 @@ module.exports = function (app, config) {
    app.use(restify.CORS());
    app.use(restify.fullResponse());
 
-   //new Buffer("Hello World").toString('base64')
-   //findOne SessionKey
-   // if not found create one and use it's key
-   
+
+   // TODO duration doesn't seem to do anything
    app.use(clientSessions({
-      cookieName: 'session',    // defaults to session_state
-      secret: (new mongoose.Types.ObjectId()).toString(),
-      // true session duration:
-      // will expire after duration (ms)
-      // from last session.reset() or
-      // initial cookieing.
-      duration: 24 * 60 * 60 * 1000, // defaults to 1 day
+     cookieName: 'session',    // defaults to session_state
+     secret: sessionKey,
+     // true session duration:
+     // will expire after duration (ms)
+     // from last session.reset() or
+     // initial cookie.
+     duration: config.session_timeout, // defaults to 20 minutes, in ms
+     // refresh every access
+     path: '/',
+     httpOnly: true, // defaults to true
+     secure: false   // defaults to false
    }));
 
-   app.use(restify.throttle({
-     burst: 100,
-     rate: 50,
-     ip: true,
-     overrides: {
-      '192.168.1.1': {
-        rate: 0,        // unlimited
-        burst: 0
+    app.use(restify.throttle({
+      burst: 100,
+      rate: 50,
+      ip: true,
+      overrides: {
+        '192.168.1.1': {
+           rate: 0,        // unlimited
+           burst: 0
+         }
       }
-     }
-   }));
+    }));
    app.use(restify.conditionalRequest());
 }

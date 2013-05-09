@@ -44,13 +44,12 @@ module.exports = function (app, config, mailHelper) {
      verifyCode.save(function (err, user) {
        if (!err) {
          // create a verification code
-         var refer = req.toString().substring(req.toString().indexOf('referer'));
+         var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
          var host = req.header('Host');
          refer = refer.substring(0, refer.indexOf(host) + host.length);
-         var fullURL = req.protocol + "://" + refer + "/api/v1/verify?v=" + verifyCode.key;
+         var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
          var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
-         messageBody = messageBody + "<a href='" + fullURL + "'>Activate your account</a>"
-console.log("Email " + messageBody);
+         messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
          mail.sendMail(user.email, 'Account Validation Email', messageBody, true);
          res.send(user);
          return next();

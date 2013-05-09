@@ -10,12 +10,7 @@
 </h2>
 <h3>Login Test</h3>
 
-<p>
-<form name="selectForm" id="selectForm">
-      <select name="userSelectList" id="userSelectList">
-      </select>
-</form>
-</p>
+
 <form name="inputForm" id="inputForm">
 <table>
    <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
@@ -68,40 +63,18 @@
      $('#formButton4').click(function() { checkRole('User'); });
      $('#formButton5').click(function() { checkRole('Subscriber'); });
      $('#formButton6').click(function() { checkRole('Admin'); });
-      $('#selectForm').change(function() { setupForm(); });
+
       $('#clearFormButton').click(function() { clearForm(); });
-      loadData();
    });
-
-   function loadData() {
-      $.ajax({
-         type: "GET",
-         url: "http://localhost:3000/api/v1/userlist",
-         data: {sortField:'username'},
-         success: function(data) {
-            if (data === null || data.length == 0) {
-               alert("No data found.");
-            } else {
-               $('input[name="pages"]').val(data.pageCount);
-               //console.log(data);
-               buildSelectList(data.users);
-            }
-         },
-         error:function(err) {
-            console.log(err);
-            alert(JSON.parse(err.responseText).message)
-         },
-         dataType: 'json'
-      });
-   }
-
+var a,b,cc;
    function formSubmit() {
       $.ajax({
          type: "POST",
          url: "http://localhost:3000/api/v1/session/login",
          data: $('#inputForm').serialize(),
        timeout: 2000,
-         success: function(data) {
+         success: function(data, textStatus, xhr) {
+           a=data;b=textStatus;cc=xhr;
             if (data === null || data.length == 0) {
                alert("No data found.");
             } else {
@@ -110,7 +83,7 @@
             }
          },
          error:function(err) {
-            alert(err.statusText);
+            alert(jQuery.parseJSON(err.responseText ).message);
          },
          dataType: 'json'
       });
@@ -125,7 +98,7 @@
             alert("Logged out");
          },
          error:function(err) {
-            alert(err.statusText);
+            alert(jQuery.parseJSON(err.responseText ).message);
          },
          dataType: 'json'
       });
@@ -140,12 +113,11 @@
             if (data === null || data.length == 0) {
                alert("No data found.");
             } else {
-            alert(data.message);
-               console.log(data);
+              alert(data.message);
             }
          },
          error:function(err) {
-            alert(err.statusText);
+            alert(jQuery.parseJSON(err.responseText ).message);
          },
          dataType: 'json'
       });
@@ -160,52 +132,16 @@
             if (data === null || data.length == 0) {
                alert("No data found.");
             } else {
-            alert(data.message);
-               //console.log(data);
+              alert(data.message);
             }
          },
          error:function(err) {
-       console.log(err);
-            alert(err.statusText);
+            alert(jQuery.parseJSON(err.responseText ).message);
          },
          dataType: 'json'
       });
    }
 
-   function buildSelectList(dataArr) {
-      $('#userSelectList').empty();
-      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
-      for (i = 0; i < dataArr.length; i++) {
-         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
-      }
-      $('#userSelectList').val(null);
-      $('#inputForm')[0].reset();
-     $('#role').empty();
-   }
-
-   function setupForm() {
-      $.ajax({
-         type: "GET",
-         url: "http://localhost:3000/api/v1/user",
-         data: {'id':$('#userSelectList').val()},
-         success: function(data) {
-            if (data === null || data.length == 0) {
-               alert("No data found.");
-            } else {
-               console.log(data);
-               $('input[name="username"]').val(data.username);
-               $('input[name="email"]').val(data.email);
-              $('input[name="password"]').val('');
-            $('#role').html(data.role);
-            }
-         },
-         error:function(err) {
-            console.log(err);
-            alert(JSON.parse(err.responseText).message)
-         },
-         dataType: 'json'
-      });
-   }
 
    function clearForm() {
       $('#selectForm')[0].reset();

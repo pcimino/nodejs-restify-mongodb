@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
+  , VerifyCode = mongoose.model('VerifyCode')
   , restify = require('restify');
 
 module.exports = function (app, config, auth) {
@@ -16,23 +17,22 @@ module.exports = function (app, config, auth) {
       query.findOne(function (err, user) {
          if (err) {
             res.send(err);
-         }
-         if (!user) {
-            res.send({ message: 'Unknown user' })
-         }
-         if (!user.emailValidatedFlag && user.newEmail != '') {
+           return next();
+         } else if (!user) {
+            return next(new restify.NotAuthorizedError("Invalid username."));
+           return next();
+         } else if (!user.emailValidatedFlag && !user.newEmail) {
            // user account has never been validated
-           req.session.reset();
-           res.send({ message: 'Email address must be validated to activate your account.' })
-         }
-         if (user.authenticate(req.params.password)) {
-            req.session.user = user._id;
+           return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
+         } else if (user.authenticate(req.params.password)) {
+           console.log(req.session.user)
+            req.session.user = user._id; //subscriber@subscriber
 			      res.send(user);
+           return next();
          } else {
-			      req.session.reset();
-            res.send({ message: 'Invalid password.' })
+			      return next(new restify.NotAuthorizedError("Invalid password."));
          }
-		 return next();
+
       });
    }
 
@@ -41,10 +41,46 @@ module.exports = function (app, config, auth) {
       res.send({});
    }
 
+
+   var VERIFY_EMAIL_SUCCESS = "Your email has been successfully validated.";
+   var VERIFY_ACCTL_SUCCESS = "Your account has been successfully validated.";
+   var VERIFY_FAIL = "Sorry. We can not validate this account/email. Please try requesting a new code.";
+
+  // should probably return a file formt he /public directory on success/fail
    function verifyCode(req, res, next) {
-    console.log('test verify');
-     res.send({message:'Test'});
+     var query = VerifyCode.where( 'key', new RegExp('^'+req.params.v+'$', 'i') );
+      query.findOne(function (err, verifyCode) {
+        if (!err && verifyCode) {
+          validateCode(req, res, next, verifyCode);
+        } else {
+          return next(new restify.NotAuthorizedError(VERIFY_FAIL));
+        }
+      });
    }
+
+   function validateCode(req, res, next, verifyCode) {
+      User.findById(verifyCode.userObjectId, function (err, user) {
+        if (!err && user) {
+          if (user.newEmail == '') {
+            user.emailValidatedFlag = true;
+            user.save();
+            res.send(VERIFY_ACCTL_SUCCESS);
+            return next();
+          } else {
+            user.email = user.newEmail;
+            user.newEmail = '';
+            user.emailValidatedFlag = true;
+            user.save();
+            return next(new restify.NotAuthorizedError(VERIFY_EMAIL_SUCCESS));
+          }
+          verifyCode.remove();
+        } else {
+          return next(new restify.NotAuthorizedError(VERIFY_FAIL));
+        }
+      });
+		 //return next();
+   }
+
    // Set up routes
 
    // Ping but with user authentication
@@ -68,4 +104,3 @@ module.exports = function (app, config, auth) {
       res.send({'message':'Success'});
    });
 }
-

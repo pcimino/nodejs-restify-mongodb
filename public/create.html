@@ -78,8 +78,8 @@
               url: "http://localhost:3000/api/v1/user",
               data: $('#inputForm').serialize(),
               success: function(data) {
-                  console.log("Success " + data);
-                  $('input[name="id"]').val(data._id);
+                 $('input[name="id"]').val(data._id);
+                 alert('Use the HTTP link in your email to validate this account. If you have not configured your email server connection, look in the project subfolder /nodejs-restify-mongodb/mailLog/testPreview');
                },
 				error: function(err) {
 					//console.log(err.responseText);

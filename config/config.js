@@ -10,6 +10,7 @@ module.exports = {
 	    db_prefix: 'mongodb',
 	    db_port: '27017',
 	    db_database: 'test_database',
+      session_timeout: 1200000, // defaults to 20 minutes, in ms (20 * 60 * 1000)
       socket_loglevel: '1', // 0 - error, 1 - warn, 2 - info, 3 - debug
       mailSettings : {
           mailFrom: 'test@gmail.com',
@@ -18,29 +19,7 @@ module.exports = {
           sendEmail: false,
           browserPreview: true
       },
-	  version: '1.0.0',
-	  // TODO wiring in Passport, although tried a couple of times, probably
-      // need to go to Express to get Passport to work correctly
-	  facebook: {
-          clientID: "APP_ID"
-        , clientSecret: "APP_SECRET"
-        , callbackURL: "http://localhost:3000/auth/facebook/callback"
-      },
-      twitter: {
-          clientID: "CONSUMER_KEY"
-        , clientSecret: "CONSUMER_SECRET"
-        , callbackURL: "http://localhost:3000/auth/twitter/callback"
-      },
-      github: {
-          clientID: 'APP_ID'
-        , clientSecret: 'APP_SECRET'
-        , callbackURL: 'http://localhost:3000/auth/github/callback'
-      },
-      google: {
-          clientID: "APP_ID"
-        , clientSecret: "APP_SECRET"
-        , callbackURL: "http://localhost:3000/auth/google/callback"
-      }
+	    version: '1.0.0'
     }
   , test: {
 

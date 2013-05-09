@@ -1,7 +1,8 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , VerifyCode = mongoose.model('VerifyCode')
-  , restify = require('restify');
+  , restify = require('restify')
+, clientSessions = require("client-sessions");
 
 module.exports = function (app, config, auth) {
    // Return the available roles
@@ -25,10 +26,13 @@ module.exports = function (app, config, auth) {
            // user account has never been validated
            return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
          } else if (user.authenticate(req.params.password)) {
-           console.log(req.session.user)
-            req.session.user = user._id; //subscriber@subscriber
-			      res.send(user);
-           return next();
+           if (!req.session) {
+             return next(new restify.NotAuthorizedError("Session lost."));
+           } else {
+             req.session.user = user._id; //subscriber@subscriber
+			       res.send(user);
+             return next();
+           }
          } else {
 			      return next(new restify.NotAuthorizedError("Invalid password."));
          }
@@ -85,6 +89,7 @@ module.exports = function (app, config, auth) {
 
    // Ping but with user authentication
    app.get('/api/auth', auth.requiresLogin, function (req, res) {
+     console.log(req);
       res.send({'message':'Success'});
    });
 

@@ -27,12 +27,16 @@
    </td></tr>
 </table>
 </form>
+<p><font color="green"><b>After creating the account, use the HTTP link in your email to validate the account. If you have not configured your email server connection, look in the project subfolder /nodejs-restify-mongodb/mailLog/testPreview</b></font></p>
+
+<hr>
 <p><a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/index.html">Home</a></p>
 
 <script type="text/javascript">
    $(document).ready(function() {
       $('#formButton').click(function() { formSubmit(); });
+
       $('#clearFormButton').click(function() { clearForm(); });
       $('input[name="id"]').attr("disabled", "disabled");
       $('#usernameLink').click(function() { checkUsername(); });
@@ -68,7 +72,7 @@
       clearForm();
    }
    function formSubmit() {
-      $('input[name="id"]').val(''); // Safety, doesn't seem liek this is required: if user resubmitting modified form data clear out the ObjectId
+      $('input[name="id"]').val(''); // Safety, doesn't seem like this is required: if user resubmitting modified form data clear out the ObjectId
       var stt = "username='"+$('input[name="username"]')+"'&id="+"'"+$('input[name="id"]')+"'";
       $.ajax({
          type: "GET",
@@ -81,7 +85,7 @@
               data: $('#inputForm').serialize(),
               success: function(data) {
                  $('input[name="id"]').val(data._id);
-                 alert('Use the HTTP link in your email to validate this account. If you have not configured your email server connection, look in the project subfolder /nodejs-restify-mongodb/mailLog/testPreview');
+                 alert('Use the HTTP link in your email to validate this account.');
                },
 				error: function(err) {
 					//console.log(err.responseText);
@@ -98,7 +102,7 @@
       });
    }
    function checkUsername() {
-      $('input[name="id"]').val(''); // Safety, doesn't seem liek this is required: if user resubmitting modified form data clear out the ObjectId
+      $('input[name="id"]').val(''); // Safety, doesn't seem like this is required: if user resubmitting modified form data clear out the ObjectId
       var stt = "username='"+$('input[name="username"]')+"'&id="+"'"+$('input[name="id"]')+"'";
       $.ajax({
          type: "GET",

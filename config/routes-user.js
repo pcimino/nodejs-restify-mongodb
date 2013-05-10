@@ -65,18 +65,24 @@ module.exports = function (app, config, auth, mailHelper) {
    function getUser(req, res, next) {
       if (req.params.id != null && req.params.id != '') {
          getUserById(req, res, next);
+      } else if (req.params.username != null && req.params.username != '') {
+          getUserByUsername(req, res, next)
+      } else if (req.session && req.session.user) {
+        getUserById(req, res, next);
       } else {
-         if (req.params.username != null && req.params.username != '') {
-            getUserByUsername(req, res, next)
-         } else {
-            return next(new restify.MissingParameterError('No search params sent.'));
-         }
+        return next(new restify.MissingParameterError('No search params sent.'));
       }
    }
-   // Search by ID
+   // Search by ID, if none provide search for the logged in user's info
    function getUserById(req, res, next) {
-      if (req.params.id != null && req.params.id != '') {
-         User.findById(req.params.id, function (err, user) {
+     var id = req.params.id;
+     if (!req.params.id) {
+       if (req.session && req.session.user) {
+         id = req.session.user;
+       }
+     }
+      if (id) {
+         User.findById(id, function (err, user) {
             if (!err) {
               res.send(user);
               return next();
@@ -88,6 +94,7 @@ module.exports = function (app, config, auth, mailHelper) {
          return next(new restify.MissingParameterError('ObjectId required.'));
       }
    }
+
    // Search by Username
    function getUserByUsername(req, res, next) {
       if (req.params.username != null && req.params.username != '') {
@@ -116,6 +123,12 @@ module.exports = function (app, config, auth, mailHelper) {
             user.username = req.params.username;
             user.email = req.params.email;
             user.role = req.params.role;
+            if (req.params.password != req.params.vPassword) {
+              return next(new restify.MissingParameterError('Password and Verify Password must match.'));
+            }
+            if (req.params.password) {
+              user.password = req.params.password;
+            }
             user.save(function (err) {
                if (!err) {
                   // console.log("updated");

@@ -21,15 +21,21 @@
       </p>
    </form>
 </p>
-<p><a href="/public/update.html"><b>U</b>pdate User</a>&nbsp;&nbsp;&nbsp;&nbsp;
-  <a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<hr>
+<p><font color="green"><b>This page requires Administrator access. Create and login with an Admin role user.</b></font></p>
+<hr>
+<p>
+<a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/update.html"><b>U</b>pdate User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/readList.html"><b>R</b>ead a list of Users</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/index.html">Home</a></p>
 <script type="text/javascript">
    $(document).ready(function() {
-      $('#formButton').click(function() { formSubmit(); });
-      $('#clearFormButton').click(function() { clearForm(); });
-      loadData();
+     $('#formButton').click(function() { formSubmit(); });
+     $('#clearFormButton').click(function() { clearForm(); });
+     checkAdminRole();
+     $('.input').attr("disabled", "disabled");
    });
 
    function loadData() {
@@ -86,6 +92,21 @@
    function clearForm() {
       $('#selectForm')[0].reset();
       $('#userSelectList').val(null);
+   }
+   function checkAdminRole() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/roles/access",
+         data: {'id':$('#userSelectList').val(), 'role' : 'Admin'},
+         success: function(data) {
+            $('input').removeAttr("disabled");
+            loadData();
+         },
+         error:function(err) {
+            alert("This page requires Administrator access. Create and login with an Admin role user.");
+         },
+         dataType: 'json'
+      });
    }
 </script>
 

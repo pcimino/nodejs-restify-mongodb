@@ -33,6 +33,23 @@ module.exports = function (app, config, mailHelper) {
          return next(new restify.MissingParameterError('Username required.'));
       }
    }
+
+  // User needs verification code resent (account or email)
+   function resendVerifyCode(req, res, next) {
+      var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
+      query.findOne(function (err, user) {
+         if (err) {
+            res.send(err);
+           return next();
+         } else if (!user) {
+            return next(new restify.NotAuthorizedError("Invalid username."));
+           return next();
+         } else {
+            generateVerifyCode(req, res, next, user);
+         }
+
+      });
+   }
 // http://stackoverflow.com/questions/6287297/reading-content-from-url-with-node-js
   //http://expressjs.com/api.html#req.params
 
@@ -41,7 +58,7 @@ module.exports = function (app, config, mailHelper) {
      var verifyCode = new VerifyCode();
      verifyCode.userObjectId = user._id;
      verifyCode.key = (new ObjectId()).toString();
-     verifyCode.save(function (err, user) {
+     verifyCode.save(function (err, verifyCode) {
        if (!err) {
          // create a verification code
          var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
@@ -50,7 +67,12 @@ module.exports = function (app, config, mailHelper) {
          var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
          var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
          messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
-         mail.sendMail(user.email, 'Account Validation Email', messageBody, true);
+
+         var mailAddress = user.email;
+         if (user.newEmail) {
+             mailAddress = user.newEmail;
+         }
+         mail.sendMail(mailAddress, 'Account Validation Email', messageBody, true);
          res.send(user);
          return next();
        } else {
@@ -84,6 +106,53 @@ module.exports = function (app, config, mailHelper) {
       }
    }
 
+
+  // User needs a new password
+   function sendNewPassword(req, res, next) {
+     var newPass = makePassword();
+      var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
+      query.findOne(function (err, user) {
+         if (err) {
+            res.send(err);
+           return next();
+         } else if (!user) {
+            return next(new restify.NotAuthorizedError("Invalid username."));
+           return next();
+         } else {
+           user.password = newPass;
+           user.tempPasswordFlag = true;
+           user.save(function (err, user) {
+            if (!err) {
+              // send the new password
+             var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+             var host = req.header('Host');
+             refer = refer.substring(0, refer.indexOf(host) + host.length);
+             var fullURL = refer + "/";
+             var messageBody = "Hello " + user.name + ",</br><p>Here is your new password. Please login and change it.</p><p>" + newPass + "</p>";
+             messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>"
+
+             var mailAddress = user.email;
+             mail.sendMail(mailAddress, 'Temporary Password Email', messageBody, true);
+             res.send(user);
+             return next();
+            } else {
+               return next(err);
+            }
+         });
+         }
+
+      });
+   }
+  function makePassword()
+  {
+      var text = "";
+      var possible = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefhjlxyz2456789";
+
+      for( var i=0; i < 10; i++ )
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
+  }
    // Set up routes
 
    // I looked at versioning via header. Lots of arguments pro/con regarding different types of versioning
@@ -97,5 +166,13 @@ module.exports = function (app, config, mailHelper) {
 
    // Read
    app.get('/api/v1/user/username/exists', checkUsername);
+
+   // API-wise this makes more sense in routes-auth.js, but functionally it works better here
+   // maybe put common JS in a require('utility') module?
+   // resend the verify link
+   app.get('/api/v1/verify/resend', resendVerifyCode);
+
+   // setup temp password
+   app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }

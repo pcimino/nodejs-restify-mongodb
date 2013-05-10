@@ -9,10 +9,9 @@
    </a>
 </h2>
 <h3>Update User</h3>
-
 <form name="inputForm" id="inputForm" method="get">
 <table>
-   <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id" readonly><font size="2" color="blue">Read only.</font></br></td></tr>
+   <input class="input" type="hidden" name="id">
    <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name"></td></tr>
    <tr><td>Role:</td><td><select name="displayRole" id="roleSelectList"></select><input type="hidden" name="role"></td></tr>
    <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email"></td></tr>
@@ -27,7 +26,10 @@
    </td></tr>
 </table>
 </form>
-<p><a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <hr>
+<p>
+<a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/readList.html"><b>R</b>ead a list of Users</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/delete.html"><b>D</b>elete a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/index.html">Home</a></p>
@@ -37,6 +39,8 @@
 	   $('#roleSelectList').change(function() { setupRoleForm(); });
      $('#clearFormButton').click(function() { clearForm(); });
 	   loadRoles();
+     checkAuth();
+     $('.input').attr("disabled", "disabled");
    });
 
    function loadRoles() {
@@ -95,7 +99,6 @@
       $.ajax({
          type: "GET",
          url: "http://localhost:3000/api/v1/user",
-         data: {'id':$('#userSelectList').val()},
          success: function(data) {
             if (data === null || data.length == 0) {
                alert("No data found.");
@@ -108,10 +111,8 @@
 					return $(this).text() == data.role;
 				}).prop('selected', true);
 				$('input[name="role"]').val(data.role);
-
                $('input[name="username"]').val(data.username);
                $('input[name="email"]').val(data.email);
-			   $('input[name="password"]').val(data.hashed_password);
             }
          },
          error:function(err) {
@@ -136,14 +137,11 @@
          data: $('#postLoginForm').serialize(),
        timeout: 2000,
          success: function(data) {
-            if (data === null || data.length == 0) {
-               alert("No data found.");
-            } else {
-              alert(data.message);
-            }
+           $('input').removeAttr("disabled");
+           setupForm();
          },
          error:function(err) {
-            alert(jQuery.parseJSON(err.responseText ).message);
+            alert("This page will not work until you login.");
          },
          dataType: 'json'
       });

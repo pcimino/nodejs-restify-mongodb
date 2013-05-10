@@ -8,14 +8,8 @@
       <img src="/public/translunar.png" align="middle"/>REST Test
    </a>
 </h2>
-<h3>Update a User</h3>
+<h3>Update User</h3>
 
-<p>
-<form name="selectForm" id="selectForm" method="get">
-      <select name="userSelectList" id="userSelectList">
-      </select>
-</form>
-</p>
 <form name="inputForm" id="inputForm" method="get">
 <table>
    <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id" readonly><font size="2" color="blue">Read only.</font></br></td></tr>
@@ -23,7 +17,8 @@
    <tr><td>Role:</td><td><select name="displayRole" id="roleSelectList"></select><input type="hidden" name="role"></td></tr>
    <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email"></td></tr>
    <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
-   <tr><td>Hashed Password:</td><td><input class="input" type="text" size="50" name="password" readonly></td></tr>
+   <tr><td>Password:</td><td><input class="input" type="text" size="25" name="password"></td></tr>
+   <tr><td>Password (Verify):</td><td><input class="input" type="text" size="25" name="vPassword"></td></tr>
    <tr><td>
    <tr><td>
       <input id="formButton" type="button" value="Update">
@@ -32,15 +27,16 @@
    </td></tr>
 </table>
 </form>
-<p><a href="/public/index.html">Home</a></p>
+<p><a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/readList.html"><b>R</b>ead a list of Users</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/delete.html"><b>D</b>elete a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/index.html">Home</a></p>
 <script type="text/javascript">
    $(document).ready(function() {
-      $('#formButton').click(function() { formSubmit(); });
-      $('#selectForm').change(function() { setupForm(); });
-	  $('#roleSelectList').change(function() { setupRoleForm(); });
-      $('#clearFormButton').click(function() { clearForm(); });
-      loadData();
-	  loadRoles();
+     $('#formButton').click(function() { formSubmit(); });
+	   $('#roleSelectList').change(function() { setupRoleForm(); });
+     $('#clearFormButton').click(function() { clearForm(); });
+	   loadRoles();
    });
 
    function loadRoles() {
@@ -73,27 +69,6 @@
       clearForm();
    }
 
-   function loadData() {
-      $.ajax({
-         type: "GET",
-         url: "http://localhost:3000/api/v1/userlist",
-         data: {sortField:'username'},
-         success: function(data) {
-            if (data === null || data.length == 0) {
-               alert("No data found.");
-            } else {
-               $('input[name="pages"]').val(data.pageCount);
-               //console.log(data);
-               buildSelectList(data.users);
-            }
-         },
-         error:function(err) {
-            console.log(err);
-            alert(JSON.parse(err.responseText).message)
-         },
-         dataType: 'json'
-      });
-   }
 
    function formSubmit() {
       $.ajax({
@@ -105,7 +80,6 @@
                alert("No data found.");
             } else {
                console.log(data);
-               loadData();
             }
          },
          error:function(err) {
@@ -116,15 +90,6 @@
       });
    }
 
-   function buildSelectList(dataArr) {
-      $('#userSelectList').empty();
-      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
-      for (i = 0; i < dataArr.length; i++) {
-         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
-      }
-      $('#userSelectList').val(null);
-      $('#inputForm')[0].reset();
-   }
 
    function setupForm() {
       $.ajax({
@@ -163,6 +128,25 @@
       $('#selectForm')[0].reset();
       $('#inputForm')[0].reset();
       $('#userSelectList').val(null);
+   }
+   function checkAuth() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/auth",
+         data: $('#postLoginForm').serialize(),
+       timeout: 2000,
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+              alert(data.message);
+            }
+         },
+         error:function(err) {
+            alert(jQuery.parseJSON(err.responseText ).message);
+         },
+         dataType: 'json'
+      });
    }
 </script>
 

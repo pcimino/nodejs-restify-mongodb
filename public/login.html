@@ -54,6 +54,18 @@
 <li>All blue buttons return "Forbidden"</li>
 </ol>
 </p>
+  <hr>
+<p>Resend validation email</p>
+<form name="resendForm" id="resendForm" method="get">
+<table>
+   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
+   <tr><td>
+      <input id="resendFormButton" type="button" value="Resend">
+      </td><td>
+   </td></tr>
+</table>
+</form>
+  <hr>
 <p></p>
 <p><a href="/public/create.html"><b>C</b>reate a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/forgotpw.html">Forgot Password</a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -62,16 +74,16 @@
 
 <script type="text/javascript">
    $(document).ready(function() {
-      $('#formButton').click(function() { formSubmit(); });
+     $('#formButton').click(function() { formSubmit(); });
      $('#formButton2').click(function() { formSubmit2(); });
      $('#formButton3').click(function() { formSubmit3(); });
      $('#formButton4').click(function() { checkRole('User'); });
      $('#formButton5').click(function() { checkRole('Subscriber'); });
      $('#formButton6').click(function() { checkRole('Admin'); });
-
-      $('#clearFormButton').click(function() { clearForm(); });
+     $('#resendFormButton').click(function() { resendFormSubmit(); });
+     $('#clearFormButton').click(function() { clearForm(); });
    });
-var a,b,cc;
+
    function formSubmit() {
       $.ajax({
          type: "POST",
@@ -79,7 +91,6 @@ var a,b,cc;
          data: $('#inputForm').serialize(),
        timeout: 2000,
          success: function(data, textStatus, xhr) {
-           a=data;b=textStatus;cc=xhr;
             if (data === null || data.length == 0) {
                alert("No data found.");
             } else {
@@ -147,10 +158,26 @@ var a,b,cc;
       });
    }
 
+   function resendFormSubmit() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/verify/resend",
+         data: $('#resendForm').serialize(),
+         success: function() {
+           alert('Use the HTTP link in your email to validate this account.');
+         },
+         error: function(err) {
+            // console.log(err);
+			      alert(JSON.parse(err.responseText).message);
+         },
+         dataType: 'json'
+      });
+   }
 
    function clearForm() {
       $('#selectForm')[0].reset();
       $('#inputForm')[0].reset();
+      $('#resendForm')[0].reset();
       $('#userSelectList').val(null);
      $('#role').empty();
    }

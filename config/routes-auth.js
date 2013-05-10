@@ -2,7 +2,7 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , VerifyCode = mongoose.model('VerifyCode')
   , restify = require('restify')
-, clientSessions = require("client-sessions");
+  , clientSessions = require("client-sessions");
 
 module.exports = function (app, config, auth) {
    // Return the available roles
@@ -64,20 +64,28 @@ module.exports = function (app, config, auth) {
 
    function validateCode(req, res, next, verifyCode) {
       User.findById(verifyCode.userObjectId, function (err, user) {
+      var successMsg = VERIFY_ACCTL_SUCCESS;
         if (!err && user) {
-          if (user.newEmail == '') {
-            user.emailValidatedFlag = true;
-            user.save();
-            res.send(VERIFY_ACCTL_SUCCESS);
-            return next();
-          } else {
+          if (user.newEmail) {
             user.email = user.newEmail;
             user.newEmail = '';
             user.emailValidatedFlag = true;
-            user.save();
-            return next(new restify.NotAuthorizedError(VERIFY_EMAIL_SUCCESS));
+            successMsg = VERIFY_EMAIL_SUCCESS;
           }
-          verifyCode.remove();
+          user.emailValidatedFlag = true;
+          user.save(function (err) {
+            if (err) {
+              if (err.message) {
+                return next(new restify.InternalError(err.message));
+              } else {
+                return next(new restify.InternalError(err));
+              }
+            } else {
+              verifyCode.remove();
+              res.send(successMsg);
+              return next();
+            }
+          });
         } else {
           return next(new restify.NotAuthorizedError(VERIFY_FAIL));
         }
@@ -104,7 +112,7 @@ module.exports = function (app, config, auth) {
    // Get the verify a code a link
    app.get('/api/v1/verify', verifyCode);
 
-   // Check user access
+  // Check user access
    app.get('/api/v1/roles/access', auth.access, function (req, res) {
       res.send({'message':'Success'});
    });

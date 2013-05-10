@@ -10,54 +10,49 @@
 </h2>
 <h3>Forgot Password Test</h3>
 
-
-<form name="inputForm" id="inputForm" method="get">
+<form name="resendForm" id="resendForm" method="get">
 <table>
-   <tr><td>ID:</td><td><input class="input" type="text" size="25" name="id" readonly></td></tr>
-   <tr><td>Name:</td><td><input class="input" type="text" size="25" name="name" readonly></td></tr>
-   <tr><td>Email:</td><td><input class="input" type="text" size="25" name="email" readonly></td></tr>
-   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username" readonly></td></tr>
+   <tr><td>Username:</td><td><input class="input" type="text" size="25" name="username"></td></tr>
    <tr><td>
-   <tr><td>Message text:</td><td><input class="input" type="text" name="message"></td></tr>
-
-   <tr><td>
-      <input id="formButton" type="button" value="Send Email">
+      <input id="resendFormButton" type="button" value="reset Password">
       </td><td>
-      <input id="clearFormButton" type="button" value="Clear Form">
    </td></tr>
 </table>
 </form>
-<p>Default email configuration uses the Preview module to save emails in the [server home]/tmp/nodemailer directory</p>
-<p>To change email settings in <b>config.js</b>, look at <a href="https://npmjs.org/package/nodemailer" target="_blank">Node Mailer</a></p>
-
-<p><a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
+  <hr>
+<p></p>
+<p>
+<a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/update.html"><b>U</b>pdate User</a>&nbsp;&nbsp;&nbsp;&nbsp;
 <a href="/public/index.html">Home</a></p>
+
 <script type="text/javascript">
    $(document).ready(function() {
-      $('#formButton').click(function() { formSubmit(); });
-      $('#clearFormButton').click(function() { clearForm(); });
+     $('#resendFormButton').click(function() { resendFormSubmit(); });
    });
 
-   function formSubmit() {
+   function resendFormSubmit() {
       $.ajax({
-         type: "POST",
-         url: "http://localhost:3000/api/v1/email",
-        data: {to : $('input[name="email"]').val(), subject:'Test email', message: $('input[name="message"]').val()},
-         success: function(data) {
-            alert("Email sent.");
+         type: "GET",
+         url: "http://localhost:3000/api/v1/password/sendNew",
+         data: $('#resendForm').serialize(),
+         success: function() {
+           alert('Password has been changed. Please check your email');
          },
-         error:function(err) {
-            console.log(err);
-            alert(JSON.parse(err.responseText).message)
+         error: function(err) {
+            // console.log(err);
+			      alert(JSON.parse(err.responseText).message);
          },
          dataType: 'json'
       });
    }
 
-
    function clearForm() {
+      $('#selectForm')[0].reset();
       $('#inputForm')[0].reset();
+      $('#resendForm')[0].reset();
+      $('#userSelectList').val(null);
+     $('#role').empty();
    }
 </script>
 

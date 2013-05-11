@@ -64,7 +64,7 @@ UserSchema.pre('save', function(next) {
     next(new restify.MissingParameterError('Email cannot be blank'));
   }
   if (this.email.indexOf('@') <= 0) {
-    next(new restify.MissingParameterError('Email address must be valid'));
+//    next(new restify.MissingParameterError('Email address must be valid'));
   }
 
   // password not blank when creating, otherwise skip

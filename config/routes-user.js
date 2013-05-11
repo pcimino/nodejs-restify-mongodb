@@ -130,15 +130,7 @@ module.exports = function (app, config, auth, mailHelper) {
               return next(new restify.MissingParameterError('You must enter your current password to verify.'));
             }
             if (req.params.cPassword) {
-              var testUser = new User();
-              testUser.password = req.params.cPassword;
-              testUser._id = user._id;
-              console.log(user._id);
-              console.log(user.hashed_password);
-              console.log(testUser._id);
-              console.log(testUser.hashed_password);
-
-              if (user.hashed_password != testUser.hashed_password) {
+              if (!user.authenticate(req.params.cPassword)) {
                 return next(new restify.MissingParameterError('You must enter your current password to verify.'));
 
               }

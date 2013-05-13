@@ -97,7 +97,6 @@ module.exports = function (app, config, auth) {
 
    // Ping but with user authentication
    app.get('/api/auth', auth.requiresLogin, function (req, res) {
-     console.log(req);
       res.send({'message':'Success'});
    });
 

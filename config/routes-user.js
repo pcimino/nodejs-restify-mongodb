@@ -3,6 +3,8 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , UserList = mongoose.model('UserList')
+  , VerifyCode = mongoose.model('VerifyCode')
+  , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
 var mail = {};
@@ -138,6 +140,7 @@ module.exports = function (app, config, auth, mailHelper) {
             if (req.params.password) {
               user.password = req.params.password;
             }
+
             if (req.params.email) {
               if (user.email != req.params.email) {
                 user.newEmail = req.params.email;
@@ -148,15 +151,13 @@ module.exports = function (app, config, auth, mailHelper) {
 
             user.save(function (err) {
                if (!err) {
-                  // console.log("updated");
                   res.send(user);
 
                  //TODO Still need to figure this out a bit
-                  if (user.newEmai) {
+                  if (user.newEmail) {
                      generateVerifyCode(req, res, next, user);
-                  } else {
-                    return next();
                   }
+                  return next();
                } else {
                   return next(new restify.InternalError(err));
                }
@@ -188,8 +189,6 @@ module.exports = function (app, config, auth, mailHelper) {
              mailAddress = user.newEmail;
          }
          mail.sendMail(mailAddress, 'Account Validation Email', messageBody, true);
-         res.send(user);
-         return next();
        } else {
          return next(err);
        }

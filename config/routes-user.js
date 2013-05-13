@@ -121,7 +121,6 @@ module.exports = function (app, config, auth, mailHelper) {
          if (!err) {
             user.name = req.params.name;
             user.username = req.params.username;
-            user.email = req.params.email;
             user.role = req.params.role;
             if (req.params.password != req.params.vPassword) {
               return next(new restify.MissingParameterError('Password and Verify Password must match.'));
@@ -139,11 +138,25 @@ module.exports = function (app, config, auth, mailHelper) {
             if (req.params.password) {
               user.password = req.params.password;
             }
+            if (req.params.email) {
+              if (user.email != req.params.email) {
+                user.newEmail = req.params.email;
+              }
+            } else {
+              return next(new restify.MissingParameterError('Email required.'));
+            }
+
             user.save(function (err) {
                if (!err) {
                   // console.log("updated");
                   res.send(user);
-                  return next();
+
+                 //TODO Still need to figure this out a bit
+                  if (user.newEmai) {
+                     generateVerifyCode(req, res, next, user);
+                  } else {
+                    return next();
+                  }
                } else {
                   return next(new restify.InternalError(err));
                }
@@ -154,16 +167,50 @@ module.exports = function (app, config, auth, mailHelper) {
       });
    }
 
+  // TODO Duplicate code from routes-user-signup, how to cleanup, unify this in functional programming? Chanined events makes it a bit ugly
+   // create the verification code and send the email
+   function generateVerifyCode(req, res, next, user) {
+     var verifyCode = new VerifyCode();
+     verifyCode.userObjectId = user._id;
+     verifyCode.key = (new ObjectId()).toString();
+     verifyCode.save(function (err, verifyCode) {
+       if (!err) {
+         // create a verification code
+         var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+         var host = req.header('Host');
+         refer = refer.substring(0, refer.indexOf(host) + host.length);
+         var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
+         var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
+         messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+
+         var mailAddress = user.email;
+         if (user.newEmail) {
+             mailAddress = user.newEmail;
+         }
+         mail.sendMail(mailAddress, 'Account Validation Email', messageBody, true);
+         res.send(user);
+         return next();
+       } else {
+         return next(err);
+       }
+     });
+
+   }
    // Delete the user
    function deleteUser(req, res, next) {
-      User.findById(req.params.id).remove(function (err) {
-        if (!err) {
-         res.send({});
-         return next();
-        } else {
-         return next(new restify.MissingParameterError('ObjectId required.'));
-        }
-      });
+     if (req.session && req.session.user) {
+       if (req.session.user == req.params.id) {
+         return next(new restify.InvalidArgumentError('User cannot delete themselves.'));
+       }
+        User.findById(req.params.id).remove(function (err) {
+          if (!err) {
+           res.send({});
+           return next();
+          } else {
+           return next(new restify.MissingParameterError('ObjectId required.'));
+          }
+        });
+      }
    }
 
 

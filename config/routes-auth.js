@@ -81,7 +81,9 @@ module.exports = function (app, config, auth) {
                 return next(new restify.InternalError(err));
               }
             } else {
-              verifyCode.remove();
+              // clean up all verification codes
+              VerifyCode.remove({userObjectId: user._id}, function(err){});
+
               res.send(successMsg);
               return next();
             }

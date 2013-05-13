@@ -29,6 +29,6 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
    // Create
-   app.post('api/v1/email', postEmail); // TODO lock down auth.requiresLogin,
+   app.post('/api/v1/email', auth.requiresLogin, postEmail);
 
 }

@@ -162,7 +162,7 @@ module.exports = function (app, config, mailHelper) {
 
 
    // Create
-   app.post('api/v1/user', postUser);
+   app.post('/api/v1/user', postUser);
 
    // Read
    app.get('/api/v1/user/username/exists', checkUsername);

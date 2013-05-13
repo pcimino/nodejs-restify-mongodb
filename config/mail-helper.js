@@ -1,5 +1,10 @@
 var path = require('path')
-    , nodemailer = require('nodemailer');
+    , nodemailer = require('nodemailer')
+    , mongoose = require('mongoose')
+    , User = mongoose.model('User')
+    , VerifyCode = mongoose.model('VerifyCode')
+    , ObjectId = mongoose.Types.ObjectId;
+
 
 // create reusable transports
 var transport = null;
@@ -19,6 +24,80 @@ var mailOptions = {
   errDir: '../mailLog/error'
 }
 
+function sendMailHelper(recipient, subject, body, htmlFlag) {
+  if (null === transport) {
+    createTransport();
+  }
+  var sendOptions = {};
+
+  sendOptions.mailFrom = mailOptions.mailFrom;
+  sendOptions.to = recipient;
+  sendOptions.subject = subject;
+
+  if (true == htmlFlag) {
+    sendOptions.html = body;
+  } else {
+    sendOptions.text = body;
+  }
+
+  transport.sendMail(sendOptions, function(error, response) {
+    if (error) {
+      console.log(error);
+      // email failed, send to the error log directory
+      transportErrorLog.sendMail(sendOptions);
+    } else {
+      if (response) console.log("Message sent: " + response.message);
+    }
+  });
+};
+
+/**
+   * Create the transport
+   */
+function createTransport() {
+  if (null != transport) {
+    closeConnection();
+  }
+  require('mail-preview');
+  if (true == mailOptions.sendEmail) {
+    transport = nodemailer.createTransport("SMTP",{
+      service: mailOptions.service,
+      auth: mailOptions.auth
+    });
+  } else {
+    // For email previews
+    var tmpdir = path.join(__dirname, mailOptions.previewDir, 'nodemailer');
+
+    transport = nodemailer.createTransport('MailPreview', {
+      dir: tmpdir,  // defaults to ./tmp/nodemailer
+      browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
+    });
+  }
+
+  // For email error logging
+  var tmpErr = path.join(__dirname, mailOptions.errDir, 'nodemailer');
+
+  transportErrorLog = nodemailer.createTransport('MailPreview', {
+    dir: tmpErr,  // defaults to ./tmp/nodemailer
+    browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
+  });
+};
+
+/**
+   * Close the connection
+   */
+function closeConnection() {
+  if (null != transport) {
+    transport.close(); // shut down the connection pool, no more messages
+  }
+  transport = null;
+
+  if (null != transportErrorLog) {
+    transportErrorLog.close(); // shut down the connection pool, no more messages
+  }
+  transportErrorLog = null;
+};
+
 /**
  * Generates a MailHelper object which is the main 'hub' for managing the
  * send process
@@ -27,7 +106,7 @@ var mailOptions = {
  * @param {Object} options Message options object, see README for the complete list of possible options
  */
 var MailHelper = function(config) {
-    this.initialize(config);
+  this.initialize(config);
 }
 
 /**
@@ -66,78 +145,40 @@ MailHelper.prototype.initialize = function(appConfig){
  * @param htmlFlag if true, body is html
  */
 MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
-    if (null === transport) {
-        this.createTransport();
-    }
-    var sendOptions = {};
-
-    sendOptions.mailFrom = mailOptions.mailFrom;
-    sendOptions.to = recipient;
-    sendOptions.subject = subject;
-
-    if (true == htmlFlag) {
-        sendOptions.html = body;
-    } else {
-        sendOptions.text = body;
-    }
-
-    transport.sendMail(sendOptions, function(error, response) {
-        if (error) {
-            console.log(error);
-            // email failed, send to the error log directory
-            transportErrorLog.sendMail(sendOptions);
-        } else {
-            if (response) console.log("Message sent: " + response.message);
-        }
-    });
+    sendMailHelper(recipient, subject, body, htmlFlag);
 };
 
-/**
- * Close the connection
- */
-MailHelper.prototype.closeConnection = function() {
-    if (null != transport) {
-        transport.close(); // shut down the connection pool, no more messages
-    }
-    transport = null;
+// http://stackoverflow.com/questions/6287297/reading-content-from-url-with-node-js
+  //http://expressjs.com/api.html#req.params
 
-    if (null != transportErrorLog) {
-        transportErrorLog.close(); // shut down the connection pool, no more messages
+  // create the verification code and send the email
+MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
+  var verifyCode = new VerifyCode();
+  verifyCode.userObjectId = user._id;
+  verifyCode.key = (new ObjectId()).toString();
+  verifyCode.save(function (err, verifyCode) {
+    if (!err) {
+      // create a verification code
+      var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+      var host = req.header('Host');
+      refer = refer.substring(0, refer.indexOf(host) + host.length);
+      var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
+      var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
+      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+
+      var mailAddress = user.email;
+      if (user.newEmail) {
+        mailAddress = user.newEmail;
+      }
+      sendMailHelper(mailAddress, 'Account Validation Email', messageBody, true);
+    } else {
+      return next(err);
     }
-    transportErrorLog = null;
+  });
 };
 
-/**
- * Create the transport
- */
-MailHelper.prototype.createTransport = function() {
-    if (null != transport) {
-        this.closeConnection();
-    }
-    require('mail-preview');
-    if (true == mailOptions.sendEmail) {
-        transport = nodemailer.createTransport("SMTP",{
-            service: mailOptions.service,
-            auth: mailOptions.auth
-        });
-    } else {
-        // For email previews
-        var tmpdir = path.join(__dirname, mailOptions.previewDir, 'nodemailer');
 
-        transport = nodemailer.createTransport('MailPreview', {
-            dir: tmpdir,  // defaults to ./tmp/nodemailer
-            browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
-        });
-    }
 
-    // For email error logging
-    var tmpErr = path.join(__dirname, mailOptions.errDir, 'nodemailer');
-
-    transportErrorLog = nodemailer.createTransport('MailPreview', {
-        dir: tmpErr,  // defaults to ./tmp/nodemailer
-        browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
-    });
-}
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;

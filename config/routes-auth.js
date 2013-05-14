@@ -22,12 +22,10 @@ module.exports = function (app, config, auth) {
          } else if (!user) {
             return next(new restify.NotAuthorizedError("Invalid username."));
            return next();
-         } else if (!user.emailValidatedFlag && !user.newEmail) {
-           // user account has never been validated
-           return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
          } else if (user.authenticate(req.params.password)) {
-           if (!req.session) {
-             return next(new restify.NotAuthorizedError("Session lost."));
+          if (!user.emailValidatedFlag && !user.newEmail) {
+             // user account has never been validated
+             return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
            } else {
              req.session.user = user._id; //subscriber@subscriber
 			       res.send(user);

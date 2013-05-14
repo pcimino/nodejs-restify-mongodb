@@ -84,11 +84,7 @@
          url: "http://localhost:3000/api/v1/user",
          data: $('#inputForm').serialize(),
          success: function(data) {
-            if (data === null || data.length == 0) {
-               alert("No data found.");
-            } else {
-               console.log(data);
-            }
+            alert("Success");
          },
          error:function(err) {
             console.log(err);

@@ -1,6 +1,8 @@
 var net = require('net')
   , SocketIo = {};
 
+// http://mattmueller.me/blog/quick-tip-node-js-socket-io-authentication
+  
 /**
  * Generates a SocketHelper
  *

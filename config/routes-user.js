@@ -12,7 +12,13 @@ var mail = {};
 module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
 
-   // This function is responsible for searching and returning multiple users
+  /**
+   * This function is responsible for searching and returning multiple users
+   *
+   * @param request includes the fields to create a UserList object
+   * @param response contains a populated UserList object
+   * @param next method
+   */
    function searchUsers(req, res, next) {
       var userList = new UserList(req.params);
 
@@ -63,7 +69,15 @@ module.exports = function (app, config, auth, mailHelper) {
      return;
    }
 
-   // Search by ID or username
+  /**
+   * Gateway request routes to other functions based on params
+   * Search for a user by id or username
+   * if none given get the logged in user's information
+   *
+   * @param request can include an id, a username or no search param
+   * @param response contains a populated User object
+   * @param next method
+   */
    function getUser(req, res, next) {
       if (req.params.id != null && req.params.id != '') {
          getUserById(req, res, next);
@@ -75,7 +89,14 @@ module.exports = function (app, config, auth, mailHelper) {
         return next(new restify.MissingParameterError('No search params sent.'));
       }
    }
-   // Search by ID, if none provide search for the logged in user's info
+
+  /**
+   * Search for a user by id
+   *
+   * @param request includes an id
+   * @param response contains a populated User object
+   * @param next method
+   */
    function getUserById(req, res, next) {
      var id = req.params.id;
      if (!req.params.id) {
@@ -97,7 +118,13 @@ module.exports = function (app, config, auth, mailHelper) {
       }
    }
 
-   // Search by Username
+  /**
+   * Search for a user by username
+   *
+   * @param request includes an username
+   * @param response contains a populated User object
+   * @param next method
+   */
    function getUserByUsername(req, res, next) {
       if (req.params.username != null && req.params.username != '') {
          var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
@@ -117,7 +144,13 @@ module.exports = function (app, config, auth, mailHelper) {
       }
    }
 
-    // Find a user and modify, then save it
+  /**
+   * Modify an existing user with matching id
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function putUser(req, res, next) {
       User.findById(req.params.id, function (err, user) {
          if (!err) {
@@ -168,7 +201,13 @@ module.exports = function (app, config, auth, mailHelper) {
       });
    }
 
-   // Delete the user
+  /**
+   * Delete an existing user with matching id
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function deleteUser(req, res, next) {
      if (req.session && req.session.user) {
        if (req.session.user == req.params.id) {

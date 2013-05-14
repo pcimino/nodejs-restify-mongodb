@@ -24,6 +24,14 @@ var mailOptions = {
   errDir: '../mailLog/error'
 }
 
+/**
+ * Helper method available to the MailHelper module
+ *
+ * @param {String} recipient
+ * @param {String} subject
+ * @param {String} body
+ * @param {Boolean} htmlFlag
+ */
 function sendMailHelper(recipient, subject, body, htmlFlag) {
   if (null === transport) {
     createTransport();
@@ -52,8 +60,9 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
 };
 
 /**
-   * Create the transport
-   */
+ * Create the transports
+ * There are 2 transports, the primary, and the secondary which saves failed emails
+ */
 function createTransport() {
   if (null != transport) {
     closeConnection();
@@ -84,8 +93,8 @@ function createTransport() {
 };
 
 /**
-   * Close the connection
-   */
+ * Close the connections
+ */
 function closeConnection() {
   if (null != transport) {
     transport.close(); // shut down the connection pool, no more messages
@@ -148,10 +157,14 @@ MailHelper.prototype.sendMail = function(recipient, subject, body, htmlFlag) {
     sendMailHelper(recipient, subject, body, htmlFlag);
 };
 
-// http://stackoverflow.com/questions/6287297/reading-content-from-url-with-node-js
-  //http://expressjs.com/api.html#req.params
-
-  // create the verification code and send the email
+/**
+ * create the verification code and send the email
+ *
+ * @param request
+ * @param response
+ * @param next method
+ * @param {Object} instance of a user object
+ */
 MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
   var verifyCode = new VerifyCode();
   verifyCode.userObjectId = user._id;
@@ -176,8 +189,6 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
     }
   });
 };
-
-
 
 
 // Export MailHelper constructor

@@ -14,7 +14,13 @@ var mail = {};
 module.exports = function (app, config, mailHelper) {
    mail = mailHelper;
 
-   // Create a new user model, fill it up and save it to Mongodb
+  /**
+   * Create a new user model, fill it up and save it to Mongodb
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function postUser(req, res, next) {
      if (req.params.password != req.params.vPassword) {
        return next(new restify.MissingParameterError('Password and Verify Password must match.'));
@@ -35,7 +41,13 @@ module.exports = function (app, config, mailHelper) {
       }
    }
 
-  // User needs verification code resent (account or email)
+  /**
+   * User requests a verification code be resent (account or email)
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function resendVerifyCode(req, res, next) {
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
       query.findOne(function (err, user) {
@@ -53,11 +65,13 @@ module.exports = function (app, config, mailHelper) {
       });
    }
 
-
-   // Search for existing username
-   // based on this post
-   //    https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
-   // I probably should be using the validator the way it's demonstratated but for now I'm just borrowing the query
+  /**
+   * Search for existing username
+   * https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
+   * @param request
+   * @param response
+   * @param next method
+   */
    function checkUsername(req, res, next) {
       if (req.params.username != null && req.params.username != '') {
          var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
@@ -78,8 +92,12 @@ module.exports = function (app, config, mailHelper) {
       }
    }
 
-
-  // User needs a new password
+  /**
+   * User requests a new password
+   * @param request
+   * @param response
+   * @param next method
+   */
    function sendNewPassword(req, res, next) {
      var newPass = makePassword();
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
@@ -115,8 +133,11 @@ module.exports = function (app, config, mailHelper) {
 
       });
    }
-  function makePassword()
-  {
+  /**
+   * Helper method to generate a new password
+   * Only included characters/numbers that will avoid confusion. i.e certain fonts using 0/O or 1/l can be visually ambiguous
+   */
+  function makePassword() {
       var text = "";
       var possible = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefhjlxyz2456789";
 
@@ -126,12 +147,6 @@ module.exports = function (app, config, mailHelper) {
       return text;
   }
    // Set up routes
-
-   // I looked at versioning via header. Lots of arguments pro/con regarding different types of versioning
-   // I like the embedded version (self documenting) so stuck with that instead
-   // apt.get({path: 'api/user:id', version: '1.0.0'}, getUser_V1);
-   // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
-
 
    // Create
    app.post('/api/v1/user', postUser);

@@ -7,8 +7,13 @@ var mail = {};
 module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
 
-
-   // Create a new user model, fill it up and save it to Mongodb
+  /**
+   * Send an email, this function is more for testing than anything else
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function postEmail(req, res, next) {
       var to = req.params.to;
       var subject = req.params.subject;

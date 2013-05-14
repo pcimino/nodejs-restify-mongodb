@@ -5,14 +5,30 @@ var mongoose = require('mongoose')
   , clientSessions = require("client-sessions");
 
 module.exports = function (app, config, auth) {
-   // Return the available roles
+  /**
+   * Return a list of available Roles
+   * Must match what's defined in the User.js object
+   *
+   * Used to restrict access to APIs based on Role for authenticated users
+   *
+   * User vs. Subscriber: Conceptually used for a free versus paying customer
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function roles(req, res, next) {
       res.send(['User', 'Subscriber','Admin']);
    }
 
-   // Search by Username
-   // User logs in
-   // if new email is blank and email not validated, user cannot login
+  /**
+   * User logs in using username
+   * if new email is blank and email not validated, user cannot login
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function login(req, res, next) {
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
       query.findOne(function (err, user) {
@@ -38,6 +54,13 @@ module.exports = function (app, config, auth) {
       });
    }
 
+  /**
+   * User logs out
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function logout(req, res, next) {
       req.session.reset();
       res.send({});
@@ -48,19 +71,34 @@ module.exports = function (app, config, auth) {
    var VERIFY_ACCTL_SUCCESS = "Your account has been successfully validated.";
    var VERIFY_FAIL = "Sorry. We can not validate this account/email. Please try requesting a new code.";
 
-  // should probably return a file formt he /public directory on success/fail
+
+  /**
+   * Request includes a verification code to authenticate an email address
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
    function verifyCode(req, res, next) {
      var query = VerifyCode.where( 'key', new RegExp('^'+req.params.v+'$', 'i') );
       query.findOne(function (err, verifyCode) {
         if (!err && verifyCode) {
-          validateCode(req, res, next, verifyCode);
+          updateUserEmailStatus(req, res, next, verifyCode);
         } else {
           return next(new restify.NotAuthorizedError(VERIFY_FAIL));
         }
       });
    }
 
-   function validateCode(req, res, next, verifyCode) {
+  /**
+   * Helper method that updates the database
+   *
+   * @param request
+   * @param response
+   * @param next method
+   * @param next{Object} instance of VerifyCode
+   */
+   function updateUserEmailStatus(req, res, next, verifyCode) {
       User.findById(verifyCode.userObjectId, function (err, user) {
       var successMsg = VERIFY_ACCTL_SUCCESS;
         if (!err && user) {
@@ -90,7 +128,6 @@ module.exports = function (app, config, auth) {
           return next(new restify.NotAuthorizedError(VERIFY_FAIL));
         }
       });
-		 //return next();
    }
 
    // Set up routes

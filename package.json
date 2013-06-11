@@ -17,5 +17,6 @@
     , "mail-preview" : "latest"
     , "socket.io": "latest"
     , "socket.io-client": "latest"
+    , "q": "latest"
   }
 }

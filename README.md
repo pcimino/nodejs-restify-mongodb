@@ -73,6 +73,10 @@ But I do discuss bits and pieces about where you can find info and how I'd like 
 - [Case insensitive Mongoose Search](https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/)  
 
 
-
+# Tags
+##FinalDemo
+Stable demonstrator.
+##Promise
+Included the Promises Q npm module in preparation of rewriting some of the asynchronous dependent calls to use promises.
 
 

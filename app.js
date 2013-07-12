@@ -1,7 +1,8 @@
 // Modules
 var restify = require("restify")
   , mongoose = require('mongoose')
-  , fs = require('fs');
+  , fs = require('fs')
+  , preflightEnabler = require('se7ensky-restify-preflight');
 
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
@@ -36,6 +37,7 @@ var app = restify.createServer({
   version: config.version
 });
 
+preflightEnabler(app);
 
 // function to retrieve the session secret from the database
 // checks for existing or creates one if none available

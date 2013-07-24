@@ -91,7 +91,8 @@ module.exports = function (app, config, auth) {
    }
 
   /**
-   * Helper method that updates the database
+   * Helper method that updates the database with the user's email status
+   * This sets the user's email flag validated=true
    *
    * @param request
    * @param response
@@ -132,23 +133,58 @@ module.exports = function (app, config, auth) {
 
    // Set up routes
 
-   // Ping but with user authentication
+   /**
+   * Ping but with user authentication
+   *
+   * @param path
+   * @param promised callback
+   * @param request
+   * @param response
+   */
    app.get('/api/auth', auth.requiresLogin, function (req, res) {
       res.send({'message':'Success'});
    });
 
-   // Login
+   /**
+   * Login request
+   *
+   * @param path
+   * @param promised callback
+   */
    app.post('/api/v1/session/login', login);
-   // Logout
+
+   /**
+   * Logout request
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/session/logout', logout);
 
-   // Get the available roles
+   /**
+   * Get the available roles
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/roles', roles);
 
-   // Get the verify a code a link
+   /**
+   * User clicked on the verification link
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/verify', verifyCode);
 
-  // Check user access
+  /**
+   * Check user access
+   *
+   * @param path
+   * @param promised callback
+   * @param request
+   * @param response
+   */
    app.get('/api/v1/roles/access', auth.access, function (req, res) {
       res.send({'message':'Success'});
    });

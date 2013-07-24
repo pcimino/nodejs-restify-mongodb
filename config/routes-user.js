@@ -233,7 +233,13 @@ module.exports = function (app, config, auth, mailHelper) {
    // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
 
 
-   // Read
+   /**
+   * Search for users
+   *
+   * @param path
+   * @param promised callback check authization
+   * @param promised 2nd callback searches for users
+   */
    app.get('/api/v1/userlist', auth.requiresLogin, searchUsers);
 
    // TODO Need to figure out the explicit REST URI
@@ -242,13 +248,33 @@ module.exports = function (app, config, auth, mailHelper) {
    //       app.get('/api/v1/user/:id', getUserById);
    //       app.get('/api/v1/user/:username', getUserByUsername);
    // so went back to a generic path
+   /**
+   * Search for users
+   *
+   * @param path
+   * @param promised callback check authization
+   * @param promised 2nd callback gets user
+   */
    app.get('/api/v1/user', auth.requiresLogin, getUser);
 
 
-   // Update
+   /**
+   * Update user information
+   *
+   * @param path
+   * @param promised callback check authization
+   * @param promised 2nd callback searches for users
+   */
    app.put('/api/v1/user', auth.requiresLogin, putUser);
 
    // Delete
    // 405 ? app.del('/api/v1/user/:id', deleteUser);
+   /**
+   * delete a user
+   *
+   * @param path
+   * @param promised callback check Administrator auth
+   * @param promised 2nd callback deletes
+   */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }

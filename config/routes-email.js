@@ -33,7 +33,13 @@ module.exports = function (app, config, auth, mailHelper) {
    // apt.get({path: 'api/user:id', version: '2.0.0'}, getUser_V2);
 
 
-   // Create
+   /**
+   * Create an email
+   *
+   * @param path
+   * @param promised callback
+   * @param promised 2nd callback
+   */
    app.post('/api/v1/email', auth.requiresLogin, postEmail);
 
 }

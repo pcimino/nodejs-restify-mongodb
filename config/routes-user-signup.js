@@ -147,19 +147,40 @@ module.exports = function (app, config, mailHelper) {
       return text;
   }
    // Set up routes
-
-   // Create
+   /**
+   * reate a user
+   *
+   * @param path
+   * @param promised callback
+   */
    app.post('/api/v1/user', postUser);
 
-   // Read
+   /**
+   * Search for username
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/user/username/exists', checkUsername);
 
-   // API-wise this makes more sense in routes-auth.js, but functionally it works better here
-   // maybe put common JS in a require('utility') module?
-   // resend the verify link
+
+   /**
+   * resend the verification link
+   *  API-wise this makes more sense in routes-auth.js, but functionally it works better here
+   *  maybe put common JS in a require('utility') module?
+   *  resend the verify link
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/verify/resend', resendVerifyCode);
 
-   // setup temp password
+   /**
+   * Setup a temporary password
+   *
+   * @param path
+   * @param promised callback
+   */
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }

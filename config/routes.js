@@ -21,7 +21,7 @@ module.exports = function (app, config, auth, smtpTransport) {
       if (req.url === '/public') {
          req.url = '/public/index.html';
       }
-      req.headers.accept = 'application/json';
+  //    req.headers.accept = 'application/json';
       return next();
    });
 

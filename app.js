@@ -38,6 +38,10 @@ var app = restify.createServer({
 });
 
 preflightEnabler(app);
+//app.use(restify.CORS());
+//app.use(restify.fullResponse());
+
+
 
 // function to retrieve the session secret from the database
 // checks for existing or creates one if none available

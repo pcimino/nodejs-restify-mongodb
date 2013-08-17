@@ -4,3 +4,4 @@ set SERVER_HOME=..
 cd %SERVER_HOME%
 
 call npm update 
+pause

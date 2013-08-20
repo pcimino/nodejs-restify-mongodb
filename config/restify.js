@@ -17,12 +17,6 @@ module.exports = function (app, config, sessionKey) {
    app.use(restify.gzipResponse());
    app.use(restify.bodyParser());
 
-   // Cross domain? Need to verify if this is required for this app
-   // http://stackoverflow.com/questions/14338683/how-can-i-support-cors-when-using-restify
-   app.use(restify.CORS());
-   app.use(restify.fullResponse());
-
-
    // TODO duration doesn't seem to do anything
    app.use(clientSessions({
      cookieName: 'session',    // defaults to session_state

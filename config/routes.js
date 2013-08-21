@@ -84,7 +84,7 @@ module.exports = function (app, config, auth, smtpTransport) {
 
    // load the remaining paths, broken up (somewhat) by functionality)
    require(config_path + '/routes-user.js')(app, config, auth, smtpTransport);
-   require(config_path + '/routes-user-signup.js')(app, config, smtpTransport);
+   require(config_path + '/routes-user-signup.js')(app, config, auth, smtpTransport);
 
    require(config_path + '/routes-email.js')(app, config, auth, smtpTransport);
    require(config_path + '/routes-auth.js')(app, config, auth)

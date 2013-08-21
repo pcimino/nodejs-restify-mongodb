@@ -11,7 +11,7 @@ var mongoose = require('mongoose')
 
 var mail = {};
 
-module.exports = function (app, config, mailHelper) {
+module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
 
   /**
@@ -27,6 +27,10 @@ module.exports = function (app, config, mailHelper) {
      }
      var user = new User(req.params);
       if (user.username != null && user.username != '') {
+         // check if security check in place
+         if (config.secureUserSignup) {
+           return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
+         }
          user.save(function (err, user) {
             if (!err) {
               // create a verification code
@@ -99,7 +103,7 @@ module.exports = function (app, config, mailHelper) {
    * @param next method
    */
    function sendNewPassword(req, res, next) {
-      var newPass = globalUtil.password.generatePassword();
+      var newPass = globalUtil.security.generatePassword();
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
       query.findOne(function (err, user) {
          if (err) {

@@ -157,6 +157,12 @@ module.exports = function (app, config, auth, mailHelper) {
             user.name = req.params.name;
             user.username = req.params.username;
             user.role = req.params.role;
+
+            // check if security check in place
+            if (config.secureUserSignup) {
+              return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
+            }
+
             if (req.params.password != req.params.vPassword) {
               return next(new restify.MissingParameterError('Password and Verify Password must match.'));
             }

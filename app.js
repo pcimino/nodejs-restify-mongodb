@@ -1,7 +1,7 @@
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
   , config = require('./config/config')[env];
-  
+
 // Modules
 var restify = require("restify")
   , mongoose = require('mongoose')
@@ -24,21 +24,25 @@ db.once('open', function callback () {
   console.log("Database connection opened.");
 });
 
+// Bootstrap models
+fs.readdirSync(models_path).forEach(function (file) {
+  console.log("Loading model " + file);
+  require(models_path+'/'+file);
+});
+
+
+// Bootstrap auth middleware
+var auth = require(config_path + '/middlewares/authorization.js');
+
 // Bootstrap JavaScript utilities
 // globals considered bad, eventually this container should be rewritten into a module
 globalUtil = {};
 fs.readdirSync(utils_path).forEach(function (file) {
   console.log("Loading utility " + file);
   var variableName = file.substring(0, file.indexOf('.'));
-  globalUtil[variableName] = require(utils_path+'/'+file);
+  require(utils_path+'/'+file)(globalUtil, config, auth);
 });
-//console.log(globalUtil.password.generatePassword());
-
-// Bootstrap models
-fs.readdirSync(models_path).forEach(function (file) {
-  console.log("Loading model " + file);
-  require(models_path+'/'+file);
-});
+// console.log(globalUtil.generatePassword());
 
 // Configure the server
 var app = restify.createServer({
@@ -74,9 +78,6 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     // because we can't have a synchronous DB call, finish up the server setup here
     // restify settings
     require(config_path + '/restify')(app, config, sessionKey.key);
-
-    // Bootstrap routes
-    var auth = require(config_path + '/middlewares/authorization.js');
 
     // configure email
     var MailHelper = require(config_path + '/mail-helper.js').MailHelper;

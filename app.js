@@ -1,15 +1,16 @@
+// Load configurations
+var env = process.env.NODE_ENV || 'development'
+  , config = require('./config/config')[env];
+  
 // Modules
 var restify = require("restify")
   , mongoose = require('mongoose')
   , fs = require('fs')
   , preflightEnabler = require('se7ensky-restify-preflight');
 
-// Load configurations
-var env = process.env.NODE_ENV || 'development'
-  , config = require('./config/config')[env];
-
 // Paths
 var models_path = config.root + '/models'
+var utils_path = config.root + '/jsUtil'
 var config_path = config.root + '/config'
 
 // Database
@@ -22,6 +23,16 @@ db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
   console.log("Database connection opened.");
 });
+
+// Bootstrap JavaScript utilities
+// globals considered bad, eventually this container should be rewritten into a module
+globalUtil = {};
+fs.readdirSync(utils_path).forEach(function (file) {
+  console.log("Loading utility " + file);
+  var variableName = file.substring(0, file.indexOf('.'));
+  globalUtil[variableName] = require(utils_path+'/'+file);
+});
+//console.log(globalUtil.password.generatePassword());
 
 // Bootstrap models
 fs.readdirSync(models_path).forEach(function (file) {

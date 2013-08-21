@@ -99,7 +99,7 @@ module.exports = function (app, config, mailHelper) {
    * @param next method
    */
    function sendNewPassword(req, res, next) {
-     var newPass = makePassword();
+      var newPass = globalUtil.password.generatePassword();
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
       query.findOne(function (err, user) {
          if (err) {
@@ -133,19 +133,7 @@ module.exports = function (app, config, mailHelper) {
 
       });
    }
-  /**
-   * Helper method to generate a new password
-   * Only included characters/numbers that will avoid confusion. i.e certain fonts using 0/O or 1/l can be visually ambiguous
-   */
-  function makePassword() {
-      var text = "";
-      var possible = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefhjlxyz2456789";
 
-      for( var i=0; i < 10; i++ )
-          text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-      return text;
-  }
    // Set up routes
    /**
    * reate a user

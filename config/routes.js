@@ -15,19 +15,12 @@ module.exports = function (app, config, auth, smtpTransport) {
    * @param next method in chain
    */
    app.pre(function(req, res, next) {
-    if (req.headers.origin) {
-      res.header('Access-Control-Allow-Origin', req.headers.origin);
-    }
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'X-Requested-With, Cookie, Set-Cookie, Accept, Access-Control-Allow-Credentials, Origin, Content-Type, Request-Id , X-Api-Version, X-Request-Id, Authorization');
-    res.header('Access-Control-Expose-Headers', 'Set-Cookie');
       if (req.url === '/') {
          req.url = '/public';
       }
       if (req.url === '/public') {
          req.url = '/public/index.html';
       }
-  //    req.headers.accept = 'application/json';
       return next();
    });
 

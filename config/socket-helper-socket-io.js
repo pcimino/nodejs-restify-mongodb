@@ -29,8 +29,9 @@ SocketHelper.prototype.initialize = function(app, appConfig) {
 
   SocketIo.sockets.on('connection', function(socket) {
     var id = setInterval(function() {
-      socket.volatile.emit('timestamp', JSON.stringify(new Date()), function() {  }); // ignore errors
-    }, 500);
+      var timeStamp = JSON.stringify(new Date());
+      socket.volatile.emit('timestamp', timeStamp, function() {  }); // ignore errors
+    }, 1000);
     socket.on('close', function() {
       console.log('stopping client interval');
       clearInterval(id);

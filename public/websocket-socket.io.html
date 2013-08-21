@@ -22,7 +22,7 @@
    </tr>
 </table>
 </form>
-  <P>Time: <span id='output'><span></p>
+  <P>Server Time: <span id='output'><span></p>
 
 <p>
 <ol>
@@ -48,7 +48,7 @@
    function formSubmit() {
       var host = window.document.location.host.replace(/:.*/, '');
       ws = io.connect('ws://' + host + ':3000');
-     ws.on('connect', function(){
+      ws.on('connect', function(){
       ws.on('timestamp', function (data) {
         updateStats(JSON.parse(data));
       });

@@ -28,8 +28,10 @@ module.exports = function (app, config, auth, mailHelper) {
      var user = new User(req.params);
       if (user.username != null && user.username != '') {
          // check if security check in place
-         if (config.secureUserSignup) {
-           return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
+
+         // TODO need to verify if the user is logged in as an Admin and creating another user
+         if (config.secureUserSignup && user.role != 'Admin') {
+    //TODO       return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
          }
          user.save(function (err, user) {
             if (!err) {
@@ -60,12 +62,12 @@ module.exports = function (app, config, auth, mailHelper) {
            return next();
          } else if (!user) {
             return next(new restify.NotAuthorizedError("Invalid username."));
-           return next();
+            return next();
          } else {
             mail.generateVerifyCode(req, res, next, user);
+            res.send(user);
             return next();
          }
-
       });
    }
 
@@ -103,7 +105,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function sendNewPassword(req, res, next) {
-      var newPass = globalUtil.security.generatePassword();
+      var newPass = globalUtil.generatePassword();
       var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
       query.findOne(function (err, user) {
          if (err) {
@@ -176,3 +178,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
+
+
+

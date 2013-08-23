@@ -41,13 +41,11 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
   sendOptions.mailFrom = mailOptions.mailFrom;
   sendOptions.to = recipient;
   sendOptions.subject = subject;
-
   if (true == htmlFlag) {
     sendOptions.html = body;
   } else {
     sendOptions.text = body;
   }
-
   transport.sendMail(sendOptions, function(error, response) {
     if (error) {
       console.log(error);
@@ -82,10 +80,8 @@ function createTransport() {
       browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
     });
   }
-
   // For email error logging
   var tmpErr = path.join(__dirname, mailOptions.errDir, 'nodemailer');
-
   transportErrorLog = nodemailer.createTransport('MailPreview', {
     dir: tmpErr,  // defaults to ./tmp/nodemailer
     browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
@@ -184,6 +180,7 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
         mailAddress = user.newEmail;
       }
       sendMailHelper(mailAddress, 'Account Validation Email', messageBody, true);
+      return next();
     } else {
       return next(err);
     }

@@ -48,11 +48,11 @@
    function formSubmit() {
       var host = window.document.location.host.replace(/:.*/, '');
       ws = io.connect('ws://' + host + ':3000');
-      ws.on('connect', function(){
-      ws.on('timestamp', function (data) {
-        updateStats(JSON.parse(data));
+      ws.on('connect', function() {
+        ws.on('timestamp', function (data) {
+          updateStats(JSON.parse(data));
+        });
       });
-    });
 
   }
   function formSubmit2() {

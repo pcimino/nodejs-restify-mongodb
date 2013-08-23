@@ -42,7 +42,7 @@ fs.readdirSync(utils_path).forEach(function (file) {
   var variableName = file.substring(0, file.indexOf('.'));
   require(utils_path+'/'+file)(globalUtil, config, auth);
 });
-// console.log(globalUtil.generatePassword());
+//console.log(globalUtil.generatePassword());
 
 // Configure the server
 var app = restify.createServer({
@@ -97,6 +97,7 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
+
 
 
 

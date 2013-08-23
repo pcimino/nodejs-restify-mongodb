@@ -159,8 +159,9 @@ module.exports = function (app, config, auth, mailHelper) {
             user.role = req.params.role;
 
             // check if security check in place
-            if (config.secureUserSignup) {
-              return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
+            // TODO need to verify if the user is logged in as an Admin and creating another user
+            if (config.secureUserSignup && user.role != 'Admin') {
+    //TODO          return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
             }
 
             if (req.params.password != req.params.vPassword) {
@@ -284,3 +285,4 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+

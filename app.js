@@ -18,11 +18,32 @@ var connectStr = config.db_prefix +'://'+config.host+':'+config.db_port+'/'+conf
 console.log(connectStr);
 mongoose.connect(connectStr);
 var db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'connection error:'));
+var firstTimeConnecting = true;
 db.once('open', function callback () {
   console.log("Database connection opened.");
+  firstTimeConnecting = false;
 });
+// this will cause the server to wait for the database
+// This is needed since the hash for the client session is in the database
+// downside is if the DB goes down so does the server
+db.on('error', function (err) {
+  console.log("DB Connection error, retrying connect");
+
+  if (err) { // couldn't connect
+    // hack the driver to allow re-opening after initial network error
+    db.db.close();
+    if (firstTimeConnecting) {
+      // retry if desired
+      setTimeout(function () {
+        mongoose.connect(connectStr);
+      }, 3000);
+    } else {
+        // this jsut errs out, I think I need to rebuild the connection and db and set the db.on('error' and db.on('open'
+        mongoose.connect(connectStr);console.log(3)
+    }
+  }
+});
+
 
 // Bootstrap models
 fs.readdirSync(models_path).forEach(function (file) {
@@ -97,8 +118,4 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
-
-
-
-
 

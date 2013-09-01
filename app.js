@@ -16,32 +16,26 @@ var config_path = config.root + '/config'
 // Database
 var connectStr = config.db_prefix +'://'+config.host+':'+config.db_port+'/'+config.db_database;
 console.log(connectStr);
-mongoose.connect(connectStr);
+mongoose.connect(connectStr, {server:{auto_reconnect:true}});
 var db = mongoose.connection;
-var firstTimeConnecting = true;
+
+// the reconnect seems to behave properly, but the link to this particular instance gets lost?
+// the recinnected and open don't work after a disconnect, although everything else seems to be working
+mongoose.connection.on('opening', function() {
+  console.log("reconnecting... %d", mongoose.connection.readyState);
+});
 db.once('open', function callback () {
   console.log("Database connection opened.");
-  firstTimeConnecting = false;
 });
-// this will cause the server to wait for the database
-// This is needed since the hash for the client session is in the database
-// downside is if the DB goes down so does the server
 db.on('error', function (err) {
-  console.log("DB Connection error, retrying connect");
-
-  if (err) { // couldn't connect
-    // hack the driver to allow re-opening after initial network error
-    db.db.close();
-    if (firstTimeConnecting) {
-      // retry if desired
-      setTimeout(function () {
-        mongoose.connect(connectStr);
-      }, 3000);
-    } else {
-        // this jsut errs out, I think I need to rebuild the connection and db and set the db.on('error' and db.on('open'
-        mongoose.connect(connectStr);console.log(3)
-    }
-  }
+  console.log("DB Connection error %s", err);
+});
+db.on('reconnected', function () {
+  console.log('MongoDB reconnected!');
+});
+db.on('disconnected', function() {
+  console.log('MongoDB disconnected!');
+  mongoose.connect(connectStr, {server:{auto_reconnect:true}});
 });
 
 
@@ -118,4 +112,5 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
+
 

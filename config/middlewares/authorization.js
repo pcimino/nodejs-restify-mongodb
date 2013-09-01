@@ -26,13 +26,7 @@ exports.requiresLogin = function(req, res, next) {
    User.findById(id, function (err, user) {
       if (!err) {
          if (user) {
-           // found that I needed to send the username as well as the Success
-           // could send the whole user data, but this would be too much most of the time
-           // If the client refreshes, the data in the page clears, but the cookie is still good
-           // so check if the session is good, the client is responsible for checking if the data has been cleared, if so
-           // reload the user data
-           res.send({message: 'Success', username: user.username});
-           return({});
+            return next({});
          } else {
             return next(new restify.NotAuthorizedError("Access restricted."));
          }

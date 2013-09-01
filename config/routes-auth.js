@@ -18,7 +18,7 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
    function roles(req, res, next) {
-      res.send(['User', 'Subscriber', 'Admin']);
+      res.send(['User', 'Subscriber','Admin']);
    }
 
   /**
@@ -142,7 +142,7 @@ module.exports = function (app, config, auth) {
    * @param response
    */
    app.get('/api/auth', auth.requiresLogin, function (req, res) {
-     // the requiresLogin is responsible for sending the response
+      res.send({'message':'Success'});
    });
 
    /**
@@ -189,4 +189,3 @@ module.exports = function (app, config, auth) {
       res.send({'message':'Success'});
    });
 }
-

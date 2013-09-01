@@ -46,10 +46,20 @@
    });
 
    function formSubmit() {
+       // /api/v1/user returns the current user with no path mod
+       // /api/v1/user/:id replace :id with the id to search for, requires admin access
+       // /api/v1/user/:username replace :username with the username to search for, requires admin access
+       var path = "http://localhost:3000/api/v1/user";
+
+       if ($('input[name="id"]').val().length > 0) {
+           path = path + "Id/" + $('input[name="id"]').val();
+       } else if ($('input[name="username"]').val().length > 0) {
+           path = path + "Name/" + $('input[name="username"]').val();
+       }
       $.ajax({
          type: "GET",
-         url: "http://localhost:3000/api/v1/user",
-         data: $('#inputForm').serialize(),
+         url: path,
+         data: '',
          success: function(data) {
             if (data === null || data.length == 0) {
                alert("No data found.");
@@ -101,3 +111,4 @@
 </script>
 
 </body>
+

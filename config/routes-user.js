@@ -79,12 +79,16 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function getUser(req, res, next) {
-      if (req.params.id != null && req.params.id != '') {
-         getUserById(req, res, next);
-      } else if (req.params.username != null && req.params.username != '') {
-          getUserByUsername(req, res, next)
-      } else if (req.session && req.session.user) {
-        getUserById(req, res, next);
+      if (req.session && req.session.user) {
+        id = req.session.user;
+         User.findById(id, function (err, user) {
+            if (!err) {
+              res.send(user);
+              return next();
+            } else {
+              return next(new restify.InternalError(err));
+            }
+         });
       } else {
         return next(new restify.MissingParameterError('No search params sent.'));
       }
@@ -98,13 +102,10 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function getUserById(req, res, next) {
-     var id = req.params.id;
-     if (!req.params.id) {
-       if (req.session && req.session.user) {
-         id = req.session.user;
-       }
-     }
-      if (id) {
+     var id = req.url;
+     id = id.substring(id.lastIndexOf("/")+1);
+
+     if (id) {
          User.findById(id, function (err, user) {
             if (!err) {
               res.send(user);
@@ -126,8 +127,11 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function getUserByUsername(req, res, next) {
-      if (req.params.username != null && req.params.username != '') {
-         var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
+     var username = req.url;
+     username = username.substring(username.lastIndexOf("/")+1);
+
+      if (username != null && username != '') {
+         var query = User.where( 'username', new RegExp('^'+username+'$', 'i') );
          query.findOne(function (err, user) {
             if (!err) {
                if (user) {
@@ -262,6 +266,17 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised callback check authization
    * @param promised 2nd callback gets user
    */
+   /* this doesn't work because both :username and :id  hit this request first
+      app.get('/api/v1/user/:id', auth.adminAccess, getUserById);
+      app.get('/api/v1/user/:username', auth.adminAccess, getUserByUsername);
+   */
+   // get the user by id, only admin can do this
+   app.get('/api/v1/userId/:id', auth.adminAccess, getUserById);
+
+   // and then to be consistent
+   app.get('/api/v1/userName/:username', auth.adminAccess, getUserByUsername);
+
+   // This one is takes no args/params and is for the client to retrieve the authenticated user's information
    app.get('/api/v1/user', auth.requiresLogin, getUser);
 
 
@@ -285,4 +300,5 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 

@@ -94,57 +94,39 @@ module.exports = function (app, config, auth, mailHelper) {
       }
    }
 
+
   /**
-   * Search for a user by id
+   * Search for a user by id or username
    *
-   * @param request includes an id
+   * @param request path includes an id or username
    * @param response contains a populated User object
    * @param next method
    */
-   function getUserById(req, res, next) {
-     var id = req.url;
-     id = id.substring(id.lastIndexOf("/")+1);
-
-     if (id) {
-         User.findById(id, function (err, user) {
-            if (!err) {
-              res.send(user);
-              return next();
-            } else {
-              return next(new restify.InternalError(err));
-            }
-         });
-      } else {
-         return next(new restify.MissingParameterError('ObjectId required.'));
-      }
-   }
-
-  /**
-   * Search for a user by username
-   *
-   * @param request includes an username
-   * @param response contains a populated User object
-   * @param next method
-   */
-   function getUserByUsername(req, res, next) {
-     var username = req.url;
-     username = username.substring(username.lastIndexOf("/")+1);
-
-      if (username != null && username != '') {
-         var query = User.where( 'username', new RegExp('^'+username+'$', 'i') );
+   function getUserByIdOrUsername(req, res, next) {
+     var search = req.url;
+     search = search.substring(search.lastIndexOf("/")+1);
+      if (search != null && search != '') {
+         var query = User.where( 'username', new RegExp('^'+search+'$', 'i') );
          query.findOne(function (err, user) {
             if (!err) {
                if (user) {
                   res.send(user);
                } else {
-                  res.send(new restify.MissingParameterError('User not found.'));
+                 User.findById(search, function (err, user) {
+                    if (!err) {
+                      res.send(user);
+                    } else {
+                      res.send(new restify.MissingParameterError('User not found.'));
+                    }
+                    return next();
+                 });
                }
             } else {
               return next(new restify.InternalError(err));
             }
          });
       } else {
-         return next(new restify.MissingParameterError('Username required.'));
+         return next(new restify.MissingParameterError('Username or ID required.'));
       }
    }
 
@@ -266,18 +248,11 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised callback check authization
    * @param promised 2nd callback gets user
    */
-   /* this doesn't work because both :username and :id  hit this request first
-      app.get('/api/v1/user/:id', auth.adminAccess, getUserById);
-      app.get('/api/v1/user/:username', auth.adminAccess, getUserByUsername);
-   */
-   // get the user by id, only admin can do this
-   app.get('/api/v1/userId/:id', auth.adminAccess, getUserById);
-
-   // and then to be consistent
-   app.get('/api/v1/userName/:username', auth.adminAccess, getUserByUsername);
-
    // This one is takes no args/params and is for the client to retrieve the authenticated user's information
    app.get('/api/v1/user', auth.requiresLogin, getUser);
+
+   // get the user by id or username, only admin can do this
+   app.get('/api/v1/user/:search', auth.adminAccess, getUserByIdOrUsername);
 
 
    /**

@@ -1,3 +1,6 @@
+/**
+* Wrapper functionality for sendmail
+*/
 var path = require('path')
     , nodemailer = require('nodemailer')
     , mongoose = require('mongoose')

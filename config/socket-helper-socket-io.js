@@ -1,8 +1,11 @@
+/**
+* Wrapper functionality for socket management
+*/
 var net = require('net')
   , SocketIo = {};
 
 // http://mattmueller.me/blog/quick-tip-node-js-socket-io-authentication
-  
+
 /**
  * Generates a SocketHelper
  *
@@ -42,3 +45,4 @@ SocketHelper.prototype.initialize = function(app, appConfig) {
 
 // Export SocketHelper constructor
 module.exports.SocketHelper = SocketHelper;
+

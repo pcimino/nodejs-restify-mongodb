@@ -1,7 +1,9 @@
-// Routes for the user signup flow:
-// - User creates initial information
-// - Email sent with verification code
-// - Verification code sets email to validated state
+/**
+* Routes for the user signup flow:
+* - User creates initial information
+* - Email sent with verification code
+* - Verification code sets email to validated state
+*/
 // http://mcavage.github.io/node-restify/#Content-Negotiation
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
@@ -178,6 +180,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
 
 
 

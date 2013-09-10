@@ -1,3 +1,6 @@
+/**
+* Routes module for authorized (secured) access
+*/
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , VerifyCode = mongoose.model('VerifyCode')
@@ -189,3 +192,4 @@ module.exports = function (app, config, auth) {
       res.send({'message':'Success'});
    });
 }
+

@@ -1,5 +1,7 @@
-// NOTE : All of these routes are exposed (unprotected) See routes-auth.js for examples of authorized routes
-
+/**
+* Email Routes module
+*    All of these routes are exposed (unprotected) See routes-auth.js for examples of authorized routes
+*/
 var restify = require('restify');
 
 var mail = {};

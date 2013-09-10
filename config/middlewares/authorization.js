@@ -1,3 +1,6 @@
+/**
+* Authorization middleware module
+*/
 var restify = require('restify')
    , mongoose = require('mongoose')
    , User = mongoose.model('User');

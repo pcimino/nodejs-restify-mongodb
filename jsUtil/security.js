@@ -1,3 +1,7 @@
+/**
+* Security Utility code function(s)
+*/
+
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , ObjectId = mongoose.Types.ObjectId;
@@ -18,6 +22,7 @@ module.exports = function (globalUtil, config, auth) {
   };
 
 }
+
 
 
 

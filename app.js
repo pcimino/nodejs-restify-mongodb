@@ -1,3 +1,7 @@
+/**
+* Main application server setup
+*/
+
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
   , config = require('./config/config')[env];
@@ -112,5 +116,6 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
+
 
 

@@ -1,4 +1,6 @@
-
+/**
+* Routes module for parsing requests
+*/
 var restify = require('restify')
   , fs = require('fs')
   , mongoose = require('mongoose');
@@ -90,3 +92,4 @@ module.exports = function (app, config, auth, smtpTransport) {
    require(config_path + '/routes-auth.js')(app, config, auth)
 
 }
+

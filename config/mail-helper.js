@@ -203,6 +203,40 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
   });
 };
 
+/**
+ * create the verification code for updated email address
+ *
+ * @param request
+ * @param response
+ * @param next method
+ * @param {Object} instance of a user object
+ */
+MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, user) {
+  var verifyCode = new VerifyCode();
+  verifyCode.userObjectId = user._id;
+  verifyCode.key = (new ObjectId()).toString();
+  verifyCode.save(function (err, verifyCode) {
+    if (!err) {
+      // create a verification code
+      var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+      var host = req.header('Host');
+      refer = refer.substring(0, refer.indexOf(host) + host.length);
+      var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
+      var messageBody = "Hi " + user.name + ",</br><p>Please click the link to validate your new email address.</p>";
+      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+
+      var mailAddress = user.email;
+      if (user.newEmail) {
+        mailAddress = user.newEmail;
+      }
+      sendMailHelper(mailAddress, 'Account Validation Email', messageBody, true);
+      return next();
+    } else {
+      return next(err);
+    }
+  });
+};
+
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;

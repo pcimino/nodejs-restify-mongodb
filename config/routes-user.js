@@ -142,36 +142,40 @@ module.exports = function (app, config, auth, mailHelper) {
    function putUser(req, res, next) {
       User.findById(req.params.id, function (err, user) {
          if (!err) {
-            user.name = req.params.name;
-            user.username = req.params.username;
-            user.role = req.params.role;
-
-            if (!mail.validateEmail(req.params.email)) {
-               return next(new restify.MissingParameterError('Please enter a valid email address.'));
+            // only change data if submit supplied it
+            if (req.params.name) {
+              user.name = req.params.name;
             }
-            if (req.params.password != req.params.vPassword) {
-              return next(new restify.MissingParameterError('Password and Verify Password must match.'));
+            if (req.params.username) {
+              user.username = req.params.username;
             }
-            if (req.params.password && !req.params.cPassword) {
-              return next(new restify.MissingParameterError('You must enter your current password to verify.'));
-            }
-            if (req.params.cPassword) {
-              if (!user.authenticate(req.params.cPassword)) {
-                return next(new restify.MissingParameterError('You must enter your current password to verify.'));
-
-              }
-              user.tempPasswordFlag = true;
-            }
-            if (req.params.password) {
-              user.password = req.params.password;
+            if (req.params.role) {
+              user.role = req.params.role;
             }
 
+            // validations
             if (req.params.email) {
-              if (user.email != req.params.email) {
+              if (!mail.validateEmail(req.params.email)) {
+                 return next(new restify.MissingParameterError('Please enter a valid email address.'));
+              } else {
                 user.newEmail = req.params.email;
               }
-            } else {
-              return next(new restify.MissingParameterError('Email required.'));
+            }
+            if (req.params.password) {
+              if (req.params.password != req.params.vPassword) {
+                return next(new restify.MissingParameterError('Password and Verify Password must match.'));
+              }
+              if (req.params.password && !req.params.cPassword) {
+                return next(new restify.MissingParameterError('You must enter your current password to verify.'));
+              }
+              if (req.params.cPassword) {
+                if (!user.authenticate(req.params.cPassword)) {
+                  return next(new restify.MissingParameterError('You must enter your current password to verify.'));
+
+                }
+                user.tempPasswordFlag = true;
+                user.password = req.params.password;
+              }
             }
 
             user.save(function (err) {
@@ -180,7 +184,8 @@ module.exports = function (app, config, auth, mailHelper) {
 
                  // generate and send a verification code
                   if (user.newEmail) {
-                     mail.generateVerifyCode(req, res, next, user);
+                     // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
+                     mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
                   }
                   return next();
                } else {
@@ -274,6 +279,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

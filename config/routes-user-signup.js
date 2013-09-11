@@ -27,14 +27,11 @@ module.exports = function (app, config, auth, mailHelper) {
      if (req.params.password != req.params.vPassword) {
        return next(new restify.MissingParameterError('Password and Verify Password must match.'));
      }
+     if (!mail.validateEmail(req.params.email)) {
+       return next(new restify.MissingParameterError('Please enter a valid email address.'));
+     }
      var user = new User(req.params);
       if (user.username != null && user.username != '') {
-         // check if security check in place
-
-         // TODO need to verify if the user is logged in as an Admin and creating another user
-         if (config.secureUserSignup && user.role != 'Admin') {
-    //TODO       return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
-         }
          user.save(function (err, user) {
             if (!err) {
               // create a verification code
@@ -180,6 +177,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
 
 
 

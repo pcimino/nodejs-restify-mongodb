@@ -144,6 +144,19 @@ MailHelper.prototype.initialize = function(appConfig){
     }
 };
 
+
+
+/**
+ * Helper method to perform basic email validation
+ *
+ * @param {String} email
+ */
+MailHelper.prototype.validateEmail = function(email) {
+  var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return filter.test(email);
+};
+
+
 /**
  * Send mail with defined transport object
  *

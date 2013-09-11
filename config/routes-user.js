@@ -146,12 +146,9 @@ module.exports = function (app, config, auth, mailHelper) {
             user.username = req.params.username;
             user.role = req.params.role;
 
-            // check if security check in place
-            // TODO need to verify if the user is logged in as an Admin and creating another user
-            if (config.secureUserSignup && user.role != 'Admin') {
-    //TODO          return next(new restify.MissingParameterError('Adminstration access required to create an Admin user.'));
+            if (!mail.validateEmail(req.params.email)) {
+               return next(new restify.MissingParameterError('Please enter a valid email address.'));
             }
-
             if (req.params.password != req.params.vPassword) {
               return next(new restify.MissingParameterError('Password and Verify Password must match.'));
             }
@@ -277,6 +274,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

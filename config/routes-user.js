@@ -244,7 +244,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * Search for users
    *
    * @param path
-   * @param promised callback check authization
+   * @param promised callback check authorization
    * @param promised 2nd callback searches for users
    */
    app.get('/api/v1/userlist', auth.requiresLogin, searchUsers);
@@ -259,7 +259,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * Search for users
    *
    * @param path
-   * @param promised callback check authization
+   * @param promised callback check authorization
    * @param promised 2nd callback gets user
    */
    // This one is takes no args/params and is for the client to retrieve the authenticated user's information
@@ -273,7 +273,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * Update user information
    *
    * @param path
-   * @param promised callback check authization
+   * @param promised callback check authorization
    * @param promised 2nd callback searches for users
    */
    app.put('/api/v1/user', auth.requiresLogin, putUser);
@@ -289,6 +289,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

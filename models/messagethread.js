@@ -12,6 +12,8 @@ var mongoose = require('mongoose')
 var MessageThreadSchema = new Schema({
   id: ObjectId
   , version: { type: Number }
+  , createDate: { type: ISODate }
+  , modifyDate: { type: ISODate }
   , fromUserId: { type: ObjectId }
   , toUserId: { type: ObjectId }
   , fromUsername: { type: String, trim: true }
@@ -24,5 +26,6 @@ var MessageThreadSchema = new Schema({
 })
 
 module.exports = mongoose.model('MessageThread', MessageThreadSchema)
+
 
 

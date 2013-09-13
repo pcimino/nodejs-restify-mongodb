@@ -89,7 +89,10 @@ module.exports = function (app, config, auth, smtpTransport) {
    require(config_path + '/routes-user-signup.js')(app, config, auth, smtpTransport);
 
    require(config_path + '/routes-email.js')(app, config, auth, smtpTransport);
-   require(config_path + '/routes-auth.js')(app, config, auth)
+   require(config_path + '/routes-auth.js')(app, config, auth);
+
+   require(config_path + '/routes-messaging.js')(app, config, auth)
 
 }
+
 

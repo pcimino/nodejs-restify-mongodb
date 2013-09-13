@@ -89,7 +89,9 @@ module.exports = function (app, config, auth, mailHelper) {
                   return next(new restify.InternalError('Username already in use.'));
                }
             } else {
-              return next(new restify.InternalError(err));
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
             }
          });
       } else {

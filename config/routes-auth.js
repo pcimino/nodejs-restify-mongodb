@@ -115,11 +115,13 @@ module.exports = function (app, config, auth) {
           user.emailValidatedFlag = true;
           user.save(function (err) {
             if (err) {
-              if (err.message) {
-                return next(new restify.InternalError(err.message));
-              } else {
-                return next(new restify.InternalError(err));
-              }
+                  var errObj = err;
+                  if (err.message) {
+                    errObj = err.message;
+                  } else {
+                    errObj = err.err;
+                  }
+                  return next(new restify.InternalError(errObj));
             } else {
               // clean up all verification codes
               VerifyCode.remove({userObjectId: user._id}, function(err){});

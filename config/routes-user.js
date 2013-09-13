@@ -61,11 +61,15 @@ module.exports = function (app, config, auth, mailHelper) {
                   res.send(userList);
                   return next();
                } else {
-                  return next(new restify.InternalError(err));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
                }
             });
          } else {
-            return next(new restify.InternalError(err));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
          }
       });
      return;
@@ -88,7 +92,9 @@ module.exports = function (app, config, auth, mailHelper) {
               res.send(user);
               return next();
             } else {
-              return next(new restify.InternalError(err));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
             }
          });
       } else {
@@ -124,7 +130,9 @@ module.exports = function (app, config, auth, mailHelper) {
                  });
                }
             } else {
-              return next(new restify.InternalError(err));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
             }
          });
       } else {
@@ -189,7 +197,9 @@ module.exports = function (app, config, auth, mailHelper) {
                   }
                   return next();
                } else {
-                  return next(new restify.InternalError(err));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
                }
             });
          } else {
@@ -279,6 +289,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

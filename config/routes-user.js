@@ -1,6 +1,6 @@
 /**
-* Public Routes module
-*    All of these routes are exposed (unprotected) See routes-auth.js for examples of authorized routes
+* User Routes module
+*    these routes require authenticated users
 */
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
@@ -279,6 +279,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

@@ -14,8 +14,8 @@ var mongoose = require('mongoose')
  */
 
 var SessionKeySchema = new Schema({
-  id: ObjectId,
-  key: { type: String, trim: true }
+  id: ObjectId
+  , key: { type: String, trim: true }
 })
 
 /**

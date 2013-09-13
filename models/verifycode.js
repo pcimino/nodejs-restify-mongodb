@@ -13,9 +13,9 @@ var mongoose = require('mongoose')
  */
 
 var VerifyCodeSchema = new Schema({
-  id: ObjectId,
-  userObjectId: ObjectId,
-  key: { type: String, trim: true }
+  id: ObjectId
+  , userObjectId: ObjectId
+  , key: { type: String, trim: true }
 })
 
 /**
@@ -39,3 +39,4 @@ VerifyCodeSchema.pre('save', function(next) {
 
 
 mongoose.model('VerifyCode', VerifyCodeSchema)
+

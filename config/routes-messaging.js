@@ -47,7 +47,9 @@ module.exports = function (app, config, auth) {
    function putMessageThread(req, res, next) {
      // TODO how to avoid collisions? Pull a message and check version #
       if (req.session && req.session.user) {
-
+        // update, remove message form archival view
+        // messageThread.fromArchiveFlag = false;
+        // messageThread.toArchiveFlag = false;
       }
    }
 
@@ -60,7 +62,7 @@ module.exports = function (app, config, auth) {
    */
    function getMessageThread(req, res, next) {
       if (req.session && req.session.user) {
-
+// archiveFlag, senderFlag (true retrieves messageThreads user started, false: messageThreads started by another user)
       }
    }
 
@@ -73,7 +75,15 @@ module.exports = function (app, config, auth) {
    */
    function archiveMessageThread(req, res, next) {
       if (req.session && req.session.user) {
-
+        // only archive this users' view
+        // not using an else, possibly admin might moderate a message?
+        /*
+        if (req.session.user._id == messageThread.fromUserId) {
+          messageThread.fromArchiveFlag = false;
+        }
+        if (req.session.user._id == messageThread.toUserId) {
+          messageThread.toArchiveFlag = false;
+        }*/
       }
    }
 

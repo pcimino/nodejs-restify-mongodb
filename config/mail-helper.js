@@ -189,9 +189,14 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
       protocol = protocol.substring(0, protocol.indexOf("://") + 3);
 
       var fullURL = protocol + host + "/api/v1/verify?v=" + verifyCode.key;
-      var messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address and activate your account.</p>";
-      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
-
+      var messageBody;
+      if (user.newEmail) {
+        messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address.</p>";
+        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Validate your email address</a>"
+      } else {
+        messageBody = "Welcome " + user.name + ",</br><p>Please click the link to activate your account.</p>";
+        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+      }
       var mailAddress = user.email;
       if (user.newEmail) {
         mailAddress = user.newEmail;

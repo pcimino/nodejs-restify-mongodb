@@ -13,12 +13,12 @@ var mongoose = require('mongoose')
  */
 var UserSchema = new Schema({
   id: ObjectId
-  , name: { type: String, trim: true }
-  , email: { type: String, trim: true }
+  , name: { type: String, trim: true, required: true }
+  , email: { type: String, trim: true, required: true, unique: true }
   , newEmail: { type: String, trim: true, default: '' }
   , emailValidatedFlag: { type: Boolean, default: false }
-  , username: { type: String, trim: true }
-  , role: { type: String, enum: ['User', 'Subscriber', 'Admin'], default: 'User' }
+  , username: { type: String, trim: true, required: true, unique: true }
+  , role: { type: String, enum: ['User', 'Subscriber', 'Admin'], default: 'User', required: true }
   , hashed_password: { type: String, trim: true }
   , tempPasswordFlag: { type: Boolean, default: false }
 })
@@ -120,4 +120,5 @@ UserSchema.methods = {
 }
 
 mongoose.model('User', UserSchema)
+
 

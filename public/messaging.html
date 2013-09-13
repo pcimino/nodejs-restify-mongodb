@@ -1,0 +1,81 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;" bgcolor="white">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>Message a User</h3>
+<p>
+   <form name="selectForm" id="selectForm" method="get">
+      <p>
+         <select name="id" id="userSelectList">
+
+         </select>
+      </p><p>
+         <input id="formButton" type="button" value="Send Message">
+         <input id="clearFormButton" type="button" value="Clear Form">
+      </p>
+   </form>
+</p>
+<hr>
+<hr>
+<p>
+<a href="/public/login.html">Login</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/update.html"><b>U</b>pdate User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/read.html"><b>R</b>ead a User</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/readList.html"><b>R</b>ead a list of Users</a>&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="/public/demo.html">Home</a></p>
+<script type="text/javascript">
+   $(document).ready(function() {
+     $('#formButton').click(function() { formSubmit(); });
+     $('#clearFormButton').click(function() { clearForm(); });
+     loadData();
+   });
+
+   function loadData() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/userlist",
+         data: {sortField:'username'},
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               $('input[name="pages"]').val(data.pageCount);
+               //console.log(data);
+               buildSelectList(data.users);
+            }
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function formSubmit() {
+       //TODO
+   }
+
+   function buildSelectList(dataArr) {
+      $('#userSelectList').empty();
+      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
+      for (i = 0; i < dataArr.length; i++) {
+         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
+      }
+      clearForm();
+   }
+   function clearForm() {
+      $('#selectForm')[0].reset();
+      $('#userSelectList').val(null);
+   }
+
+</script>
+
+</body>
+

@@ -18,8 +18,9 @@ var MessageThreadSchema = new Schema({
   , toUsername: { type: String, trim: true }
   , subject: { type: String, trim: true }
   , messages: [String]
-  , archiveFlag: { type: Boolean, default: false }
-  , systemMessageFlag: { type: Boolean, default: false } // Used for priority messages from the system tot he user
+  , fromArchiveFlag: { type: Boolean, default: false } // so the sender can archive their view of it independently
+  , toArchiveFlag: { type: Boolean, default: false } // so the recipient can archive their view of it independently
+  , inappropriateFlag: { type: Boolean, default: false } // moderator flags messages
 })
 
 module.exports = mongoose.model('MessageThread', MessageThreadSchema)

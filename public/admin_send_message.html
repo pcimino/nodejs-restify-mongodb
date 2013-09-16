@@ -1,0 +1,104 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;" bgcolor="white">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+    <h3>Admin Page: Send System-Wide Message</h3>
+    <hr>
+    <p><font color="green"><b>System messages can only be created by the Administrator Role</b></font></p>
+    <hr>
+<p>
+   <form name="selectForm" id="selectForm" method="get">
+       <p>
+       <table>
+         <tr><td>Subject:</td><td><input class="input" type="text" size="25" name="subject"></td></tr>
+         <tr><td>Message:</td><td><input class="input" type="text" size="25" name="message"></td></tr>
+       </table>
+       </p>
+       <p>
+         <input id="formButton" type="button" value="Send Message">
+         <input id="clearFormButton" type="button" value="Clear Form">
+      </p>
+   </form>
+</p>
+
+<hr>
+<hr>
+<p>
+<a href="/public/login.html">Login</a></p><p>
+<a href="/public/update.html"><b>U</b>pdate User</a></p><p>
+<a href="/public/read.html"><b>R</b>ead a User</a></p><p>
+<a href="/public/readList.html"><b>R</b>ead a list of Users</a></p><p>
+<a href="/public/demo.html">Home</a></p>
+
+<h3>Message Links</h3>
+<p>
+    <a href="/public/send_message.html">Send a message to another user</a>
+</p>
+<p>
+    <a href="/public/read_message.html">Read & Archive Messages</a>
+</p>
+
+
+<script type="text/javascript">
+   $(document).ready(function() {
+     $('#formButton').click(function() { formSubmit(); });
+     $('#clearFormButton').click(function() { clearForm(); });
+   });
+
+   function formSubmit() {
+      $.ajax({
+         type: "POST",
+         url: "http://localhost:3000/api/v1/systemMessage",
+         data: $('#selectForm').serialize(),
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               console.log(data);
+               clearForm();
+                alert('Sent');
+            }
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function onSelect() {
+       $('#toUserName').val($("#userSelectList").find("option:selected").text());
+       $('#toUserId').val($("#userSelectList").val());
+       $('#username').val($("#userSelectList").find("option:selected").text());
+       $('#userid').val($("#userSelectList").val());
+   }
+
+   function buildSelectList(dataArr) {
+      $('#userSelectList').empty();
+      $('#userSelectList').append('<option value="null" >-- Select Username --</option>');
+      for (i = 0; i < dataArr.length; i++) {
+         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" >' + dataArr[i].username + '</option>');
+      }
+      clearForm();
+   }
+   function clearForm() {
+      $('#selectForm')[0].reset();
+      $('#userSelectList').val(null);
+   }
+
+</script>
+
+</body>
+
+
+
+
+
+

@@ -1,0 +1,193 @@
+<!doctype html>
+<head>
+<script type="text/javascript" src="/public/jquery-1.9.1.min.js"></script>
+</head>
+<body style="margin-left:100px;" bgcolor="white">
+<h2>
+   <a href="http://www.translunardesigns.com" alt="Trans Lunar Designs" target="_blank" >
+      <img src="/public/translunar.png" align="middle"/>REST Test
+   </a>
+</h2>
+<h3>User Messages</h3>
+<p><form id="messageForm">
+       <div id="dynamicMessageTable">
+       </div>
+   </form>
+</p>
+<hr>
+<h3>System Messages</h3>
+<p><form id="messageForm">
+       <div id="dynamicSystemMessageTable">
+       </div>
+   </form>
+</p>
+<hr>
+<hr>
+<hr>
+<p>
+<a href="/public/login.html">Login</a></p><p>
+<a href="/public/update.html"><b>U</b>pdate User</a></p><p>
+<a href="/public/read.html"><b>R</b>ead a User</a></p><p>
+<a href="/public/readList.html"><b>R</b>ead a list of Users</a></p><p>
+<a href="/public/demo.html">Home</a></p>
+<h3>Message Links</h3>
+<p>
+    <a href="/public/send_message.html">Send a message to another user</a>
+</p>
+<p>
+    <a href="/public/admin_send_message.html">Admin Only: Send System-wide message</a>
+</p>
+
+<script type="text/javascript">
+   $(document).ready(function() {
+     loadData();
+   });
+
+   function loadData() {
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/messageThread",
+         data: $('#selectForm').serialize(),
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               buildMessageList(data);
+            }
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+      $.ajax({
+         type: "GET",
+         url: "http://localhost:3000/api/v1/systemMessage",
+         data: $('#selectForm').serialize(),
+         success: function(data) {
+            if (data === null || data.length == 0) {
+               alert("No data found.");
+            } else {
+               buildSystemMessageList(data);
+            }
+         },
+         error:function(err) {
+            console.log(err);
+             alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+   function buildMessageList(dataArr) {
+       for (var i = 0; i < dataArr.length; i++) {
+           console.log("Subject:" + dataArr[i].subject + " To:" + dataArr[i].toUsername + " From:" + dataArr[i].fromUsername + " Message:" + dataArr[i].messages[0]);
+       }
+      $("#dynamicMessageTable").empty();
+      $("#dynamicMessageTable").append("<table border='1' cellpadding='10'>");
+      $("#dynamicMessageTable").append("<caption>Message Table</caption>");
+      $("#dynamicMessageTable").append("<thead>");
+      $("#dynamicMessageTable").append("<tr>");
+      $("#dynamicMessageTable").append("<th style='text-align:left;'>From</th>");
+      $("#dynamicMessageTable").append("<th style='text-align:left;'>To</th>");
+      $("#dynamicMessageTable").append("<th style='text-align:left;'>Subject</th>");
+      $("#dynamicMessageTable").append("<th style='text-align:left;'>Message</th>");
+      $("#dynamicMessageTable").append("<th style='text-align:left;'>Action</th>");
+      $("#dynamicMessageTable").append("</tr>");
+      $("#dynamicMessageTable").append("</thead>");
+
+      $("#dynamicMessageTable").append("<tbody>");
+
+      for (i = 0; i < dataArr.length; i++) {
+         $("#dynamicMessageTable").append("<tr>");
+         $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].fromUsername + "</td>");
+         $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].toUsername + "</td>");
+         $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].subject + "</td>");
+         $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].messages[0] + "</td>");
+         $("#dynamicMessageTable").append("<td width='5%'><input type='button' onclick='archiveMessage(\"" + dataArr[i]._id + "\")' value='Archive'></td>");
+
+         $("#dynamicMessageTable").append("</tr>");
+      }
+
+      $("#dynamicMessageTable").append("</tbody>");
+      $("#dynamicMessageTable").append("</table>");
+   }
+
+   function buildSystemMessageList(dataArr) {
+       for (var i = 0; i < dataArr.length; i++) {
+         console.log("Subject:" + dataArr[i].subject + " Message:" + dataArr[i].message);
+       }
+
+      $("#dynamicSystemMessageTable").empty();
+      $("#dynamicSystemMessageTable").append("<table border='1' cellpadding='10'>");
+      $("#dynamicSystemMessageTable").append("<caption>System Message Table</caption>");
+      $("#dynamicSystemMessageTable").append("<thead>");
+      $("#dynamicSystemMessageTable").append("<tr>");
+      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Subject</th>");
+      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Message</th>");
+      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Action</th>");
+      $("#dynamicSystemMessageTable").append("</tr>");
+      $("#dynamicSystemMessageTable").append("</thead>");
+
+      $("#dynamicSystemMessageTable").append("<tbody>");
+
+      for (i = 0; i < dataArr.length; i++) {
+         $("#dynamicSystemMessageTable").append("<tr>");
+         $("#dynamicSystemMessageTable").append("<td width='10%'>" + dataArr[i].subject + "</td>");
+         $("#dynamicSystemMessageTable").append("<td width='10%'>" + dataArr[i].message + "</td>");
+         $("#dynamicSystemMessageTable").append("<td width='5%'><input type='button' onclick='archiveSysMessage(\"" + dataArr[i]._id + "\")' value='Archive'></td>");
+
+         $("#dynamicSystemMessageTable").append("</tr>");
+      }
+
+      $("#dynamicSystemMessageTable").append("</tbody>");
+      $("#dynamicSystemMessageTable").append("</table>");
+   }
+
+    function archiveSysMessage(sysMessageId) {
+          $.ajax({
+             type: "DELETE",
+             url: "http://localhost:3000/api/v1/systemMessage",
+              data: {'systemMessageId': sysMessageId},
+             success: function(data) {
+                if (data === null || data.length == 0) {
+                   alert("No data found.");
+                } else {
+                   location.reload(true);
+                }
+             },
+             error:function(err) {
+                console.log(err);
+                 alert(JSON.parse(err.responseText).message)
+             },
+             dataType: 'json'
+          });
+    }
+
+
+    function archiveMessage(messageId) {
+          $.ajax({
+             type: "DELETE",
+             url: "http://localhost:3000/api/v1/messageThread",
+              data: {'messageThreadId': messageId},
+             success: function(data) {
+                if (data === null || data.length == 0) {
+                   alert("No data found.");
+                } else {
+                   location.reload(true);
+                }
+             },
+             error:function(err) {
+                console.log(err);
+                 alert(JSON.parse(err.responseText).message)
+             },
+             dataType: 'json'
+          });
+    }
+</script>
+
+</body>
+
+
+

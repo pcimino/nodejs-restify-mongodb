@@ -8,21 +8,29 @@
       <img src="/public/translunar.png" align="middle"/>REST Test
    </a>
 </h2>
-<h3>Delete a User</h3>
+<h3>Message a User</h3>
 <p>
    <form name="selectForm" id="selectForm" method="get">
       <p>
          <select name="id" id="userSelectList">
 
          </select>
-      </p><p>
-         <input id="formButton" type="button" value="Delete">
+      </p>
+       <p>
+       <table>
+         <tr><td>ID:</td><td><input class="input" type="text" size="25" id="userid" name="userid" readonly><input class="input" type="hidden" name="toUserId" id="toUserId"></td></tr>
+         <tr><td>Username:</td><td><input class="input" type="text" size="25" id="username" name="username" readonly><input class="input" type="hidden" name="toUsername" id="toUsername"></td></tr>
+         <tr><td>Subject:</td><td><input class="input" type="text" size="25" name="subject"></td></tr>
+         <tr><td>Message:</td><td><input class="input" type="text" size="25" name="message"></td></tr>
+       </table>
+       </p>
+       <p>
+         <input id="formButton" type="button" value="Send Message">
          <input id="clearFormButton" type="button" value="Clear Form">
       </p>
    </form>
 </p>
-<hr>
-<p><font color="green"><b>This page requires Administrator access. Create and login with an Admin role user.</b></font></p>
+
 <hr>
 <p>
 <a href="/public/login.html">Login</a></p><p>
@@ -30,12 +38,23 @@
 <a href="/public/read.html"><b>R</b>ead a User</a></p><p>
 <a href="/public/readList.html"><b>R</b>ead a list of Users</a></p><p>
 <a href="/public/demo.html">Home</a></p>
+
+<h3>Message Links</h3>
+<p>
+    <a href="/public/read_message.html">Read & Archive Messages</a>
+</p>
+<p>
+    <a href="/public/admin_send_message.html">Admin Only: Send System-wide message</a>
+</p>
+
 <script type="text/javascript">
    $(document).ready(function() {
      $('#formButton').click(function() { formSubmit(); });
      $('#clearFormButton').click(function() { clearForm(); });
-     checkAdminRole();
-     $('.input').attr("disabled", "disabled");
+     $('#userSelectList').click(function() { onSelect(); });
+     $('#userid').attr("disabled", "disabled");
+     $('#username').attr("disabled", "disabled");
+     loadData();
    });
 
    function loadData() {
@@ -62,15 +81,17 @@
 
    function formSubmit() {
       $.ajax({
-         type: "DELETE",
-         url: "http://localhost:3000/api/v1/user",
+         type: "POST",
+         url: "http://localhost:3000/api/v1/messageThread",
          data: $('#selectForm').serialize(),
          success: function(data) {
             if (data === null || data.length == 0) {
                alert("No data found.");
             } else {
                console.log(data);
+               clearForm();
                loadData();
+                alert('Sent');
             }
          },
          error:function(err) {
@@ -81,11 +102,18 @@
       });
    }
 
+   function onSelect() {
+       $('#toUsername').val($("#userSelectList").find("option:selected").text());
+       $('#toUserId').val($("#userSelectList").val());
+       $('#username').val($("#userSelectList").find("option:selected").text());
+       $('#userid').val($("#userSelectList").val());
+   }
+
    function buildSelectList(dataArr) {
       $('#userSelectList').empty();
-      $('#userSelectList').append('<option value="null" selected="selected">-- Select Username --</option>');
+      $('#userSelectList').append('<option value="null" >-- Select Username --</option>');
       for (i = 0; i < dataArr.length; i++) {
-         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" selected="selected">' + dataArr[i].username + '</option>');
+         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" >' + dataArr[i].username + '</option>');
       }
       clearForm();
    }
@@ -93,21 +121,12 @@
       $('#selectForm')[0].reset();
       $('#userSelectList').val(null);
    }
-   function checkAdminRole() {
-      $.ajax({
-         type: "GET",
-         url: "http://localhost:3000/api/v1/roles/access",
-         data: {'id':$('#userSelectList').val(), 'role' : 'Admin'},
-         success: function(data) {
-            $('input').removeAttr("disabled");
-            loadData();
-         },
-         error:function(err) {
-            alert("This page requires Administrator access. Create and login with an Admin role user.");
-         },
-         dataType: 'json'
-      });
-   }
+
 </script>
 
 </body>
+
+
+
+
+

@@ -10,7 +10,7 @@ var mongoose = require('mongoose')
  */
 var SystemMessageSchema = new Schema({
   id: ObjectId
-  , createDate: { type: ISODate }
+  , createDate: { type: Date }
   , fromUserId: { type: ObjectId }
   , fromUsername: { type: String, trim: true }
 
@@ -19,6 +19,7 @@ var SystemMessageSchema = new Schema({
 })
 
 module.exports = mongoose.model('SystemMessage', SystemMessageSchema)
+
 
 
 

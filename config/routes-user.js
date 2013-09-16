@@ -179,7 +179,6 @@ module.exports = function (app, config, auth, mailHelper) {
               if (req.params.cPassword) {
                 if (!user.authenticate(req.params.cPassword)) {
                   return next(new restify.MissingParameterError('You must enter your current password to verify.'));
-
                 }
                 user.tempPasswordFlag = true;
                 user.password = req.params.password;
@@ -289,6 +288,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

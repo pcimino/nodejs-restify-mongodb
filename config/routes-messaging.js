@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
   , MessageThread = mongoose.model('MessageThread')
   , SystemMessage = mongoose.model('SystemMessage')
   , SystemMessageArchive = mongoose.model('SystemMessageArchive')
+  , User = mongoose.model('User')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
@@ -20,21 +21,47 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
    function postMessageThread(req, res, next) {
+      // console.log(req.session.user + "::" + req.params.fromUsername +":" + req.params.fromUserId +":" + req.params.toUsername +":" + req.params.toUserId +":" + req.params.subject + ":" + req.params.message)
       if (req.session && req.session.user) {
-        var messageThread = new MessageThread(req.params);
+        if (!req.params.toUsername) {
+          return next(new restify.MissingParameterError('You must enter a recipient.'));
+        }
+        if (!req.params.toUserId) {
+          return next(new restify.MissingParameterError('You must enter a recipient.'));
+        }
+        if (!req.params.message) {
+          return next(new restify.MissingParameterError('You must enter a message.'));
+        }
+        if (!req.params.subject) {
+          return next(new restify.MissingParameterError('You must enter a subject.'));
+        }
+        var messageThread = new MessageThread(req.params); // why isn't this working??
         messageThread.version = 1;
         messageThread.fromUsername = req.session.user.username;
-        messageThread.fromUserId = req.session.user._id;
+        messageThread.fromUserId = req.session.user;
+        messageThread.toUsername = req.params.toUsername;
+        messageThread.toUserId = req.params.toUserId;
         messageThread.message = null;
         messageThread.messages = [];
         messageThread.messages.push(req.params.message);
         messageThread.createDate = new Date();
 
-        messageThread.save(function (err, messageThread) {
+        id = req.session.user;
+        User.findById(id, function (err, user) {
           if (!err) {
-            res.send({});
+            messageThread.fromUsername = user.username;
+            // console.log(JSON.stringify(messageThread));
+            messageThread.save(function (err, messageThread) {
+              if (!err) {
+                res.send({});
+              } else {
+                return next(err);
+              }
+            });
           } else {
-            return next(err);
+            var errObj = err;
+            if (err.err) errObj = err.err;
+            return next(new restify.InternalError(errObj));
           }
         });
       }
@@ -59,14 +86,49 @@ module.exports = function (app, config, auth) {
    /**
    * Get a message thread
    *
-   * @param request filter (optional) by fromUsername, fromUserId, archiveFlag if true does not filter out archived
+   * @param request filter (optional) by fromUsername, toUsername, archiveFlag if true does not filter out archived
    * @param response array of MessageThreads
    * @param next method
    */
    function getMessageThread(req, res, next) {
       if (req.session && req.session.user) {
-// archiveFlag, senderFlag (true retrieves messageThreads user started, false: messageThreads started by another user)
+        var archived = true;
+        if (!req.params.archiveFlag) archived = false;
+
+        // TODO is there a way to make a complex query [(A && B) || (C && D)] ?
+        var queryFrom = MessageThread.where('fromUserId', req.session.user);
+        var queryTo = MessageThread.where('toUserId', req.session.user);
+        if (!req.params.archiveFlag) {
+          queryFrom = queryFrom.where('fromArchiveFlag', false);
+          queryTo = queryTo.where('toArchiveFlag', false);
+        }
+
+        queryFrom.exec(function (err, fromResults) {
+          if (!err) {
+            queryTo.exec(function (err, toResults) {
+              if (!err) {
+                for (var i = 0; i < toResults.length; i++) {
+                  fromResults.push(toResults[i]);
+                }
+                res.send(fromResults); // TODO how to sort ???
+              } else {
+                res.send({});
+              }
+            });
+          } else {
+            res.send({});
+          }
+        });
       }
+     return next();
+     /* Something like this: http://stackoverflow.com/questions/13279992/complex-mongodb-query-with-multiple-or/13280188#comment18104912_13280188
+    MessageThread.find({
+      'fromUserId', req.session.user
+      $or: [
+          { 'toUserId', req.session.user }
+      ]
+    }, callback);
+     */
    }
 
    /**
@@ -77,17 +139,35 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
    function archiveMessageThread(req, res, next) {
-      if (req.session && req.session.user) {
-        // only archive this users' view
-        // not using an else, possibly admin might moderate a message?
-        /*
-        if (req.session.user._id == messageThread.fromUserId) {
-          messageThread.fromArchiveFlag = false;
+        if (req.session && req.session.user) {
+          if (!req.params.messageThreadId) {
+            return next(new restify.MissingParameterError('You must enter a Message Id.'));
+          }
+          MessageThread.findById(req.params.messageThreadId, function (err, messageThread) {
+             if (!err) {
+               if (req.session.user == messageThread.fromUserId) {
+                 messageThread.fromArchiveFlag = true;
+               }
+               if (req.session.user == messageThread.toUserId) {
+                 messageThread.toArchiveFlag = true;
+               }
+
+               messageThread.save(function (err) {
+                 if (!err) {
+                    res.send({});
+                    return next();
+                 } else {
+                    var errObj = err;
+                    if (err.err) errObj = err.err;
+                    return next(new restify.InternalError(errObj));
+                 }
+              });
+           } else {
+              return next(new restify.MissingParameterError('ObjectId required.'));
+           }
+        });
+
         }
-        if (req.session.user._id == messageThread.toUserId) {
-          messageThread.toArchiveFlag = false;
-        }*/
-      }
    }
 
    /**
@@ -99,17 +179,36 @@ module.exports = function (app, config, auth) {
    */
    function postSystemMessage(req, res, next) {
       if (req.session && req.session.user) {
+        if (!req.params.message) {
+          return next(new restify.MissingParameterError('You must enter a message.'));
+        }
+        if (!req.params.subject) {
+          return next(new restify.MissingParameterError('You must enter a subject.'));
+        }
         var systemMessage = new SystemMessage(req.params);
-        systemMessage.createDate = new Date();
-        systemMessage.fromUsername = req.session.user.username;
-        systemMessage.fromUserId = req.session.user._id;
-        systemMessage.save(function (err, systemMessage) {
+          systemMessage.createDate = new Date();
+          systemMessage.fromUserId = req.session.user;
+
+        id = req.session.user;
+        User.findById(id, function (err, user) {
           if (!err) {
-            res.send({});
+              systemMessage.fromUsername = user.username;
+              systemMessage.save(function (err, systemMessageResult) {
+              if (!err) {
+                res.send({});
+              } else {
+                return next(err);
+              }
+            });
           } else {
-            return next(err);
+            var errObj = err;
+            if (err.err) errObj = err.err;
+            return next(new restify.InternalError(errObj));
           }
         });
+
+
+
       }
    }
 
@@ -122,26 +221,35 @@ module.exports = function (app, config, auth) {
    */
    function getSystemMessage(req, res, next) {
       if (req.session && req.session.user) {
+             /* Something like this: http://stackoverflow.com/questions/13279992/complex-mongodb-query-with-multiple-or/13280188#comment18104912_13280188
+    MessageThread.find({
+      'fromUserId', req.session.user
+      $or: [
+          { 'toUserId', req.session.user }
+      ]
+    }, callback);
+     */
+        // "mongoose-joins"
+        // SystemMessageArchive SystemMessage
+
           if (req.params.archiveFlag) {
               // skip the archive, retrieve all messages
               filterSystemMessage(req, res, null, next);
          } else {
              // retrieve all the archive flags for this user then filter the
-             var query = SystemMessageArchive.where( 'userId', req.session.user._id );
+             var query = SystemMessageArchive.where( 'userId', req.session.user );
              query.find(function (err, systemMessageArchive) {
                 if (!err) {
-                   if (systemMessageArchive) {
-                       filterSystemMessage(req, res, systemMessageArchive, next);
-                   } else {
-                       res.send({});
-                       return next();
-                   }
+                  // console.log(JSON.stringify(systemMessageArchive))
+                   filterSystemMessage(req, res, systemMessageArchive, next);
                 } else {
                       var errObj = err;
                       if (err.err) errObj = err.err;
                       return next(new restify.InternalError(errObj));
                 }
              });
+         }
+
       }
    }
   /**
@@ -152,15 +260,15 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
     function filterSystemMessage(req, res, systemMessageArchiveArr, next) {
-      res.send(SystemMessage.find(function (err, systemMessageArr) {
-        if (!err) {
+      SystemMessage.find(function (err, systemMessageArr) {
           if (systemMessageArr) {
             if (systemMessageArchiveArr) {
                 // going to be SLOW so admins need to keep the message count low and purge them when done
                 for (var i = systemMessageArr.length-1; i >= 0; i--) {
                   for (var j = 0; j < systemMessageArchiveArr.length; j++) {
-                      if (systemMessageArr[i]._id == systemMessageArchiveArr[j].systemMessageId) {
-                          systemMessageArr.split(i, 1);
+                      if (systemMessageArr[i]._id.toString() == systemMessageArchiveArr[j].systemMessageId.toString()) {
+                        systemMessageArr.splice(i, 1);
+                        j = systemMessageArchiveArr.length;
                       }
                   }
                 }
@@ -170,13 +278,33 @@ module.exports = function (app, config, auth) {
             res.send({});
             return next();
           }
-        } else {
-          var errObj = err;
-          if (err.err) errObj = err.err;
-          return next(new restify.InternalError(errObj));
-        }
       });
     }
+    /**
+     * Archive a system messages
+     *
+     * @param request input systemMessageId
+     * @param response
+     * @param next method
+     */
+     function archiveSystemMessage(req, res, next) {
+        if (req.session && req.session.user) {
+          if (!req.params.systemMessageId) {
+            return next(new restify.MissingParameterError('You must enter a System Message Id.'));
+          }
+
+          var systemMessageArchive = new SystemMessageArchive(req.params);
+          systemMessageArchive.userId = req.session.user;
+            systemMessageArchive.save(function (err, systemMessage) {
+            if (!err) {
+              res.send({});
+            } else {
+              return next(err);
+            }
+          });
+        }
+     }
+
     /**
      * Purge a system messages
      *
@@ -194,6 +322,8 @@ module.exports = function (app, config, auth) {
                return next(new restify.MissingParameterError('ObjectId required.'));
             }
           });
+        } else {
+          return next(new restify.MissingParameterError('You must enter a message id.'));
         }
      }
 
@@ -231,7 +361,7 @@ module.exports = function (app, config, auth) {
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
-     app.delete('/api/v1/messageThread', auth.requiresLogin, archiveMessageThread);
+     app.del('/api/v1/messageThread', auth.requiresLogin, archiveMessageThread);
 
      /**
      * Post a system message thread
@@ -258,7 +388,7 @@ module.exports = function (app, config, auth) {
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
-     app.delete('/api/v1/systemMessage', auth.requiresLogin, archiveSystemMessage);
+     app.del('/api/v1/systemMessage', auth.requiresLogin, archiveSystemMessage);
 
      /**
      * Deletes a System Message by the administrator
@@ -267,9 +397,11 @@ module.exports = function (app, config, auth) {
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
-     app.delete('/api/v1/systemMessage/purge', auth.adminAccess, purgeSystemMessage);
+     app.del('/api/v1/systemMessage/purge', auth.adminAccess, purgeSystemMessage);
 
 }
+
+
 
 
 

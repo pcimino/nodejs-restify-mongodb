@@ -92,13 +92,13 @@ module.exports = function (app, config, auth) {
    */
    function getMessageThread(req, res, next) {
       if (req.session && req.session.user) {
-        var archived = true;
-        if (!req.params.archiveFlag) archived = false;
+        var noArchived = true;
+        if (req.params.archiveFlag && req.params.archiveFlag == 'true') noArchived = false;
 
         // TODO is there a way to make a complex query [(A && B) || (C && D)] ?
         var queryFrom = MessageThread.where('fromUserId', req.session.user);
         var queryTo = MessageThread.where('toUserId', req.session.user);
-        if (!req.params.archiveFlag) {
+        if (noArchived) {
           queryFrom = queryFrom.where('fromArchiveFlag', false);
           queryTo = queryTo.where('toArchiveFlag', false);
         }
@@ -112,11 +112,11 @@ module.exports = function (app, config, auth) {
                 }
                 res.send(fromResults); // TODO how to sort ???
               } else {
-                res.send({});
+                res.send(err);
               }
             });
           } else {
-            res.send({});
+            res.send(err);
           }
         });
       }
@@ -232,7 +232,7 @@ module.exports = function (app, config, auth) {
         // "mongoose-joins"
         // SystemMessageArchive SystemMessage
 
-          if (req.params.archiveFlag) {
+          if (req.params.archiveFlag && req.params.archiveFlag == 'true') {
               // skip the archive, retrieve all messages
               filterSystemMessage(req, res, null, next);
          } else {
@@ -400,6 +400,7 @@ module.exports = function (app, config, auth) {
      app.del('/api/v1/systemMessage/purge', auth.adminAccess, purgeSystemMessage);
 
 }
+
 
 
 

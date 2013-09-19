@@ -7,6 +7,9 @@ This is a basic Node.js setup demonstrating:
 - Basic (crude) session id via cookie
 - Static content
 
+## ***Recent Changes*** ##
+Implementing the ability to login with username or email address. This involves enforcing uniqueness on these fields. So you may need to wipe or fix your data manually. To simplify this, email and username will also be stored in lowercase to avoid user confusion.
+
 ## Quick Start ##
 If you're new to Node.js and/or Mongo DB, these steps will get you started. Advanced users may want to look at the start-node.bat script and configure it for their environment. *nix shell scripts are also included, run `chmod 755 *.sh` if needed.
   

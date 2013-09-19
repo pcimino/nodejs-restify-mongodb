@@ -190,15 +190,10 @@ module.exports = function (app, config, auth, mailHelper) {
                if (!err) {
                   res.send(user);
 
-                 // generate and send a verification code
+                  // generate and send a verification code to swap email address
                   if (user.newEmail) {
-                     if (config.requireVerifiedEmail) {
                        // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
                        mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
-                     } else {
-                       user.email = user.newEmai;
-                       user.newEmai = '';
-                     }
                   }
                   return next();
                } else {

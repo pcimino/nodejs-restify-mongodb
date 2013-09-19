@@ -33,8 +33,14 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
    function login(req, res, next) {
-      var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
-      query.findOne(function (err, user) {
+      // login with username or email, email could be in the username field if the UI only has one input field
+      var queryVal = req.params.username;
+      if (!queryVal || queryVal.length === 0) {
+          queryVal = req.params.email;
+      }
+
+      //var query = User.or([{'username': new RegExp('^'+req.params.username+'$', 'i')}, {'email': new RegExp('^'+req.params.username+'$', 'i')}, {'email': new RegExp('^'+req.params.email+'$', 'i')}] );
+      User.findOne({$or :[{'username': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}]}, function (err, user) {
          if (err) {
             res.send(err);
            return next();
@@ -194,4 +200,5 @@ module.exports = function (app, config, auth) {
       res.send({'message':'Success'});
    });
 }
+
 

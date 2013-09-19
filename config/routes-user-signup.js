@@ -100,6 +100,45 @@ module.exports = function (app, config, auth, mailHelper) {
    }
 
   /**
+   * Search for existing email
+   * https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
+   * @param request
+   * @param response
+   * @param next method
+   */
+   function checkEmail(req, res, next) {
+      if (req.params.newEmail != null && req.params.newEmail != '') {
+         var query = User.where( 'email', new RegExp('^'+req.params.newEmail+'$', 'i') );
+         query.count(function(err, count) {
+            if (!err) {
+               if (count > 0) {
+                  return next(new restify.InternalError('Email already in use.'));
+               }
+            } else {
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
+            }
+         });
+      } else if (req.params.email != null && req.params.email != '') {
+         var query = User.where( 'email', new RegExp('^'+req.params.email+'$', 'i') );
+         query.count(function(err, count) {
+            if (!err) {
+               if (count > 1) {
+                  return next(new restify.InternalError('Email already in use.'));
+               }
+            } else {
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
+            }
+         });
+      }
+     res.send({});
+     return next();
+   }
+
+  /**
    * User requests a new password
    * @param request
    * @param response
@@ -158,6 +197,14 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.get('/api/v1/user/username/exists', checkUsername);
 
+   /**
+   * Search for email
+   *
+   * @param path
+   * @param promised callback
+   */
+   app.get('/api/v1/user/email/exists', checkEmail);
+
 
    /**
    * resend the verification link
@@ -179,6 +226,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
 
 
 

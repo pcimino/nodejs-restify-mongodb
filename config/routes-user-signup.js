@@ -107,24 +107,14 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function checkEmail(req, res, next) {
-      if (req.params.newEmail != null && req.params.newEmail != '') {
-         var query = User.where( 'email', new RegExp('^'+req.params.newEmail+'$', 'i') );
-         query.count(function(err, count) {
-            if (!err) {
-               if (count > 0) {
-                  return next(new restify.InternalError('Email already in use.'));
-               }
-            } else {
-              var errObj = err;
-              if (err.err) errObj = err.err;
-              return next(new restify.InternalError(errObj));
-            }
-         });
-      } else if (req.params.email != null && req.params.email != '') {
+      if (req.params.email != null && req.params.email != '') {
          var query = User.where( 'email', new RegExp('^'+req.params.email+'$', 'i') );
          query.count(function(err, count) {
             if (!err) {
-               if (count > 1) {
+               if (count === 0) {
+                  res.send({});
+                  return next();
+               } else {
                   return next(new restify.InternalError('Email already in use.'));
                }
             } else {
@@ -133,9 +123,25 @@ module.exports = function (app, config, auth, mailHelper) {
               return next(new restify.InternalError(errObj));
             }
          });
+      } else if (req.params.newEmail != null && req.params.newEmail != '') {
+         var query = User.where( 'email', new RegExp('^'+req.params.newEmail+'$', 'i') );
+         query.count(function(err, count) {
+            if (!err) {
+               if (count === 0) {
+                  res.send({});
+                  return next();
+               } else {
+                  return next(new restify.InternalError('Email already in use.'));
+               }
+            } else {
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
+            }
+         });
+      } else {
+         return next(new restify.MissingParameterError('Email required.'));
       }
-     res.send({});
-     return next();
    }
 
   /**

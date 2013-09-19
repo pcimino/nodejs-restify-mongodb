@@ -22,6 +22,7 @@ module.exports = {
           , sendEmail: false
           , browserPreview: true
       }
+      , requireVerifiedEmail: true // UNTESTED, if false this *should* allow the user to change email address without having to verify it
       , version: '0.5.0'
     }
     , test: {
@@ -39,4 +40,5 @@ module.exports = {
         , secureUserSignup: true
     }
 }
+
 

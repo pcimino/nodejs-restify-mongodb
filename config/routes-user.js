@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , UserList = mongoose.model('UserList')
   , VerifyCode = mongoose.model('VerifyCode')
+  , MessageThread = mongoose.model('MessageThread')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
@@ -191,8 +192,13 @@ module.exports = function (app, config, auth, mailHelper) {
 
                  // generate and send a verification code
                   if (user.newEmail) {
-                     // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
-                     mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
+                     if (config.requireVerifiedEmail) {
+                       // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
+                       mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
+                     } else {
+                       user.email = user.newEmai;
+                       user.newEmai = '';
+                     }
                   }
                   return next();
                } else {
@@ -288,6 +294,8 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
+
 
 
 

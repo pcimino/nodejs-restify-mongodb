@@ -186,27 +186,49 @@ module.exports = function (app, config, auth, mailHelper) {
               }
             }
 
-            user.save(function (err) {
-               if (!err) {
-                  res.send(user);
-
-                  // generate and send a verification code to swap email address
-                  if (user.newEmail) {
-                       // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
-                       mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
+            if (user.newEmail) {
+              // verify email address is not in use
+               var query = User.where( 'email', new RegExp('^'+user.newEmail+'$', 'i') );
+               query.count(function(err, count) {
+                  if (!err) {
+                     if (count === 0) {
+                        saveUser(req, res, next, user);
+                     } else {
+                        return next(new restify.InternalError('Email already in use.'));
+                     }
+                  } else {
+                    var errObj = err;
+                    if (err.err) errObj = err.err;
+                    return next(new restify.InternalError(errObj));
                   }
-                  return next();
-               } else {
-                  var errObj = err;
-                  if (err.err) errObj = err.err;
-                  return next(new restify.InternalError(errObj));
-               }
-            });
+               });
+            } else {
+              saveUser(req, res, next, user);
+            }
+
          } else {
             return next(new restify.MissingParameterError('ObjectId required.'));
          }
       });
    }
+   /** helper function to execute the save */
+  function saveUser(req, res, next, user) {
+      user.save(function (err) {
+        if (!err) {
+          res.send(user);
+          // generate and send a verification code to swap email address
+          if (user.newEmail) {
+            // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
+            mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
+          }
+          return next();
+        } else {
+          var errObj = err;
+          if (err.err) errObj = err.err;
+          return next(new restify.InternalError(errObj));
+        }
+      });
+  }
 
   /**
    * Delete an existing user with matching id
@@ -289,6 +311,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

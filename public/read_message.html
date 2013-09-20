@@ -133,7 +133,8 @@
       $("#dynamicSystemMessageTable").append("<tr>");
       $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Subject</th>");
       $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Message</th>");
-      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Action</th>");
+      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Archive (Hide message)</th>");
+      $("#dynamicSystemMessageTable").append("<th style='text-align:left;'>Delete (Admin only)</th>");
       $("#dynamicSystemMessageTable").append("</tr>");
       $("#dynamicSystemMessageTable").append("</thead>");
 
@@ -141,9 +142,10 @@
 
       for (i = 0; i < dataArr.length; i++) {
          $("#dynamicSystemMessageTable").append("<tr>");
-         $("#dynamicSystemMessageTable").append("<td width='10%'>" + dataArr[i].subject + "</td>");
+         $("#dynamicSystemMessageTable").append("<td width='5%'>" + dataArr[i].subject + "</td>");
          $("#dynamicSystemMessageTable").append("<td width='10%'>" + dataArr[i].message + "</td>");
-         $("#dynamicSystemMessageTable").append("<td width='5%'><input type='button' onclick='archiveSysMessage(\"" + dataArr[i]._id + "\")' value='Archive'></td>");
+          $("#dynamicSystemMessageTable").append("<td width='10%'><input type='button' onclick='archiveSysMessage(\"" + dataArr[i]._id + "\")' value='Archive'></td>");
+          $("#dynamicSystemMessageTable").append("<td width='10%'><input type='button' onclick='deleteSysMessage(\"" + dataArr[i]._id + "\")' value='Delete'></td>");
 
          $("#dynamicSystemMessageTable").append("</tr>");
       }
@@ -156,6 +158,25 @@
           $.ajax({
              type: "DELETE",
              url: "http://localhost:3000/api/v1/systemMessage",
+              data: {'systemMessageId': sysMessageId},
+             success: function(data) {
+                if (data === null || data.length == 0) {
+                   alert("No data found.");
+                } else {
+                   location.reload(true);
+                }
+             },
+             error:function(err) {
+                console.log(err);
+                 alert(JSON.parse(err.responseText).message)
+             },
+             dataType: 'json'
+          });
+    }
+    function deleteSysMessage(sysMessageId) {
+          $.ajax({
+             type: "DELETE",
+              url: "http://localhost:3000/api/v1/systemMessage/delete",
               data: {'systemMessageId': sysMessageId},
              success: function(data) {
                 if (data === null || data.length == 0) {
@@ -195,6 +216,7 @@
 </script>
 
 </body>
+
 
 
 

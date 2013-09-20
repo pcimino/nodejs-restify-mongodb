@@ -73,21 +73,7 @@
       });
    }
 
-   function onSelect() {
-       $('#toUserName').val($("#userSelectList").find("option:selected").text());
-       $('#toUserId').val($("#userSelectList").val());
-       $('#username').val($("#userSelectList").find("option:selected").text());
-       $('#userid').val($("#userSelectList").val());
-   }
 
-   function buildSelectList(dataArr) {
-      $('#userSelectList').empty();
-      $('#userSelectList').append('<option value="null" >-- Select Username --</option>');
-      for (i = 0; i < dataArr.length; i++) {
-         $('#userSelectList').append('<option value="' + dataArr[i]._id + '" >' + dataArr[i].username + '</option>');
-      }
-      clearForm();
-   }
    function clearForm() {
       $('#selectForm')[0].reset();
       $('#userSelectList').val(null);
@@ -96,6 +82,7 @@
 </script>
 
 </body>
+
 
 
 

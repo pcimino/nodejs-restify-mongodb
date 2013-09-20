@@ -22,7 +22,7 @@ module.exports = {
           , sendEmail: false
           , browserPreview: true
       }
-      , version: '0.9.1'
+      , version: '0.9.2'
     }
     , test: {
         root: require('path').normalize(__dirname + '/..')
@@ -39,6 +39,7 @@ module.exports = {
         , secureUserSignup: true
     }
 }
+
 
 
 

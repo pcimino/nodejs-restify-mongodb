@@ -313,17 +313,29 @@ module.exports = function (app, config, auth) {
      * @param next method
      */
      function purgeSystemMessage(req, res, next) {
-        if (req.session && req.session.systemMessageId) {
+        if (req.session && req.session.user) {
+          if (!req.params.systemMessageId) {
+            return next(new restify.MissingParameterError('You must enter a System Message Id.'));
+          }
+
           SystemMessage.findById(req.params.systemMessageId).remove(function (err) {
             if (!err) {
-               res.send({});
-               return next();
+                var query = SystemMessageArchive.where( 'systemMessageId', req.params.systemMessageId );
+                query.exec(function (err, sysMessageArr) {
+                if (!err) {
+                   for (var i = 0; i < sysMessageArr.length; i++) {
+                     sysMessageArr[i].remove(function (err) { if (err) {console.log(err);}});
+                   }
+                   res.send({});
+                   return next();
+                } else {
+                   return next(new restify.MissingParameterError('ObjectId required.'));
+                }
+              });
             } else {
                return next(new restify.MissingParameterError('ObjectId required.'));
             }
           });
-        } else {
-          return next(new restify.MissingParameterError('You must enter a message id.'));
         }
      }
 
@@ -397,9 +409,10 @@ module.exports = function (app, config, auth) {
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
-     app.del('/api/v1/systemMessage/purge', auth.adminAccess, purgeSystemMessage);
+     app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
 }
+
 
 
 

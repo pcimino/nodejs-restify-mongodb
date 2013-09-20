@@ -22,7 +22,7 @@ module.exports = {
           , sendEmail: false
           , browserPreview: true
       }
-      , version: '0.5.0'
+      , version: '0.9.0'
     }
     , test: {
         root: require('path').normalize(__dirname + '/..')

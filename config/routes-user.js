@@ -160,6 +160,10 @@ module.exports = function (app, config, auth, mailHelper) {
             }
             if (req.params.role) {
               user.role = req.params.role;
+              if (user.role == 'Admin' && !config.openUserSignup) {
+                //TODO allow admin to modify create/modify a user with Admin access
+                return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
+              }
             }
 
             // validations
@@ -289,6 +293,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

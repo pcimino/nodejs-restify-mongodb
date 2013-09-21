@@ -7,7 +7,7 @@ module.exports = {
       , app: {
           name: 'Nodejs Restify Mongoose Demo'
       }
-      , secureUserSignup: true // set to false to create users and assign a role, if true API only allows admins to create an Admin role user
+      , openUserSignup: false // set to true to create users and assign a role, if false, API only allows admins to create an Admin role user
       , usernameOrPassword: true // true: Login, password reset and resend email verification can use either password or username, false: only username
       , host: 'localhost'
 	    , port: '3000'
@@ -23,23 +23,24 @@ module.exports = {
           , sendEmail: false
           , browserPreview: true
       }
-      , version: '0.9.2'
+      , version: '0.9.3'
     }
     , test: {
         root: require('path').normalize(__dirname + '/..')
         , app: {
             name: 'Nodejs Restify Mongoose Demo'
         }
-        , secureUserSignup: true
+        , openUserSignup: false
     }
     , production: {
         root: require('path').normalize(__dirname + '/..')
         , app: {
             name: 'Nodejs Restify Mongoose Demo'
         }
-        , secureUserSignup: true
+        , openUserSignup: false
     }
 }
+
 
 
 

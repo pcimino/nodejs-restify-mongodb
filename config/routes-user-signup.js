@@ -31,6 +31,10 @@ module.exports = function (app, config, auth, mailHelper) {
        return next(new restify.MissingParameterError('Please enter a valid email address.'));
      }
      var user = new User(req.params);
+     if (user.role == 'Admin' && !config.openUserSignup) {
+       //TODO allow admin to modify create/modify a user with Admin access
+       return next(new restify.MissingParameterError('You cannot create an Administrator.'));
+     }
       if (user.username != null && user.username != '') {
          user.save(function (err, user) {
             if (!err) {
@@ -258,6 +262,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
 
 
 

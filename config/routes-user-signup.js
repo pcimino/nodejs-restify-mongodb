@@ -54,20 +54,34 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function resendVerifyCode(req, res, next) {
-      var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
-      query.findOne(function (err, user) {
-         if (err) {
-            res.send(err);
-           return next();
-         } else if (!user) {
-            return next(new restify.NotAuthorizedError("Invalid username."));
-            return next();
-         } else {
-            mail.generateVerifyCode(req, res, next, user);
-            res.send(user);
-            return next();
-         }
-      });
+      var queryVal = req.params.username;
+      if (req.params.email) {
+        queryVal = req.params.email;
+      }
+      if (queryVal) {
+          var queryObj;
+          if (config.usernameOrPassword) {
+            queryObj = {$or :[{'username': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}]};
+          } else {
+            queryObj = {'username': new RegExp('^'+queryVal+'$', 'i')};
+          }
+          User.findOne(queryObj, function (err, user) {
+           if (err) {
+              res.send(err);
+             return next();
+           } else if (!user) {
+              return next(new restify.NotAuthorizedError("Invalid username."));
+              return next();
+           } else {
+              mail.generateVerifyCode(req, res, next, user);
+              res.send(user);
+              return next();
+           }
+        });
+      }
+      else {
+         return next(new restify.MissingParameterError('Username or email address required.'));
+      }
    }
 
   /**
@@ -151,39 +165,51 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function sendNewPassword(req, res, next) {
-      var newPass = globalUtil.generatePassword();
-      var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
-      query.findOne(function (err, user) {
-         if (err) {
-            res.send(err);
-           return next();
-         } else if (!user) {
-            return next(new restify.NotAuthorizedError("Invalid username."));
-           return next();
-         } else {
-           user.password = newPass;
-           user.tempPasswordFlag = true;
-           user.save(function (err, user) {
-            if (!err) {
-              // send the new password
-             var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
-             var host = req.header('Host');
-             refer = refer.substring(0, refer.indexOf(host) + host.length);
-             var fullURL = refer + "/";
-             var messageBody = "Hello " + user.name + ",</br><p>Here is your new password. Please login and change it.</p><p>" + newPass + "</p>";
-             messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>"
+      var queryVal = req.params.username;
+      if (req.params.email) {
+        queryVal = req.params.email;
+      }
+      if (queryVal) {
+          var newPass = globalUtil.generatePassword();
+          var queryObj;
+          if (config.usernameOrPassword) {
+            queryObj = {$or :[{'username': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}]};
+          } else {
+            queryObj = {'username': new RegExp('^'+queryVal+'$', 'i')};
+          }
+          User.findOne(queryObj, function (err, user) {
+             if (err) {
+                res.send(err);
+               return next();
+             } else if (!user) {
+                return next(new restify.NotAuthorizedError("Invalid username."));
+               return next();
+             } else {
+               user.password = newPass;
+               user.tempPasswordFlag = true;
+               user.save(function (err, user) {
+                 if (!err) {
+                   // send the new password
+                   var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+                   var host = req.header('Host');
+                   refer = refer.substring(0, refer.indexOf(host) + host.length);
+                   var fullURL = refer + "/";
+                   var messageBody = "Hello " + user.name + ",</br><p>Here is your new password. Please login and change it.</p><p>" + newPass + "</p>";
+                   messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>"
 
-             var mailAddress = user.email;
-             mail.sendMail(mailAddress, 'Temporary Password Email', messageBody, true);
-             res.send(user);
-             return next();
-            } else {
-               return next(err);
-            }
-         });
-         }
-
-      });
+                   var mailAddress = user.email;
+                   mail.sendMail(mailAddress, 'Temporary Password Email', messageBody, true);
+                   res.send(user);
+                   return next();
+                 } else {
+                   return next(err);
+                 }
+               });
+             }
+        });
+      } else {
+         return next(new restify.MissingParameterError('Username or email address required.'));
+      }
    }
 
    // Set up routes
@@ -232,6 +258,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
 
 
 

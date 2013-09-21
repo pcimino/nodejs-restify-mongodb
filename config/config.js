@@ -8,6 +8,7 @@ module.exports = {
           name: 'Nodejs Restify Mongoose Demo'
       }
       , secureUserSignup: true // set to false to create users and assign a role, if true API only allows admins to create an Admin role user
+      , usernameOrPassword: true // true: Login, password reset and resend email verification can use either password or username, false: only username
       , host: 'localhost'
 	    , port: '3000'
 	    , db_prefix: 'mongodb'
@@ -22,7 +23,7 @@ module.exports = {
           , sendEmail: false
           , browserPreview: true
       }
-      , version: '0.9.1'
+      , version: '0.9.2'
     }
     , test: {
         root: require('path').normalize(__dirname + '/..')
@@ -39,6 +40,7 @@ module.exports = {
         , secureUserSignup: true
     }
 }
+
 
 
 

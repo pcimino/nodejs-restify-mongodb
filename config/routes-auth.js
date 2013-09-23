@@ -38,29 +38,36 @@ module.exports = function (app, config, auth) {
       if (!queryVal || queryVal.length === 0) {
           queryVal = req.params.email;
       }
-
-      //var query = User.or([{'username': new RegExp('^'+req.params.username+'$', 'i')}, {'email': new RegExp('^'+req.params.username+'$', 'i')}, {'email': new RegExp('^'+req.params.email+'$', 'i')}] );
-      User.findOne({$or :[{'username': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}]}, function (err, user) {
-         if (err) {
-            res.send(err);
-           return next();
-         } else if (!user) {
-            return next(new restify.NotAuthorizedError("Invalid username."));
-           return next();
-         } else if (user.authenticate(req.params.password)) {
-          if (!user.emailValidatedFlag && !user.newEmail) {
-             // user account has never been validated
-             return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
-           } else {
-             req.session.user = user._id; //subscriber@subscriber
-			       res.send(user);
-             return next();
-           }
-         } else {
-			      return next(new restify.NotAuthorizedError("Invalid password."));
-         }
-
-      });
+      if (queryVal) {
+          var queryObj;
+          if (!config.usernameOrPassword) {
+            queryObj = {$or :[{'username': new RegExp('^'+queryVal+'$', 'i')}, {'email': new RegExp('^'+queryVal+'$', 'i')}]};
+          } else {
+            queryObj = {'username': new RegExp('^'+queryVal+'$', 'i')};
+          }
+          User.findOne(queryObj, function (err, user) {
+            if (err) {
+              res.send(err);
+              return next();
+            } else if (!user) {
+              return next(new restify.NotAuthorizedError("Invalid username."));
+              return next();
+            } else if (user.authenticate(req.params.password)) {
+              if (!user.emailValidatedFlag && !user.newEmail) {
+                // user account has never been validated
+                return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
+              } else {
+                req.session.user = user._id; //subscriber@subscriber
+                res.send(user);
+                return next();
+              }
+            } else {
+              return next(new restify.NotAuthorizedError("Invalid password."));
+            }
+          });
+      } else {
+        return next(new restify.MissingParameterError('Username or email address required.'));
+      }
    }
 
   /**
@@ -200,5 +207,6 @@ module.exports = function (app, config, auth) {
       res.send({'message':'Success'});
    });
 }
+
 
 

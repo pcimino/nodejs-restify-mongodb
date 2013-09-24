@@ -149,6 +149,64 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function putUser(req, res, next) {
+      if (req.session && req.session.user) {
+        if (req.params.id == req.session.user) {
+          User.findById(req.params.id, function (err, user) {
+             if (!err) {
+                // only change data if submit supplied it
+                if (req.params.name) {
+                  user.name = req.params.name;
+                }
+                if (req.params.username) {
+                  user.username = req.params.username;
+                }
+
+                putUserValidations(req, res, next, user);
+
+                if (req.params.role) {
+                  user.role = req.params.role;
+                  if (user.role == 'Admin' && !config.openUserSignup) {
+                    //TODO allow admin to modify create/modify a user with Admin access
+                    return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
+                  }
+                }
+
+                if (user.newEmail) {
+                    var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
+                    User.count(queryObj, function (err, count) {
+                    if (!err) {
+                      if (count === 0) {
+                            saveUser(req, res, next, user);
+                         } else {
+                            return next(new restify.InternalError('Email already in use.'));
+                         }
+                      } else {
+                        var errObj = err;
+                        if (err.err) errObj = err.err;
+                        return next(new restify.InternalError(errObj));
+                      }
+                   });
+                } else {
+                  saveUser(req, res, next, user);
+                }
+
+             } else {
+                return next(new restify.MissingParameterError('ObjectId required.'));
+             }
+          });
+        } else {
+          return next(new restify.MissingParameterError('User can only update their own information.'));
+        }
+      }
+   }
+  /**
+   * Admin: Modify an existing user
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
+   function putUserByAdmin(req, res, next) {
       User.findById(req.params.id, function (err, user) {
          if (!err) {
             // only change data if submit supplied it
@@ -158,44 +216,14 @@ module.exports = function (app, config, auth, mailHelper) {
             if (req.params.username) {
               user.username = req.params.username;
             }
-            if (req.params.role) {
-              user.role = req.params.role;
-              if (user.role == 'Admin' && !config.openUserSignup) {
-                //TODO allow admin to modify create/modify a user with Admin access
-                return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
-              }
-            }
 
-            // validations
-            if (req.params.email) {
-              if (!mail.validateEmail(req.params.email)) {
-                 return next(new restify.MissingParameterError('Please enter a valid email address.'));
-              } else {
-                user.newEmail = req.params.email;
-              }
-            }
-            if (req.params.password) {
-              if (req.params.password != req.params.vPassword) {
-                return next(new restify.MissingParameterError('Password and Verify Password must match.'));
-              }
-              if (req.params.password && !req.params.cPassword) {
-                return next(new restify.MissingParameterError('You must enter your current password to verify.'));
-              }
-              if (req.params.cPassword) {
-                if (!user.authenticate(req.params.cPassword)) {
-                  return next(new restify.MissingParameterError('You must enter your current password to verify.'));
-                }
-                user.tempPasswordFlag = true;
-                user.password = req.params.password;
-              }
-            }
+            putUserValidations(req, res, next, user);
 
             if (user.newEmail) {
-              // verify email address is not in use
-               var query = User.where( 'email', new RegExp('^'+user.newEmail+'$', 'i') );
-               query.count(function(err, count) {
-                  if (!err) {
-                     if (count === 0) {
+                var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
+                User.count(queryObj, function (err, count) {
+                if (!err) {
+                  if (count === 0) {
                         saveUser(req, res, next, user);
                      } else {
                         return next(new restify.InternalError('Email already in use.'));
@@ -215,6 +243,31 @@ module.exports = function (app, config, auth, mailHelper) {
          }
       });
    }
+  function putUserValidations(req, res, next, user) {
+      // validations
+      if (req.params.email) {
+        if (!mail.validateEmail(req.params.email)) {
+          return next(new restify.MissingParameterError('Please enter a valid email address.'));
+        } else {
+          user.newEmail = req.params.email;
+        }
+      }
+      if (req.params.password) {
+        if (req.params.password != req.params.vPassword) {
+          return next(new restify.MissingParameterError('Password and Verify Password must match.'));
+        }
+        if (req.params.password && !req.params.cPassword) {
+          return next(new restify.MissingParameterError('You must enter your current password to verify.'));
+        }
+        if (req.params.cPassword) {
+          if (!user.authenticate(req.params.cPassword)) {
+            return next(new restify.MissingParameterError('You must enter your current password to verify.'));
+          }
+          user.tempPasswordFlag = true;
+          user.password = req.params.password;
+        }
+      }
+  }
    /** helper function to execute the save */
   function saveUser(req, res, next, user) {
       user.save(function (err) {
@@ -304,6 +357,15 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.put('/api/v1/user', auth.requiresLogin, putUser);
 
+   /**
+   * Administrator updating user information
+   *
+   * @param path
+   * @param promised callback check authorization
+   * @param promised 2nd callback searches for users
+   */
+   app.put('/api/v1/admin/user', auth.adminAccess, putUserByAdmin);
+
    // Delete
    // 405 ? app.del('/api/v1/user/:id', deleteUser);
    /**
@@ -315,6 +377,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

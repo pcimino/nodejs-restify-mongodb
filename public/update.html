@@ -24,6 +24,8 @@
    <tr><td>
       <input id="formButton" type="button" value="Update">
       </td><td>
+      <input id="formButtonAdmin" type="button" value="Administrator Update">
+      </td><td>
       <input id="clearFormButton" type="button" value="Clear Form">
    </td></tr>
 </table>
@@ -42,7 +44,8 @@
 <script type="text/javascript">
    $(document).ready(function() {
      $('#formButton').click(function() { formSubmit(); });
-	   $('#roleSelectList').change(function() { setupRoleForm(); });
+     $('#formButtonAdmin').click(function() { formSubmitAdmin(); });
+	 $('#roleSelectList').change(function() { setupRoleForm(); });
      $('#clearFormButton').click(function() { clearForm(); });
 	   loadRoles();
      checkAuth();
@@ -84,6 +87,23 @@
       $.ajax({
          type: "PUT",
          url: "http://localhost:3000/api/v1/user",
+         data: $('#inputForm').serialize(),
+         success: function(data) {
+            alert("Success");
+         },
+         error:function(err) {
+            console.log(err);
+            alert(JSON.parse(err.responseText).message)
+         },
+         dataType: 'json'
+      });
+   }
+
+
+   function formSubmitAdmin() {
+      $.ajax({
+         type: "PUT",
+          url: "http://localhost:3000/api/v1/admin/user",
          data: $('#inputForm').serialize(),
          success: function(data) {
             alert("Success");
@@ -150,6 +170,7 @@
 </script>
 
 </body>
+
 
 
 

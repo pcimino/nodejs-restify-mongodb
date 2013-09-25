@@ -134,7 +134,7 @@ module.exports = function (app, config, auth) {
    /**
    * Archive a message thread
    *
-   * @param request can include an id, a username or no search param
+   * @param request includes messageThreadId
    * @param response
    * @param next method
    */
@@ -412,6 +412,7 @@ module.exports = function (app, config, auth) {
      app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
 }
+
 
 
 

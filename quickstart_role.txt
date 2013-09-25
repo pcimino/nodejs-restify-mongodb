@@ -1,20 +1,12 @@
 $ mongo
 MongoDB shell version: 2.4.6
 connecting to: test
-Server has startup warnings: 
-Mon Sep 23 18:50:35.280 [initandlisten] 
-Mon Sep 23 18:50:35.280 [initandlisten] ** NOTE: This is a 32 bit MongoDB binary.
-Mon Sep 23 18:50:35.280 [initandlisten] **       32 bit builds are limited to less than 2GB of data (or less with --journal).
-Mon Sep 23 18:50:35.280 [initandlisten] **       Note that journaling defaults to off for 32 bit and is currently off.
-Mon Sep 23 18:50:35.280 [initandlisten] **       See http://dochub.mongodb.org/core/32bit
-Mon Sep 23 18:50:35.280 [initandlisten] 
-> 
 > show dbs
 local	0.03125GB
 test_database	0.0625GB
-> > use test_database
+> use test_database
 switched to db test_database
-> > show collections
+> show collections
 sessionkeys
 system.indexes
 users
@@ -22,7 +14,7 @@ verifycodes
 
 > db.users.find({name:'admin'})
 { "_id" : ObjectId("5240c9dba58a7e5f58000007"), "username" : "admin", "name" : "admin", "email" : "pcimino@gmail.com", "hashed_password" : "1938643c2aaa6513b9c3b73aabe231bf4219f917", "tempPasswordFlag" : false, "role" : "User", "emailValidatedFlag" : true, "newEmail" : "", "__v" : 0 }
-> 
+>
 > user = db.users.findOne({name:'admin'})
 {
 	"_id" : ObjectId("5240c9dba58a7e5f58000007"),
@@ -44,7 +36,6 @@ Admin
 > user.role
 Admin
 > db.users.save(user)
-> 
 > user = db.users.findOne({name:'admin'})
 {
 	"_id" : ObjectId("5240c9dba58a7e5f58000007"),
@@ -58,7 +49,8 @@ Admin
 	"newEmail" : "",
 	"__v" : 0
 }
-> 
+>
+
 
 
 

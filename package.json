@@ -18,6 +18,7 @@
     , "socket.io": "latest"
     , "socket.io-client": "latest"
     , "se7ensky-restify-preflight": "latest"
+    , "toobusy": "latest"
   }
 }
 

@@ -19,13 +19,33 @@ var MessageThreadSchema = new Schema({
   , fromUsername: { type: String, trim: true }
   , toUsername: { type: String, trim: true }
   , subject: { type: String, trim: true }
-  , messages: [String]
+  , messages: []
   , fromArchiveFlag: { type: Boolean, default: false } // so the sender can archive their view of it independently
   , toArchiveFlag: { type: Boolean, default: false } // so the recipient can archive their view of it independently
   , inappropriateFlag: { type: Boolean, default: false } // moderator flags messages
 })
 
+/**
+ * Methods
+ */
+
+MessageThreadSchema.methods = {
+
+  /**
+   * AddReply - update the message array
+   *
+   * @param {String} from
+   * @param {String} message
+   * @api public
+   */
+   addReply: function(from, message) {
+     this.messages.push({from: from, message: message});
+     return true;
+   }
+}
+
 module.exports = mongoose.model('MessageThread', MessageThreadSchema)
+
 
 
 

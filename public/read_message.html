@@ -111,7 +111,7 @@
          $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].fromUsername + "</td>");
          $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].toUsername + "</td>");
          $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].subject + "</td>");
-         $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].messages[0] + "</td>");
+          $("#dynamicMessageTable").append("<td width='10%'>" + dataArr[i].messages[0].from + ':' + dataArr[i].messages[0].message + "</td>");
          $("#dynamicMessageTable").append("<td width='5%'><input type='button' onclick='archiveMessage(\"" + dataArr[i]._id + "\")' value='Archive'></td>");
 
          $("#dynamicMessageTable").append("</tr>");
@@ -216,6 +216,7 @@
 </script>
 
 </body>
+
 
 
 

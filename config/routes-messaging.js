@@ -37,14 +37,15 @@ module.exports = function (app, config, auth) {
         }
         var messageThread = new MessageThread(req.params); // why isn't this working??
         messageThread.version = 1;
-        messageThread.fromUsername = req.session.user.username;
+        messageThread.fromUsername = req.params.fromUsername;
         messageThread.fromUserId = req.session.user;
         messageThread.toUsername = req.params.toUsername;
         messageThread.toUserId = req.params.toUserId;
         messageThread.message = null;
         messageThread.messages = [];
-        messageThread.messages.push(req.params.message);
+        messageThread.addReply(req.params.fromUsername, req.params.message);
         messageThread.createDate = new Date();
+        messageThread.modifyDate = new Date();
 
         id = req.session.user;
         User.findById(id, function (err, user) {
@@ -75,12 +76,48 @@ module.exports = function (app, config, auth) {
    * @param next method
    */
    function putMessageThread(req, res, next) {
-     // TODO how to avoid collisions? Pull a message and check version #
-      if (req.session && req.session.user) {
-        // update, remove message form archival view
-        // messageThread.fromArchiveFlag = false;
-        // messageThread.toArchiveFlag = false;
-      }
+     // how to avoid collisions? Pull a message and check modify date
+     // would do this very differently in a relational table
+console.log(req.params)
+
+     if (req.session && req.session.user) {
+       if (!req.params._id) {
+         return next(new restify.MissingParameterError('You must enter a Message Id.'));
+       }
+       MessageThread.findById(req.params._id, function (err, messageThread) {
+         if (!err) {
+            var d1 = req.params.modifyDate;
+
+            var d2 = messageThread.modifyDate;
+           if (!d1) d1 = d2;
+           console.log(d1 + ":" + d2)
+           console.log(Date.parse(d1) >= Date.parse(d2))
+
+           if (true) {
+             messageThread.fromArchiveFlag = req.params.fromArchiveFlag;
+             messageThread.toArchiveFlag = req.params.toArchiveFlag;
+             messageThread.inappropriateFlag = req.params.inappropriateFlag;
+             messageThread.messages = req.params.messages;
+             messageThread.modifyDate = new Date();
+             messageThread.save(function (err) {
+               if (!err) {
+                 res.send({});
+                 return next();
+               } else {
+                 var errObj = err;
+                 if (err.err) errObj = err.err;
+                 return next(new restify.InternalError(errObj));
+               }
+             });
+           } else {
+             // message out of date
+             return next(new restify.MissingParameterError('Message thread is out of date. Reload the thread and try again.'));
+           }
+         } else {
+           res.send(err);
+         }
+       });
+     }
    }
 
    /**
@@ -166,8 +203,7 @@ module.exports = function (app, config, auth) {
               return next(new restify.MissingParameterError('ObjectId required.'));
            }
         });
-
-        }
+      }
    }
 
    /**
@@ -206,9 +242,6 @@ module.exports = function (app, config, auth) {
             return next(new restify.InternalError(errObj));
           }
         });
-
-
-
       }
    }
 
@@ -221,16 +254,17 @@ module.exports = function (app, config, auth) {
    */
    function getSystemMessage(req, res, next) {
       if (req.session && req.session.user) {
-             /* Something like this: http://stackoverflow.com/questions/13279992/complex-mongodb-query-with-multiple-or/13280188#comment18104912_13280188
-    MessageThread.find({
-      'fromUserId', req.session.user
-      $or: [
-          { 'toUserId', req.session.user }
-      ]
-    }, callback);
-     */
-        // "mongoose-joins"
-        // SystemMessageArchive SystemMessage
+
+         /* Here's an example where Mongoose/Mongo becomes hard. I'd like to something like this (psuedo SQL, not sure this is correct but give the gist):
+            SELECT * FROM SystemMessage A WHERE
+              A._id NOT IN (SELECT systemMessageId from SystemMessageArchive B WHERE B.UserId == req.session.user)
+
+            Maybe something like this????
+            http://stackoverflow.com/questions/13279992/complex-mongodb-query-with-multiple-or/13280188#comment18104912_13280188
+
+            Maybe look at 'mongoose-joins' module?
+         */
+
 
           if (req.params.archiveFlag && req.params.archiveFlag == 'true') {
               // skip the archive, retrieve all messages
@@ -293,15 +327,32 @@ module.exports = function (app, config, auth) {
             return next(new restify.MissingParameterError('You must enter a System Message Id.'));
           }
 
-          var systemMessageArchive = new SystemMessageArchive(req.params);
-          systemMessageArchive.userId = req.session.user;
-            systemMessageArchive.save(function (err, systemMessage) {
+          // avoid creating duplicate entries
+          // check if user already archived this message
+          // this shouldn't be necessary but my test UI allows the user to retry archiving
+          // since the overhead of
+          var query = SystemMessageArchive.where( 'systemMessageId', req.params.systemMessageId ).where( 'userId', req.session.user );
+          SystemMessageArchive.count(queryObj, function (err, count) {
             if (!err) {
-              res.send({});
+              if (count === 0) {
+                 systemMessageArchive.save(function (err, systemMessage) {
+                  if (!err) {
+                    res.send({});
+                  } else {
+                    return next(err);
+                  }
+                });
+              } else {
+                // already archived
+                res.send({});
+              }
             } else {
-              return next(err);
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
             }
           });
+
         }
      }
 
@@ -412,6 +463,8 @@ module.exports = function (app, config, auth) {
      app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
 }
+
+
 
 
 

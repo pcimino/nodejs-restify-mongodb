@@ -78,22 +78,16 @@ module.exports = function (app, config, auth) {
    function putMessageThread(req, res, next) {
      // how to avoid collisions? Pull a message and check modify date
      // would do this very differently in a relational table
-console.log(req.params)
-
      if (req.session && req.session.user) {
        if (!req.params._id) {
          return next(new restify.MissingParameterError('You must enter a Message Id.'));
        }
        MessageThread.findById(req.params._id, function (err, messageThread) {
          if (!err) {
-            var d1 = req.params.modifyDate;
-
-            var d2 = messageThread.modifyDate;
+           var d1 = req.params.modifyDate;
+           var d2 = messageThread.modifyDate;
            if (!d1) d1 = d2;
-           console.log(d1 + ":" + d2)
-           console.log(Date.parse(d1) >= Date.parse(d2))
-
-           if (true) {
+           if (Date.parse(d1) >= Date.parse(d2)) {
              messageThread.fromArchiveFlag = req.params.fromArchiveFlag;
              messageThread.toArchiveFlag = req.params.toArchiveFlag;
              messageThread.inappropriateFlag = req.params.inappropriateFlag;

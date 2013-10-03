@@ -326,9 +326,11 @@ module.exports = function (app, config, auth) {
           // this shouldn't be necessary but my test UI allows the user to retry archiving
           // since the overhead of
           var query = SystemMessageArchive.where( 'systemMessageId', req.params.systemMessageId ).where( 'userId', req.session.user );
-          SystemMessageArchive.count(queryObj, function (err, count) {
+          query.count(function (err, count) {
             if (!err) {
               if (count === 0) {
+                 var systemMessageArchive = new SystemMessageArchive(req.params);
+                 systemMessageArchive.userId = req.session.user;
                  systemMessageArchive.save(function (err, systemMessage) {
                   if (!err) {
                     res.send({});
@@ -457,6 +459,7 @@ module.exports = function (app, config, auth) {
      app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
 }
+
 
 
 

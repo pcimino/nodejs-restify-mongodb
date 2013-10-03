@@ -47,8 +47,18 @@ module.exports = function (app, config, auth, mailHelper) {
             }
          }
 
-        // NOTE This sort query is really inefficient, always queries the three columns
-        var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
+         // NOTE This sort query is really inefficient, always queries the three columns
+         var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
+
+         // This returns partially populated objects preventing client sessions from seeing too much of the user's info
+         // if config settings are set to false, then these fields will be excluded
+         if (config.searchSettings.allowEmail) query.select('email');
+         if (config.searchSettings.allowName) query.select('name');
+         if (config.searchSettings.allowUsername) query.select('username');
+
+         // If all selects are 'false' then all fields come back
+         // So explicity select the The Object Id so ONLY the Object Id plus any of the selected fields come back
+         query.select('_id');
 
          if (sortStr.length > 0) {
             query = query.sort(sortStr)
@@ -59,6 +69,7 @@ module.exports = function (app, config, auth, mailHelper) {
          query.exec(function(err, users) {
                if (!err) {
                   userList.users = users;
+                 console.log(JSON.stringify(userList))
                   res.send(userList);
                   return next();
                } else {
@@ -377,6 +388,8 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
+
 
 
 

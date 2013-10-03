@@ -22,6 +22,14 @@ module.exports = {
           , mailAuth: {user: "test@gmail.com", pass: "testpass"}
           , sendEmail: false
           , browserPreview: true
+      // see routes-user.js searchUsers
+      // the search results only inlcude ObjectId, name, username and email
+      // to further restrict returned fields, each (or all) of these can be set to false
+      }
+      , searchSettings : { // if any of these are false, that field will not be populated
+          allowEmail: true
+          , allowName: true
+          , allowUsername: true
       }
       , version: '0.9.4'
     }
@@ -40,6 +48,7 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
 
 
 

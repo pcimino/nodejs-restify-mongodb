@@ -5,8 +5,9 @@
 
 var restify = require('restify')
    , mongoose = require('mongoose')
-   , clientSessions = require("client-sessions")
-   , toobusy = require('toobusy');
+   // , toobusy = require('toobusy')
+   , clientSessions = require("client-sessions");
+
 
 module.exports = function (app, config, sessionKey) {
 
@@ -20,10 +21,12 @@ module.exports = function (app, config, sessionKey) {
 
 
    // send a 503 if the server is too busy
+   /*
     app.use(function(req, res, next) {
       if (toobusy()) res.send(503, "I'm busy right now, sorry.");
       else next();
     });
+*/
 
    app.use(clientSessions({
      cookieName: 'session',    // defaults to session_state

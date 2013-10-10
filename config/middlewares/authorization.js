@@ -3,16 +3,20 @@
 */
 var restify = require('restify')
    , mongoose = require('mongoose')
-   , User = mongoose.model('User');
+   , User = mongoose.model('User')
+   , range_check = require('range_check');
 
-/*
- *  Known issue in client-sessions as of May 2013
- *  if the secret key changes between restarts then the cookie is useless,
- *  what's worse is it tends to blow up the server
- *  https://github.com/mozilla/node-client-sessions/issues/36
- *
- *  Fix is in github but not npm module.
- */
+var config = {};
+
+/**
+* Set config
+* TODO Need to refactor this into one Export with methods and pass the config into the require('authorization.js')(config)
+*
+* @param config
+*/
+exports.setConfig = function(appConfig) {
+  config = appConfig;
+}
 
 /**
  * checks for client session
@@ -75,6 +79,11 @@ exports.access = function(req, res, next) {
  * @param next method
  */
 exports.adminAccess = function(req, res, next) {
+   // check for IP Range
+   if (!range_check.in_range(req.connection.remoteAddress, config.adminIPRange)) {
+     console.log("IP Address " + req.connection.remoteAddress + " is not withon the allowed range(s).")
+     return next(new restify.NotAuthorizedError("Access restricted."));
+   }
    var id = "-1";
    if (req.session && req.session.user) {
       id = req.session.user;
@@ -117,3 +126,4 @@ exports.subscriberAccess = function(req, res, next) {
       }
    });
 };
+

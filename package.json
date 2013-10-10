@@ -1,7 +1,7 @@
 {
     "name": "rest_test"
   , "description": "A Nodejs app demonstration Restify, Mongoose, Client Sessions, Mail and a simple Web socket"
-  , "version": "0.9.4"
+  , "version": "0.9.5"
   , "private": false
   , "author": "Paul Cimino(https://github.com/pcimino)"
   , "engines": {
@@ -19,7 +19,10 @@
     , "socket.io-client": "latest"
     , "se7ensky-restify-preflight": "latest"
     , "toobusy": "latest"
+    , "range_check": "latest"
+    , "longjohn": "latest" // https://npmjs.org/package/longjohn
   }
 }
+
 
 

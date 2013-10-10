@@ -31,7 +31,13 @@ module.exports = {
           , allowName: true
           , allowUsername: true
       }
-      , version: '0.9.4'
+      , version: '0.9.5'
+      // Range Check
+      // https://npmjs.org/package/range_check
+      // 24-bit block (/8 prefix, 1 × A)	10.0.0.0 - 10.255.255.255
+      // 20-bit block (/12 prefix, 16 × B)	172.16.0.0 - 172.31.255.255
+      // 16-bit block (/16 prefix, 256 × C)	192.168.0.0 - 192.168.255.255
+      , adminIPRange: ['10.0.0.0/12', '192.0.0.0/16', '127.0.0.0/8']
     }
     , test: {
         root: require('path').normalize(__dirname + '/..')
@@ -48,6 +54,7 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
 
 
 

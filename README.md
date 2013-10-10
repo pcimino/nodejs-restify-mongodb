@@ -1,18 +1,20 @@
 # Node+Mongoose+Restify #
 
-This is a basic Node.js setup demonstrating:  
+This is a basic Node.js setup demonstrating:
 
-- Mongo integration using Mongoose model objects  
-- Restify CRUD operations  
+- Mongo integration using Mongoose model objects
+- Restify CRUD operations
 - Basic (crude) session id via cookie
 - Static content
 
 ## ***Recent Changes*** ##
 Implementing the ability to login with username or email address. This involves enforcing uniqueness on these fields. So you may need to wipe or fix your data manually. To simplify this, email and username will also be stored in lowercase to avoid user confusion.
 
+Added IP Range Checking on Admin methods
+
 ## Quick Start ##
 If you're new to Node.js and/or Mongo DB, these steps will get you started. Advanced users may want to look at the start-node.bat script and configure it for their environment. *nix shell scripts are also included, run `chmod 755 *.sh` if needed.
-  
+
 1. Download/clone this project
 2. [Install MongoDB](http://docs.mongodb.org/manual/installation/#gsc.tab=0).
 3. [Install Node.js](http://nodejs.org/download/).
@@ -37,8 +39,8 @@ My web background is mostly Java and Java frameworks like Spring. I've done a li
 - Configure a server with a REST api
 - That connects to a Mongo database
 - And provides some form of authentication/authorization
-- And a way to serve static pages to demonstrate the APIs  
-- Create something that can be used as a backend for my next project using [MVC project](https://github.com/enyojs/enyo/wiki/Enyo-MVC-Intro)  
+- And a way to serve static pages to demonstrate the APIs
+- Create something that can be used as a backend for my next project using [MVC project](https://github.com/enyojs/enyo/wiki/Enyo-MVC-Intro)
 
 [This example was extremely helpful](http://pixelhandler.com/blog/2012/02/09/develop-a-restful-api-using-node-js-with-express-and-mongoose/). In fact if all I wanted to do was setup a Node.js server I'd be done. But copying something wholesale doesn't help me learn about the underlying technology.
 
@@ -52,28 +54,28 @@ For this demo, the user authenticates and the object id is placed in a cookie. T
 Authentication, whether using Passport or something else, is probably the next step in this project.
 
 ## (Non)Secure Server ##
-Ha! This is a demo where everything runs on localhost. Not https, certificates or even clustered MongoDB instances. And the "Session" sis nothing more than the user's dtabase id stored in a cookie. 
+Ha! This is a demo where everything runs on localhost. Not https, certificates or even clustered MongoDB instances. And the "Session" sis nothing more than the user's dtabase id stored in a cookie.
 
 But I do discuss bits and pieces about where you can find info and how I'd like to approach longer term solutions.
 
 ## Resources ##
-**Primary**  
-- [Node.js](http://nodejs.org/)  
-- [Mongo DB](http://www.mongodb.org/)  
-- [Restify](http://mcavage.github.com/node-restify)  
-- [Mongoose](http://mongoosejs.com/)  
-- [Cookies](http://https://github.com/jed/cookies)  
-- [JQuery](http://api.jquery.com/)  
+**Primary**
+- [Node.js](http://nodejs.org/)
+- [Mongo DB](http://www.mongodb.org/)
+- [Restify](http://mcavage.github.com/node-restify)
+- [Mongoose](http://mongoosejs.com/)
+- [Cookies](http://https://github.com/jed/cookies)
+- [JQuery](http://api.jquery.com/)
 
-**Secondary/Tutorials/Threads**  
-- [Creating a REST API using Node.js, Express, and MongoDB](http://coenraets.org/blog/2012/10/creating-a-rest-api-using-node-js-express-and-mongodb/)  
+**Secondary/Tutorials/Threads**
+- [Creating a REST API using Node.js, Express, and MongoDB](http://coenraets.org/blog/2012/10/creating-a-rest-api-using-node-js-express-and-mongodb/)
 - [Node.js and MongoDB](http://howtonode.org/node-and-mongo)
-- [Node Cellar Sample Application](https://github.com/ccoenraets/nodecellar)  
-- [Simple example - Node.js, Restify, MongoDb and Mongoose](http://backbonetutorials.com/nodejs-restify-mongodb-mongoose/)  
-- [test-restify-passport-facebook](https://github.com/halrobertson/test-restify-passport-facebook/)  
+- [Node Cellar Sample Application](https://github.com/ccoenraets/nodecellar)
+- [Simple example - Node.js, Restify, MongoDb and Mongoose](http://backbonetutorials.com/nodejs-restify-mongodb-mongoose/)
+- [test-restify-passport-facebook](https://github.com/halrobertson/test-restify-passport-facebook/)
 - [Node.js knockout: Restify](http://blog.nodeknockout.com/post/34710903021/restify)
-- [Node.js Development with the MongoDB Service](http://docs.cloudfoundry.com/services/mongodb/nodejs-mongodb.html)  
-- [Case insensitive Mongoose Search](https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/)  
+- [Node.js Development with the MongoDB Service](http://docs.cloudfoundry.com/services/mongodb/nodejs-mongodb.html)
+- [Case insensitive Mongoose Search](https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/)
 
 
 # Tags
@@ -81,5 +83,6 @@ But I do discuss bits and pieces about where you can find info and how I'd like 
 Stable demonstrator.
 ##Promise
 Included the Promises Q npm module in preparation of rewriting some of the asynchronous dependent calls to use promises.
+
 
 

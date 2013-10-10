@@ -52,6 +52,7 @@ fs.readdirSync(models_path).forEach(function (file) {
 
 // Bootstrap auth middleware
 var auth = require(config_path + '/middlewares/authorization.js');
+auth.setConfig(config);
 
 // Bootstrap JavaScript utilities
 // globals considered bad, eventually this container should be rewritten into a module
@@ -116,6 +117,7 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
+
 
 
 

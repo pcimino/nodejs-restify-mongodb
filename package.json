@@ -20,7 +20,7 @@
     , "se7ensky-restify-preflight": "latest"
     , "toobusy": "latest"
     , "range_check": "latest"
-    , "longjohn": "latest" // https://npmjs.org/package/longjohn
+    , "longjohn": "latest" 
   }
 }
 

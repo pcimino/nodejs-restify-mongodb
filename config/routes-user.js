@@ -67,17 +67,17 @@ module.exports = function (app, config, auth, mailHelper) {
             query = query.limit(itemsPerPage).skip(itemsPerPage * pageNum);
          }
          query.exec(function(err, users) {
-               if (!err) {
-                  userList.users = users;
-                 console.log(JSON.stringify(userList))
-                  res.send(userList);
-                  return next();
-               } else {
-                  var errObj = err;
-                  if (err.err) errObj = err.err;
-                  return next(new restify.InternalError(errObj));
-               }
-            });
+           if (!err) {
+             userList.users = users;
+             // console.log(JSON.stringify(userList))
+             res.send(userList);
+             return next();
+           } else {
+             var errObj = err;
+             if (err.err) errObj = err.err;
+             return next(new restify.InternalError(errObj));
+           }
+          });
          } else {
                   var errObj = err;
                   if (err.err) errObj = err.err;
@@ -99,16 +99,17 @@ module.exports = function (app, config, auth, mailHelper) {
    function getUser(req, res, next) {
       if (req.session && req.session.user) {
         id = req.session.user;
-         User.findById(id, function (err, user) {
-            if (!err) {
-              res.send(user);
-              return next();
-            } else {
-                  var errObj = err;
-                  if (err.err) errObj = err.err;
-                  return next(new restify.InternalError(errObj));
-            }
-         });
+        if (req.params.id) id = req.params.id;
+        User.findById(id, function (err, user) {
+          if (!err) {
+            res.send(user);
+            return next();
+          } else {
+             var errObj = err;
+             if (err.err) errObj = err.err;
+             return next(new restify.InternalError(errObj));
+          }
+       });
       } else {
         return next(new restify.MissingParameterError('No search params sent.'));
       }
@@ -388,6 +389,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

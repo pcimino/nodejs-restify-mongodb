@@ -6,6 +6,7 @@ module.exports = {
       root: require('path').normalize(__dirname + '/..')
       , app: {
           name: 'Nodejs Restify Mongoose Demo'
+        , version: '0.9.6'
       }
       , openUserSignup: false // set to true to create users and assign a role, if false, API only allows admins to create an Admin role user
       , usernameOrPassword: true // true: Login, password reset and resend email verification can use either password or username, false: only username
@@ -31,7 +32,6 @@ module.exports = {
           , allowName: true
           , allowUsername: true
       }
-      , version: '0.9.5'
       // Range Check
       // https://npmjs.org/package/range_check
       // 24-bit block (/8 prefix, 1 × A)	10.0.0.0 - 10.255.255.255
@@ -54,6 +54,7 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
 
 
 

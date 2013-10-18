@@ -228,6 +228,9 @@ module.exports = function (app, config, auth, mailHelper) {
             if (req.params.username) {
               user.username = req.params.username;
             }
+            if (req.params.role) {
+              user.role = req.params.role;
+            }
 
             putUserValidations(req, res, next, user);
 
@@ -389,6 +392,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

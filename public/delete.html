@@ -63,7 +63,7 @@
    function formSubmit() {
       $.ajax({
          type: "DELETE",
-         url: "http://localhost:3000/api/v1/user",
+          url: "http://localhost:3000/api/v1/admin/user",
          data: $('#selectForm').serialize(),
          success: function(data) {
             if (data === null || data.length == 0) {
@@ -111,3 +111,4 @@
 </script>
 
 </body>
+

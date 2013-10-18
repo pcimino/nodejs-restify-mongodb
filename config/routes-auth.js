@@ -206,7 +206,19 @@ module.exports = function (app, config, auth) {
    app.get('/api/v1/roles/access', auth.access, function (req, res) {
       res.send({'message':'Success'});
    });
+
+   /**
+   * Ping the server, retrieve the session timeout
+   *
+   * @param path
+   * @param request
+   * @param response
+   */
+   app.get('/api/v1/timeout', auth.requiresLogin, function (req, res) {
+     res.send({'message':'Success', 'timeout':config.session_timeout});
+   });
 }
+
 
 
 

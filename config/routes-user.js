@@ -379,7 +379,7 @@ module.exports = function (app, config, auth, mailHelper) {
    app.put('/api/v1/admin/user', auth.adminAccess, putUserByAdmin);
 
    // Delete
-   // 405 ? app.del('/api/v1/user/:id', deleteUser);
+   // 405 ? app.del('/api/v1/admin/user/:id', deleteUser);
    /**
    * delete a user
    *
@@ -387,8 +387,9 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised callback check Administrator auth
    * @param promised 2nd callback deletes
    */
-   app.del('/api/v1/user', auth.adminAccess, deleteUser);
+   app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
 }
+
 
 
 

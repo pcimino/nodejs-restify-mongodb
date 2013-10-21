@@ -46,6 +46,15 @@ module.exports = function (app, config, sessionKey) {
      }
    }));
 
+   // client-sessions documentation is "correct", but the devs added a work around to the cookie expiry problem
+   app.use(function(req, res, next) {
+     if (req.session) {
+       req.session.setDuration(config.session_timeout);
+     }
+     next();
+   });
+
+
     app.use(restify.throttle({
       burst: 100,
       rate: 50,
@@ -59,6 +68,7 @@ module.exports = function (app, config, sessionKey) {
     }));
    app.use(restify.conditionalRequest());
 }
+
 
 
 

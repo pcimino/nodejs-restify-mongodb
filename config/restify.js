@@ -35,13 +35,14 @@ module.exports = function (app, config, sessionKey) {
    app.use(clientSessions({
      cookieName: 'session'    // defaults to session_state
      , secret: sessionKey
-     , duration: config.session_timeout // defaults to 20 minutes, in ms
-     // refresh every access
-     , path: '/'
+     , duration: config.session_timeout // in ms
+     // refresh every access through the api
+     , path: '/api'
      , httpOnly: true // defaults to true
      , secure: false   // defaults to false
      , cookie: {
          maxAge: config.session_timeout
+         , ephemeral: config.ephemeral_cookie
      }
    }));
 
@@ -58,5 +59,7 @@ module.exports = function (app, config, sessionKey) {
     }));
    app.use(restify.conditionalRequest());
 }
+
+
 
 

@@ -15,7 +15,8 @@ module.exports = {
 	    , db_prefix: 'mongodb'
   	  , db_port: '27017'
 	    , db_database: 'test_database'
-      , session_timeout: 1200000 // defaults to 20 minutes, in ms (20 * 60 * 1000)
+      , session_timeout:  1200000 // defaults to 20 minutes, in ms (20 * 60 * 1000)
+      , ephemeral_cookie: false // if true, session cookie expires when browser closes
       , socket_loglevel: '1' // 0 - error, 1 - warn, 2 - info, 3 - debug
       , mailSettings : {
           mailFrom: 'test@gmail.com'
@@ -54,6 +55,9 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
+
+
 
 
 

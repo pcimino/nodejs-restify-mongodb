@@ -11,6 +11,9 @@ var mongoose = require('mongoose')
   , restify = require('restify');
 
 var mail = {};
+var gUser = {}; // TODO don't want to globalize user, need to figure out a better way to use Promises or Async
+var gCheckCurrentPassword = true;
+var gCheckRoleRestriction = true;
 
 module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
@@ -79,9 +82,9 @@ module.exports = function (app, config, auth, mailHelper) {
            }
           });
          } else {
-                  var errObj = err;
-                  if (err.err) errObj = err.err;
-                  return next(new restify.InternalError(errObj));
+             var errObj = err;
+             if (err.err) errObj = err.err;
+             return next(new restify.InternalError(errObj));
          }
       });
      return;
@@ -153,6 +156,37 @@ module.exports = function (app, config, auth, mailHelper) {
       }
    }
 
+
+  /**
+   * Admin: Modify an existing user
+   *
+   * @param request
+   * @param response
+   * @param next method
+   */
+   function putUserByAdmin(req, res, next) {
+       gCheckCurrentPassword = false;
+       gCheckRoleRestriction = false;
+       User.findById(req.params.id, function (err, user) {
+         if (!err && user) {
+           // only change data if submit supplied it
+           if (req.params.name) {
+             user.name = req.params.name;
+           }
+           if (req.params.username) {
+             user.username = req.params.username;
+           }
+           if (req.params.role) {
+             user.role = req.params.role;
+           }
+           gUser = user;
+           return next();
+         } else {
+           return next(new restify.MissingParameterError('ObjectId required.'));
+         }
+       });
+   }
+
   /**
    * Modify an existing user with matching id
    *
@@ -161,6 +195,9 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function putUser(req, res, next) {
+      gCheckCurrentPassword = true;
+      gCheckRoleRestriction = true;
+      gUser = {};
       if (req.session && req.session.user) {
         if (req.params.id == req.session.user) {
           User.findById(req.params.id, function (err, user) {
@@ -172,36 +209,8 @@ module.exports = function (app, config, auth, mailHelper) {
                 if (req.params.username) {
                   user.username = req.params.username;
                 }
-
-                putUserValidations(req, res, next, user);
-
-                if (req.params.role) {
-                  user.role = req.params.role;
-                  if (user.role == 'Admin' && !config.openUserSignup) {
-                    //TODO allow admin to modify create/modify a user with Admin access
-                    return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
-                  }
-                }
-
-                if (user.newEmail) {
-                    var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
-                    User.count(queryObj, function (err, count) {
-                    if (!err) {
-                      if (count === 0) {
-                            saveUser(req, res, next, user);
-                         } else {
-                            return next(new restify.InternalError('Email already in use.'));
-                         }
-                      } else {
-                        var errObj = err;
-                        if (err.err) errObj = err.err;
-                        return next(new restify.InternalError(errObj));
-                      }
-                   });
-                } else {
-                  saveUser(req, res, next, user);
-                }
-
+                gUser = user;
+                return next();
              } else {
                 return next(new restify.MissingParameterError('ObjectId required.'));
              }
@@ -211,95 +220,89 @@ module.exports = function (app, config, auth, mailHelper) {
         }
       }
    }
-  /**
-   * Admin: Modify an existing user
-   *
-   * @param request
-   * @param response
-   * @param next method
-   */
-   function putUserByAdmin(req, res, next) {
-      User.findById(req.params.id, function (err, user) {
-         if (!err) {
-            // only change data if submit supplied it
-            if (req.params.name) {
-              user.name = req.params.name;
-            }
-            if (req.params.username) {
-              user.username = req.params.username;
-            }
-            if (req.params.role) {
-              user.role = req.params.role;
-            }
-
-            putUserValidations(req, res, next, user);
-
-            if (user.newEmail) {
-                var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
-                User.count(queryObj, function (err, count) {
-                if (!err) {
-                  if (count === 0) {
-                        saveUser(req, res, next, user);
-                     } else {
-                        return next(new restify.InternalError('Email already in use.'));
-                     }
-                  } else {
-                    var errObj = err;
-                    if (err.err) errObj = err.err;
-                    return next(new restify.InternalError(errObj));
-                  }
-               });
-            } else {
-              saveUser(req, res, next, user);
-            }
-
-         } else {
-            return next(new restify.MissingParameterError('ObjectId required.'));
-         }
-      });
-   }
-  function putUserValidations(req, res, next, user) {
+  /* helper method validate the user changes */
+  function putUserValidations(req, res, next) {
       // validations
       if (req.params.email) {
         if (!mail.validateEmail(req.params.email)) {
           return next(new restify.MissingParameterError('Please enter a valid email address.'));
         } else {
-          user.newEmail = req.params.email;
+          gUser.newEmail = req.params.email;
         }
       }
+
       if (req.params.password) {
         if (req.params.password != req.params.vPassword) {
           return next(new restify.MissingParameterError('Password and Verify Password must match.'));
         }
-        if (req.params.password && !req.params.cPassword) {
+        if (gCheckCurrentPassword && req.params.password && !req.params.cPassword) {
           return next(new restify.MissingParameterError('You must enter your current password to verify.'));
         }
         if (req.params.cPassword) {
-          if (!user.authenticate(req.params.cPassword)) {
+          if (!gUser.authenticate(req.params.cPassword)) {
             return next(new restify.MissingParameterError('You must enter your current password to verify.'));
           }
-          user.tempPasswordFlag = true;
-          user.password = req.params.password;
+          gUser.tempPasswordFlag = true;
+          gUser.password = req.params.password;
         }
-      }
+      }console.log(3);
+      return next();
   }
-   /** helper function to execute the save */
-  function saveUser(req, res, next, user) {
-      user.save(function (err) {
-        if (!err) {
-          res.send(user);
-          // generate and send a verification code to swap email address
-          if (user.newEmail) {
-            // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
-            mail.generateVerifyCodeUpdatedEmail(req, res, next, user);
+  /* validate change step 2 */
+  function putUserPostValidate(req, res, next) {
+     var user = gUser;
+     if (req.params.role) {
+        user.role = req.params.role;
+        if (gCheckRoleRestriction && user.role == 'Admin' && !config.openUserSignup) {
+           return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
+        }
+     }console.log(4);
+     if (user.newEmail) {
+       console.log(5 +":"+user.newEmail);
+        var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
+        User.count(queryObj, function (err, count) {
+          if (!err) {
+             if (count === 0) {
+               console.log(6);
+                return next();
+             } else {
+               console.log('6b');
+                 return next(new restify.InternalError('Email already in use, or you must validate your new email before making more changes to your account.'));
+             }
+          } else {
+             var errObj = err;
+             if (err.err) {
+               errObj = err.err;
+             }
+            console.log('6c');
+             return next(new restify.InternalError(errObj));
           }
-          return next();
+       });
+     } else {
+         return next();
+     }
+  }
+
+
+   /** helper function to execute the save */
+  function saveUser(req, res, next) {
+    console.log(8);
+      gUser.save(function (err) {
+        if (!err) {
+          // generate and send a verification code to swap email address
+          if (gUser.newEmail) {
+            // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
+            mail.generateVerifyCodeUpdatedEmail(req, res, next, gUser);
+          }
         } else {
           var errObj = err;
           if (err.err) errObj = err.err;
           return next(new restify.InternalError(errObj));
         }
       });
+    console.log(9);
+    res.send(gUser);
+      return next();
   }
 
   /**
@@ -316,10 +319,18 @@ module.exports = function (app, config, auth, mailHelper) {
        }
         User.findById(req.params.id).remove(function (err) {
           if (!err) {
-           res.send({});
-           return next();
+            // clean up archived status
+            var query = SystemMessageArchive.where( 'userId', req.params.id );
+            query.exec(function (err, sysMessageArr) {
+            });
+            var query2 = TermsAndConditionsArchiveSchema.where( 'userId', req.params.id );
+            query2.exec(function (err, sysMessageArr) {
+            });
+
+            res.send({});
+            return next();
           } else {
-           return next(new restify.MissingParameterError('ObjectId required.'));
+            return next(new restify.MissingParameterError('ObjectId required.'));
           }
         });
       }
@@ -370,7 +381,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised callback check authorization
    * @param promised 2nd callback searches for users
    */
-   app.put('/api/v1/user', auth.requiresLogin, putUser);
+   app.put('/api/v1/user', auth.requiresLogin, putUser, putUserValidations, putUserPostValidate, saveUser);
 
    /**
    * Administrator updating user information
@@ -379,7 +390,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised callback check authorization
    * @param promised 2nd callback searches for users
    */
-   app.put('/api/v1/admin/user', auth.adminAccess, putUserByAdmin);
+   app.put('/api/v1/admin/user', auth.adminAccess, putUserByAdmin, putUserValidations, putUserPostValidate, saveUser);
 
    // Delete
    // 405 ? app.del('/api/v1/admin/user/:id', deleteUser);
@@ -392,6 +403,8 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
 }
+
+
 
 
 

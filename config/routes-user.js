@@ -245,7 +245,7 @@ module.exports = function (app, config, auth, mailHelper) {
           gUser.tempPasswordFlag = true;
           gUser.password = req.params.password;
         }
-      }console.log(3);
+      }
       return next();
   }
   /* validate change step 2 */
@@ -256,17 +256,14 @@ module.exports = function (app, config, auth, mailHelper) {
         if (gCheckRoleRestriction && user.role == 'Admin' && !config.openUserSignup) {
            return next(new restify.MissingParameterError('You cannot change this user to an Administrator.'));
         }
-     }console.log(4);
+     }
      if (user.newEmail) {
-       console.log(5 +":"+user.newEmail);
         var queryObj = {$or :[{'email': new RegExp('^'+user.newEmail+'$', 'i')}, {'newEmail': new RegExp('^'+user.newEmail+'$', 'i')}]};
         User.count(queryObj, function (err, count) {
           if (!err) {
              if (count === 0) {
-               console.log(6);
                 return next();
              } else {
-               console.log('6b');
                  return next(new restify.InternalError('Email already in use, or you must validate your new email before making more changes to your account.'));
              }
           } else {
@@ -274,7 +271,6 @@ module.exports = function (app, config, auth, mailHelper) {
              if (err.err) {
                errObj = err.err;
              }
-            console.log('6c');
              return next(new restify.InternalError(errObj));
           }
        });
@@ -286,7 +282,6 @@ module.exports = function (app, config, auth, mailHelper) {
 
    /** helper function to execute the save */
   function saveUser(req, res, next) {
-    console.log(8);
       gUser.save(function (err) {
         if (!err) {
           // generate and send a verification code to swap email address
@@ -300,8 +295,7 @@ module.exports = function (app, config, auth, mailHelper) {
           return next(new restify.InternalError(errObj));
         }
       });
-    console.log(9);
-    res.send(gUser);
+      res.send(gUser);
       return next();
   }
 

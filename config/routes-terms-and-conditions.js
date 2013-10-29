@@ -106,8 +106,6 @@ module.exports = function (app, config, auth) {
                 // going to be SLOW so admins need to keep the message count low and purge them when done
                 for (var i = termsAndConditionsArr.length-1; i >= 0; i--) {
                   for (var j = 0; j < termsAndConditionsArchiveArr.length; j++) {
-                    console.log( i + ":" + JSON.stringify(termsAndConditionsArr[i]))
-                    console.log(j + ":" + JSON.stringify(termsAndConditionsArchiveArr[j]))
                       if (termsAndConditionsArr[i]._id.toString() == termsAndConditionsArchiveArr[j].termsAndConditionsId.toString()) {
                         termsAndConditionsArr.splice(i, 1);
                         j = termsAndConditionsArchiveArr.length;

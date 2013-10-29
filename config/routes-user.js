@@ -38,48 +38,48 @@ module.exports = function (app, config, auth, mailHelper) {
       pageNum = pageNum - 1;
 
       User.count({}, function(err, count) {
-           if (!err) {
-            userList.pageCount = Math.ceil(count / itemsPerPage);
+        if (!err) {
+          userList.pageCount = Math.ceil(count / itemsPerPage);
 
-         var sortStr = "";
-         if (userList.sortField != null && userList.sortField != '') {
+          var sortStr = "";
+          if (userList.sortField != null && userList.sortField != '') {
             if ('false' === userList.ascendingSortFlag) {
-               sortStr = "-" + userList.sortField;
+              sortStr = "-" + userList.sortField;
             } else {
-               sortStr = userList.sortField;
+              sortStr = userList.sortField;
             }
-         }
+          }
 
-         // NOTE This sort query is really inefficient, always queries the three columns
-         var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
+          // NOTE This sort query is really inefficient, always queries the three columns
+          var query = User.find({ username: { $regex: userList.username, $options: 'imx' }, name: { $regex: userList.name, $options: 'imx' }, email: { $regex: userList.email, $options: 'imx' } });
 
-         // This returns partially populated objects preventing client sessions from seeing too much of the user's info
-         // if config settings are set to false, then these fields will be excluded
-         if (config.searchSettings.allowEmail) query.select('email');
-         if (config.searchSettings.allowName) query.select('name');
-         if (config.searchSettings.allowUsername) query.select('username');
+          // This returns partially populated objects preventing client sessions from seeing too much of the user's info
+          // if config settings are set to false, then these fields will be excluded
+          if (config.searchSettings.allowEmail) query.select('email');
+          if (config.searchSettings.allowName) query.select('name');
+          if (config.searchSettings.allowUsername) query.select('username');
 
-         // If all selects are 'false' then all fields come back
-         // So explicity select the The Object Id so ONLY the Object Id plus any of the selected fields come back
-         query.select('_id');
+          // If all selects are 'false' then all fields come back
+          // So explicity select the The Object Id so ONLY the Object Id plus any of the selected fields come back
+          query.select('_id');
 
-         if (sortStr.length > 0) {
+          if (sortStr.length > 0) {
             query = query.sort(sortStr)
-         }
-         if (itemsPerPage > 0) {
+          }
+          if (itemsPerPage > 0) {
             query = query.limit(itemsPerPage).skip(itemsPerPage * pageNum);
-         }
-         query.exec(function(err, users) {
-           if (!err) {
-             userList.users = users;
-             // console.log(JSON.stringify(userList))
-             res.send(userList);
-             return next();
-           } else {
-             var errObj = err;
-             if (err.err) errObj = err.err;
-             return next(new restify.InternalError(errObj));
-           }
+          }
+          query.exec(function(err, users) {
+            if (!err) {
+              userList.users = users;
+              // console.log(JSON.stringify(userList))
+              res.send(userList);
+              return next();
+            } else {
+              var errObj = err;
+              if (err.err) errObj = err.err;
+              return next(new restify.InternalError(errObj));
+            }
           });
          } else {
              var errObj = err;
@@ -87,7 +87,6 @@ module.exports = function (app, config, auth, mailHelper) {
              return next(new restify.InternalError(errObj));
          }
       });
-     return;
    }
 
   /**
@@ -280,7 +279,7 @@ module.exports = function (app, config, auth, mailHelper) {
   }
 
 
-   /** helper function to execute the save */
+  /** helper function to execute the save */
   function saveUser(req, res, next) {
       gUser.save(function (err) {
         if (!err) {
@@ -289,14 +288,15 @@ module.exports = function (app, config, auth, mailHelper) {
             // TODO When messaging is available, add a system message to the user telling them to check their email to verify the email address
             mail.generateVerifyCodeUpdatedEmail(req, res, next, gUser);
           }
+          res.send(gUser);
+          return next();
         } else {
           var errObj = err;
           if (err.err) errObj = err.err;
           return next(new restify.InternalError(errObj));
         }
       });
-      res.send(gUser);
-      return next();
+
   }
 
   /**
@@ -417,3 +417,8 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
 
+
+
+
+
+

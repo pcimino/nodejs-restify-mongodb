@@ -10,7 +10,7 @@ var mongoose = require('mongoose')
  */
 var TermsAndConditionsArchiveSchema = new Schema({
   id: ObjectId
-  , termsId: { type: ObjectId }
+  , termsAndConditionsId: { type: ObjectId }
   , userId: { type: ObjectId }
   , acceptedDate: { type: Date }
 })
@@ -21,3 +21,4 @@ module.exports = mongoose.model('TermsAndConditionsArchive', TermsAndConditionsA
 
 
 
+

@@ -7,14 +7,56 @@
 // http://mcavage.github.io/node-restify/#Content-Negotiation
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
+  , Beta = mongoose.model('Beta')
+  , BetaInvite = mongoose.model('BetaInvite')
   , VerifyCode = mongoose.model('VerifyCode')
   , restify = require('restify')
   , ObjectId = mongoose.Types.ObjectId;
 
 var mail = {};
+var gBetaFlag = false;
 
 module.exports = function (app, config, auth, mailHelper) {
    mail = mailHelper;
+
+  /**
+  * Check to see if the user signup requires beta codes
+  */
+  function checkBeta(req, res, next) {
+    Beta.findOne({}, function (err, beta) {
+      if (!err) {
+        if (beta) {
+          gBetaFlag = beta.status;
+        }
+        return next();
+      } else {
+        return next(err);
+      }
+    });
+  }
+
+  /**
+  * If beta active, verify the beta code
+  */
+  function verifyBeta(req, res, next) {
+    if (gBetaFlag) {
+      if (req.params.betaCode) {
+        BetaInvite.findOne({betaCode:req.params.betaCode}, function (err, betaInvite) {
+          if (!err) {
+            if (betaInvite) {
+              return next();
+            } else {
+              return next(new restify.MissingParameterError('A valid Beta Code is required for signup.'));
+            }
+          } else {
+            return next(err);
+          }
+        });
+      } else {
+       return next(new restify.MissingParameterError('Beta Code is required for signup.'));
+      }
+    }
+  }
 
   /**
    * Create a new user model, fill it up and save it to Mongodb
@@ -208,12 +250,12 @@ module.exports = function (app, config, auth, mailHelper) {
 
    // Set up routes
    /**
-   * reate a user
+   * Create a user
    *
    * @param path
    * @param promised callback
    */
-   app.post('/api/v1/user', postUser);
+   app.post('/api/v1/user', checkBeta, verifyBeta, postUser);
 
    /**
    * Search for username
@@ -262,3 +304,4 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
 
+

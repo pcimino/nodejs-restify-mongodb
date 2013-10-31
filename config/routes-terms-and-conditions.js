@@ -1,5 +1,5 @@
 /**
-* Messaging Routes Module
+* Terms & Conditions Routes Module
 *   Requires authenticated users
 */
 var mongoose = require('mongoose')
@@ -11,8 +11,6 @@ var mongoose = require('mongoose')
 
 
 module.exports = function (app, config, auth) {
-
-
    /**
    * Post a terms & conditions message
    *
@@ -77,11 +75,11 @@ module.exports = function (app, config, auth) {
              query.find(function (err, termsAndConditionsArchive) {
                 if (!err) {
                   // console.log(JSON.stringify(termsAndConditionsArchive))
-                   filterTermsAndConditions(req, res, termsAndConditionsArchive, req.params.archiveFlag, next);
+                  filterTermsAndConditions(req, res, termsAndConditionsArchive, req.params.archiveFlag, next);
                 } else {
-                      var errObj = err;
-                      if (err.err) errObj = err.err;
-                      return next(new restify.InternalError(errObj));
+                  var errObj = err;
+                  if (err.err) errObj = err.err;
+                  return next(new restify.InternalError(errObj));
                 }
              });
 
@@ -101,13 +99,10 @@ module.exports = function (app, config, auth) {
                 // going to be SLOW so admins need to keep the message count low and purge them when done
                 for (var i = termsAndConditionsArr.length-1; i >= 0; i--) {
                   for (var j = 0; j < termsAndConditionsArchiveArr.length; j++) {
-                    console.log(1 + ":" + archiveFlag)
                       if (termsAndConditionsArr[i]._id.toString() == termsAndConditionsArchiveArr[j].termsAndConditionsId.toString()) {
-                        if (archiveFlag == 'true' +":"+termsAndConditionsArchiveArr[j].acceptedDate) {
-                          console.log(2)
+                        if (archiveFlag == 'true' && termsAndConditionsArchiveArr[j].acceptedDate) {
                           termsAndConditionsArr[i].acceptedDate = termsAndConditionsArchiveArr[j].acceptedDate;
                         } else {
-                          console.log(3)
                           termsAndConditionsArr.splice(i, 1);
                         }
                         j = termsAndConditionsArchiveArr.length;
@@ -141,7 +136,6 @@ module.exports = function (app, config, auth) {
           // since the overhead of
           var query = TermsAndConditionsArchive.where( 'termsAndConditionsId', req.params.termsAndConditionsId ).where( 'userId', req.session.user );
           query.count(function (err, count) {
-            console.log(11 +":" + count)
             if (!err) {
               if (count === 0) {
                  var termsAndConditionsArchive = new TermsAndConditionsArchive(req.params);
@@ -197,6 +191,10 @@ module.exports = function (app, config, auth) {
 
 
 }
+
+
+
+
 
 
 

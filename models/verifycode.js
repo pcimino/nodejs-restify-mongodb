@@ -21,7 +21,6 @@ var VerifyCodeSchema = new Schema({
 /**
  * Validations
  */
-
 var validatePresenceOf = function (value) {
   return value && (value.length >= 12)
 }
@@ -29,7 +28,6 @@ var validatePresenceOf = function (value) {
 /**
  * Pre-save hook
  */
-
 VerifyCodeSchema.pre('save', function(next) {
   if (!validatePresenceOf(this.key)) {
     next(new restify.MissingParameterError('Invalid key'));
@@ -40,3 +38,4 @@ VerifyCodeSchema.pre('save', function(next) {
 
 mongoose.model('VerifyCode', VerifyCodeSchema)
 
+

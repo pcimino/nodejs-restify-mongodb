@@ -6,6 +6,7 @@ var path = require('path')
     , mongoose = require('mongoose')
     , User = mongoose.model('User')
     , VerifyCode = mongoose.model('VerifyCode')
+    , BetaInvite = mongoose.model('BetaInvite')
     , ObjectId = mongoose.Types.ObjectId;
 
 
@@ -209,6 +210,39 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
   });
 };
 
+
+/**
+ * create the beta code and send the email
+ *
+ * @param request
+ * @param response
+ * @param next method
+ * @param mailAddress
+ */
+MailHelper.prototype.generateBetaCode = function(req, res, next, mailAddress) {
+  var betaInvite = new BetaInvite();
+  betaInvite.email = mailAddress;
+  betaInvite.betaCode = globalUtil.generatePassword();
+  betaInvite.save(function (err, betaInvite) {
+    if (!err) {
+      // send the beta invite
+      var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+      var referArr = refer.split(/\s+/);
+      refer = referArr[0];
+      var fullURL = refer + "#/userSignup";
+      var messageBody = "Hello,</br><p>Here is your Beta code. Please use it to sign up.</p><p>" + betaInvite.betaCode + "</p>";
+      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Create a New Beta user Account Here</a>"
+
+      sendMailHelper(betaInvite.email, 'Beta User Invite', messageBody, true);
+      res.send({message:'Beta invite sent to ' + mailAddress})
+      return next();
+    } else {
+      return next(err);
+    }
+  });
+};
+
+
 /**
  * create the verification code for updated email address
  *
@@ -224,10 +258,10 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
   verifyCode.save(function (err, verifyCode) {
     if (!err) {
       // create a verification code
-      var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
+      var protocol = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
       var host = req.header('Host');
-      refer = refer.substring(0, refer.indexOf(host) + host.length);
-      var fullURL = refer + "/api/v1/verify?v=" + verifyCode.key;
+      protocol = protocol.substring(0, protocol.indexOf("://") + 3);
+      var fullURL = protocol + host + "/api/v1/verify?v=" + verifyCode.key;
       var messageBody = "Hi " + user.name + ",</br><p>Please click the link to validate your new email address.</p>";
       messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
 
@@ -246,3 +280,8 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;
+
+
+
+
+

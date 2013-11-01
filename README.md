@@ -84,6 +84,10 @@ But I do discuss bits and pieces about where you can find info and how I'd like 
 - [Node.js Development with the MongoDB Service](http://docs.cloudfoundry.com/services/mongodb/nodejs-mongodb.html)
 - [Case insensitive Mongoose Search](https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/)
 
+## TODO ##
+
+- DTrace logging
+- Unit tests 
 
 # Tags
 ##FinalDemo

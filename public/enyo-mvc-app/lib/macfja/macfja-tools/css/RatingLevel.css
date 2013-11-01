@@ -1,0 +1,36 @@
+.onyx-rating-bar {
+	padding: 0;
+	position: relative;
+	height: 32px;
+	line-height: 32px;
+	border-radius: 3px;
+	background-color: #e0e0e0;
+	border: 1px solid #999;
+	text-align: center;
+	color: #707070;
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient-invert.png);
+	background-size: auto 100%;
+	box-sizing: content-box !important;
+}
+
+.onyx-rating-bar .onyx-rating-element {
+	background-image: url(../images/Star.png);
+	background-size: auto 200%;
+	background-position: top center;
+	background-repeat: no-repeat;
+	display: inline-block;
+	color: transparent;
+	margin: 0 3px;
+	height: 100%;
+	box-sizing: content-box;
+	vertical-align: top;
+}
+
+.onyx-rating-bar.onyx-level-editable:active .onyx-rating-element {
+	background-position: bottom center;
+}
+
+.onyx-rating-bar .onyx-rating-element.off {
+	background-image: url(../images/Null.png);
+	background-size: auto 100%;
+}

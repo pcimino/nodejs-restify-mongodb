@@ -1,0 +1,43 @@
+.onyx-folding {
+	position: relative;
+	overflow: hidden;
+}
+
+.onyx-folding-volume {
+	background: url("../images/Folding-Center.png") repeat-x;
+	background-size: auto 100%;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	opacity: 0;
+}
+.onyx-folding-right {
+	background: url("../images/Folding-Border.png") repeat-x right;
+	background-size: 200% 100%;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+}
+.onyx-folding-left {
+	background: url("../images/Folding-Border.png") repeat-x left;
+	background-size: 200% 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+}
+.onyx-folding-label {
+	height: 24px;
+	line-height: 24px;
+	position: absolute;
+	top: 17px;
+	right: 17px;
+	padding: 0 10px;
+	border: 1px solid rgba(0, 0, 0, 0.5);
+	background: rgba(255, 255, 255, 0.5);
+	border-radius: 13px;
+	box-shadow: 0 0 4px 2px white;
+}

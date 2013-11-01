@@ -1,0 +1,61 @@
+.onyx-updown {}
+
+/* Generic button definition */
+.onyx-updown .onyx-updown-down, .onyx-updown .onyx-updown-up {
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient.png);
+	background-position: bottom;
+	background-repeat: repeat-x;
+	display: inline-block;
+	background-color: #e1e1e1;
+	text-align: center;
+	color: #000;
+	text-overflow: ellipsis;
+	height: 32px;
+	position: relative;
+	font-size: 22px;
+	line-height: 32px;
+	padding: 0 18px;
+	font-weight: bold;
+	border: 1px solid #999;
+	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.2);
+}
+
+/* Down button specificity */
+.onyx-updown .onyx-updown-down {
+	border-radius: 3px 0 0 3px;
+	margin-right: -1px;
+}
+
+/* Up button specificity */
+.onyx-updown .onyx-updown-up {
+	border-radius: 0 3px 3px 0;
+}
+
+/* Button pressed style */
+.onyx-updown .onyx-updown-down:active, .onyx-updown .onyx-updown-up:active {
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient-invert.png);
+	background-position: top;
+	box-shadow: inset 0px 1px 0px rgba(0,0,0,0.1);
+	border-top-color: #666;
+}
+
+/* Avoid pressed styling of disabled button */
+.onyx-updown .onyx-updown-down.disabled:active,
+.onyx-updown .onyx-updown-up.disabled:active,
+.onyx-updown.disabled .onyx-updown-down:active,
+.onyx-updown.disabled .onyx-updown-up:active {
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient.png);
+	background-position: bottom;
+	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.2);
+	border-top-color: #999;
+}
+
+/* Generic disabled style */
+.onyx-updown.disabled, .onyx-updown .onyx-updown-down.disabled, .onyx-updown .onyx-updown-up.disabled {
+	opacity: 0.4;
+}
+
+/* Avoid "double" disabled effect */
+.onyx-updown.disabled .onyx-updown-down, .onyx-updown.disabled .onyx-updown-up {
+	opacity: 1!important;
+}

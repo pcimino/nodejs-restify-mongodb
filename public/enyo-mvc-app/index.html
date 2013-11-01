@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Enyo Bootplate App</title>
+		<link rel="shortcut icon" href="assets/favicon.ico"/>
+	</head>
+	<body class="enyo-unselectable">
+	    <script type="text/javascript">
+            function isCanvasSupported(){
+                var elem = document.createElement('canvas');
+                return !!(elem.getContext && elem.getContext('2d'));
+            }
+            if (isCanvasSupported()) {
+                location = "mvcApp.html"
+            } else {
+                document.write("<h1 style='text-align:center;margin-top:20%;'>This site requires an HTML5 compatible browser.</H1>");
+                document.write("<h3 style='text-align:center;'>Try Mozilla Firefox, Apple Safari, Google Chrome, etc.</H3>");
+                document.write("<h4 style='text-align:center;'>If you\'re using Microsoft IE, upgrade to version 10 or higher.</H4>");
+            };
+        </script>
+	</body>
+</html>
+

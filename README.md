@@ -12,7 +12,7 @@ This is a basic Node.js setup demonstrating:
 #### ***Enyo Demonstration App*** ####
 I'm working on another project using Enyo MVC. The minified version of this app is included as part of the demo. Once you load the index.html, click on the Enyo link.
 
-#### ***Username or Password *** ####
+#### ***Username or Password*** ####
 Implementing the ability to login with username or email address. This involves enforcing uniqueness on these fields. So you may need to wipe or fix your data manually. To simplify this, email and username will also be stored in lowercase to avoid user confusion.
 
 #### ***IP Range Checking*** ####

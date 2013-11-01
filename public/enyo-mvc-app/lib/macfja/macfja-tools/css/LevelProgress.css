@@ -1,0 +1,49 @@
+.onyx-level-bar {
+	position: relative;
+	height: 36px;
+	line-height: 36px;
+}
+
+.onyx-level-bar .onyx-level-element {
+	background-size: auto 100%;
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient.png);
+	border-radius: 3px;
+	height: 100%;
+	display: inline-block;
+	background-color: #e0e0e0;
+	border: 1px solid #999;
+	margin: 0 2px;
+	text-align: center;
+	color: #707070;
+	box-sizing: border-box;
+	text-overflow: ellipsis;
+	vertical-align: top;
+}
+
+.onyx-level-bar .onyx-level-element.off {
+	background-image: url(http://enyojs.com/lib/onyx/images/gradient-invert.png);
+}
+
+.onyx-level-bar .onyx-level-element.warning {
+	background-color: #f0e040;
+	color: #787020;
+}
+
+.onyx-level-bar .onyx-level-element.critical {
+	background-color: #e04000;
+	color: #702000;
+}
+
+.onyx-level-bar .onyx-level-element.normal {
+	background-color: #40e000;
+	color: #207000;
+}
+
+.onyx-level-bar .onyx-level-element-hidden {
+	width: 4px!important;
+	height: 100%;
+	display: inline-block;
+	margin-right: -4px;
+	color: transparent;
+	text-overflow: ellipsis;
+}

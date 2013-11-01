@@ -1,0 +1,129 @@
+/*font-family: "Prelude", Arial, sans-serif;
+color: white;
+*/
+.notification-pagecurl-curl {
+	position: fixed;
+
+	background: url("Images/PageCurl.png") no-repeat;
+	height: 120px;
+	width: 150px;
+	
+	top: -120px;
+	right: -150px;
+	/*Curl visible :
+	right: -35px;
+	top: 0px;*/
+}
+
+.notification-pagecurl-curl-count {
+	position: absolute;
+	right: 40px;
+	top: 5px;
+	color: white;
+	font-size: 16px;
+	background: #C00;
+	box-shadow: 0 1px 1px black, inset 0 3px 6px #F88;
+	border-radius: 12px;
+	height: 24px;
+	line-height: 24px;
+	padding: 0 7px;
+	font-weight: bold;
+	text-shadow: 0 -1px 0px #500;
+}
+
+.notification-pagecurl-messagebar {
+	position: fixed;
+	top: 0px;
+	padding: 0px;
+	white-space: nowrap;
+	background: url("Images/PageCurl-Fill.png") repeat-x;
+	height: 80px;
+	overflow: hidden;
+	left: 100%;
+	width: 100%;
+}
+.notification-pagecurl-messagebar-close {
+	position: absolute;
+	background-image: url("Images/PageCurl-Close.png");
+	top: 24px;
+	left: 9px;
+}
+.notification-pagecurl-messagebar-scroller {
+	position: absolute;
+	left: 50px;
+	right: 0;
+	top: 0;
+	bottom: 0;
+}
+.notification-pagecurl-messagebar-message {
+	width: 230px;
+	height: 60px;
+	background-image: url("Images/PageCurl-Fix-Message.png");
+	position: relative;
+	padding: 10px;
+	padding-left: 14px;
+	margin-left: 75px;
+	display: inline-block;
+}
+
+.notification-pagecurl-messagebar img {
+	height: 70px;
+	position: absolute;
+	right: 100%;
+	top: 5px;
+	border-radius: 8px;
+}
+.notification-pagecurl-messagebar-message-title {
+	padding: 0 8px;
+	height: 25px;
+	line-height: 25px;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}
+.notification-pagecurl-messagebar-message-text {
+	padding: 0 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 32px;
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.notification-pagecurl-message {
+	position: absolute;
+	width: 230px;
+	height: 60px;
+	background-image: url("Images/PageCurl-Temp-Message.png");
+	top: 120px;
+	right: 60px;
+	padding: 10px;
+}
+.notification-pagecurl-message img {
+	height: 70px;
+	position: absolute;
+	right: 100%;
+	top: 5px;
+	border-radius: 8px;
+}
+.notification-pagecurl-message-title {
+	margin-right: 15px;
+	padding: 0 8px;
+	height: 25px;
+	line-height: 25px;
+	font-weight: bold;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 14px;
+}
+.notification-pagecurl-message-text {
+	padding: 0 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 32px;
+	font-size: 12px;
+	line-height: 16px;
+}

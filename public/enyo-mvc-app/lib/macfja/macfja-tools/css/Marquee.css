@@ -1,0 +1,20 @@
+.onyx-marquee {
+	position:  relative;
+	overflow: hidden;
+}
+.onyx-marquee-horizontal-strategy {
+	position: relative;
+	white-space: nowrap;
+}
+.onyx-marquee-vertical-strategy {
+	position: relative;
+}
+.onyx-marquee-first, .onyx-marquee-second {
+	display: inline-block;
+}
+.onyx-marquee-horizontal-strategy .onyx-marquee-second {
+	margin-left: 30px;
+}
+.onyx-marquee-vertical-strategy .onyx-marquee-second {
+	margin-top: 30px;
+}

@@ -7,6 +7,8 @@ var mongoose = require('mongoose')
   , restify = require('restify')
   , clientSessions = require("client-sessions");
 
+var gUser = {};
+
 module.exports = function (app, config, auth) {
   /**
    * Return a list of available Roles
@@ -57,8 +59,7 @@ module.exports = function (app, config, auth) {
                 // user account has never been validated
                 return next(new restify.NotAuthorizedError("Email address must be validated to activate your account."));
               } else {
-                req.session.user = user._id; //subscriber@subscriber
-                res.send(user);
+                gUser = user;
                 return next();
               }
             } else {
@@ -70,6 +71,28 @@ module.exports = function (app, config, auth) {
       }
    }
 
+   /** If IP Range check is turned on, Admin can only login from a valid IP Address
+    */
+   function checkAdminLoginAccess(req, res, next) {
+     if (gUser && gUser._id) {
+       if (gUser.allowAccess('Admin')) {
+         req.session.user = gUser._id;
+         auth.adminAccess(req, res, next);
+       }
+     } else if (!user) {
+       return next(new restify.NotAuthorizedError("Invalid username."));
+     }
+     return next();
+   }
+     /** If IP Range check is turned on, Admin can only login from a valid IP Address
+    */
+   function accessAllowed(req, res, next) {
+     if (gUser && gUser._id) {
+       req.session.user = gUser._id; //subscriber@subscriber
+       res.send(gUser);
+       return next();
+     }
+   }
   /**
    * User logs out
    *
@@ -169,7 +192,7 @@ module.exports = function (app, config, auth) {
    * @param path
    * @param promised callback
    */
-   app.post('/api/v1/session/login', login);
+   app.post('/api/v1/session/login', login, checkAdminLoginAccess, accessAllowed);
 
    /**
    * Logout request
@@ -218,6 +241,7 @@ module.exports = function (app, config, auth) {
      res.send({'message':'Success', 'timeout':config.session_timeout});
    });
 }
+
 
 
 

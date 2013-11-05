@@ -80,18 +80,20 @@ exports.access = function(req, res, next) {
  */
 exports.adminAccess = function(req, res, next) {
   if (config.ipRangeCheckFlag) {
-   // check for IP Range
-   if (!range_check.in_range(req.connection.remoteAddress, config.adminIPRange)) {
-     console.log("IP Address " + req.connection.remoteAddress + " is not within the allowed range(s).")
-     return next(new restify.NotAuthorizedError("Access restricted."));
-   }
    var id = "-1";
    if (req.session && req.session.user) {
       id = req.session.user;
    }
    User.findById(id, function (err, user) {
       if (!err) {
-         if (user && !user.allowAccess('Admin')) {
+         if (user) {
+           if (user.allowAccess('Admin')) {
+             // check for IP Range
+             if (!range_check.in_range(req.connection.remoteAddress, config.adminIPRange)) {
+               console.log("IP Address " + req.connection.remoteAddress + " is not within the allowed range(s).")
+               return next(new restify.NotAuthorizedError("Access restricted."));
+             }
+           }
             return next({});
          } else {
             return next(new restify.NotAuthorizedError("Access restricted."));
@@ -130,5 +132,6 @@ exports.subscriberAccess = function(req, res, next) {
       }
    });
 };
+
 
 

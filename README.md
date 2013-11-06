@@ -30,7 +30,9 @@ If you're new to Node.js and/or Mongo DB, these steps will get you started. Adva
 6. Run the **install-modules.bat/.sh** to install the required Node.js modules.
 7. Start the Mongo database: **start-mongo.bat/.sh**
 8. Start the Node.js server: **start-node.bat/.sh**
-0. Point your browser to [http://localhost:3000](http://localhost:3000)
+9. Point your browser to [http://localhost:3000](http://localhost:3000)
+10. When done, shutdown the Mongo Server nicely or you may need to clean up the lock file later
+10.1 nodejs-restify-mongodb/scripts/stop-mongo[.bat | .sh] 
 
 [The demo page loads and you can use the forms to call the REST APIs.](https://github.com/pcimino/nodejs-restify-mongodb/wiki/APITest)
 

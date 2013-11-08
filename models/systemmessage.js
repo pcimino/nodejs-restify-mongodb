@@ -16,6 +16,7 @@ var SystemMessageSchema = new Schema({
 
   , subject: { type: String, trim: true }
   , message: { type: String, trim: true }
+  , archiveFlag: { type: Boolean, default: false } // used for outputting only since this has to be mapped to a user's SystemmessageArchive instance
 })
 
 module.exports = mongoose.model('SystemMessage', SystemMessageSchema)
@@ -25,3 +26,4 @@ module.exports = mongoose.model('SystemMessage', SystemMessageSchema)
 
 
 
+

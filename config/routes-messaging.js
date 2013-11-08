@@ -259,24 +259,23 @@ module.exports = function (app, config, auth) {
             Maybe look at 'mongoose-joins' module?
          */
 
-
-          if (req.params.archiveFlag && req.params.archiveFlag == 'true') {
+          var archiveFlag = false;
+          if (req.params.archiveFlag) {
               // skip the archive, retrieve all messages
-              filterSystemMessage(req, res, null, next);
-         } else {
-             // retrieve all the archive flags for this user then filter the
-             var query = SystemMessageArchive.where( 'userId', req.session.user );
-             query.find(function (err, systemMessageArchive) {
-                if (!err) {
-                  // console.log(JSON.stringify(systemMessageArchive))
-                   filterSystemMessage(req, res, systemMessageArchive, next);
-                } else {
-                      var errObj = err;
-                      if (err.err) errObj = err.err;
-                      return next(new restify.InternalError(errObj));
-                }
-             });
+              archiveFlag = req.params.archiveFlag;
          }
+        // retrieve all the archive flags for this user then filter the
+        var query = SystemMessageArchive.where( 'userId', req.session.user );
+        query.find(function (err, systemMessageArchive) {
+          if (!err) {
+            filterSystemMessage(req, res, systemMessageArchive, archiveFlag, next);
+            // console.log(JSON.stringify(systemMessageArchive))
+          } else {
+            var errObj = err;
+            if (err.err) errObj = err.err;
+            return next(new restify.InternalError(errObj));
+          }
+        });
 
       }
    }
@@ -287,19 +286,25 @@ module.exports = function (app, config, auth) {
    * @param response array of SystemMessages
    * @param next method
    */
-    function filterSystemMessage(req, res, systemMessageArchiveArr, next) {
+    function filterSystemMessage(req, res, systemMessageArchiveArr, archiveFlag, next) {
       SystemMessage.find(function (err, systemMessageArr) {
           if (systemMessageArr) {
-            if (systemMessageArchiveArr) {
-                // going to be SLOW so admins need to keep the message count low and purge them when done
-                for (var i = systemMessageArr.length-1; i >= 0; i--) {
-                  for (var j = 0; j < systemMessageArchiveArr.length; j++) {
-                      if (systemMessageArr[i]._id.toString() == systemMessageArchiveArr[j].systemMessageId.toString()) {
-                        systemMessageArr.splice(i, 1);
-                        j = systemMessageArchiveArr.length;
-                      }
+            // going to be SLOW so admins need to keep the message count low and purge them when done
+            for (var i = systemMessageArr.length-1; i >= 0; i--) {
+              systemMessageArr[i].archiveFlag = false;
+              if (systemMessageArchiveArr) {
+                for (var j = 0; j < systemMessageArchiveArr.length; j++) {
+                  if (systemMessageArr[i]._id.toString() == systemMessageArchiveArr[j].systemMessageId.toString()) {
+                    if (archiveFlag == 'true') {
+                      // add a flag so messages archived by this user can be differentiated
+                      systemMessageArr[i].archiveFlag = true;
+                    } else {
+                      systemMessageArr.splice(i, 1);
+                      j = systemMessageArchiveArr.length;
+                    }
                   }
                 }
+              }
             }
             res.send(systemMessageArr);
           } else {
@@ -475,3 +480,6 @@ module.exports = function (app, config, auth) {
 
 
 
+
+
+

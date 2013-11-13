@@ -6,8 +6,15 @@
 		<link rel="shortcut icon" href="assets/favicon.ico"/>
 		<!-- -->
 		<meta http-equiv="Content-Type" content="text/html; charset=utf8"/>
-		<meta name="apple-mobile-web-app-capable" content="yes"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<script type="text/javascript">
+            // resize for mobile
+            if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+                 document.write('<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=yes">')
+            } else {
+                 document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">')
+            }
+        </script>
 		<!-- Less.js (uncomment for client-side rendering of less stylesheets; leave commented to use only CSS) -->
 		<!-- <script src="enyo/tools/minifier/node_modules/less/dist/less-1.3.3.min.js"></script> -->
 		<!-- enyo (debug) -->
@@ -19,6 +26,14 @@
 	</head>
 	<body class="enyo-unselectable">
 	    <script type="text/javascript">
+            // resize for mobile
+            if(window.innerWidth <= 800 && window.innerHeight <= 600) {
+                 document.write('<meta name="viewport" content="width=device-width, initial-scale=0.5, maximum-scale=1.0, user-scalable=no">')
+            } else {
+                 document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">')
+            }
+
+
             function isCanvasSupported(){
                 var elem = document.createElement('canvas');
                 return !!(elem.getContext && elem.getContext('2d'));
@@ -29,6 +44,7 @@
         </script>
 	</body>
 </html>
+
 
 
 

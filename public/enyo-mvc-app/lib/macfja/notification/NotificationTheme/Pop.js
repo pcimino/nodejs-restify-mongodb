@@ -255,7 +255,7 @@ enyo.kind({
 			}
 		}
 	},
-	
+
 	/**
 	 * Remove a notification
 	 * @function
@@ -266,10 +266,10 @@ enyo.kind({
 		if(uid == this.pending[0].uid) {
 			this.hideNotification(true);
 		}
-		
+
 		enyo.remove(this.getNotificationFromUid(uid), this.pending);
 	},
-	
+
 	/**
 	 * Return a notification by a its Uid
 	 * @function
@@ -281,7 +281,7 @@ enyo.kind({
 	getNotificationFromUid: function(uid) {
 		var lap = 0,
 			total = this.pending.length;
-			
+
 		for(;lap<total;lap++) {
 			if(this.pending[lap].uid == uid) return this.pending[lap];
 		}

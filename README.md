@@ -22,6 +22,8 @@ Added IP Range Checking on Admin methods, see the config.js for setting ranges
 ## Quick Start ##
 If you're new to Node.js and/or Mongo DB, these steps will get you started. Advanced users may want to look at the start-node.bat script and configure it for their environment. *nix shell scripts are also included, run `chmod 755 *.sh` if needed.
 
+This project uses <a href="https://github.com/TooTallNate/node-gyp" target="_blank">node-gyp, so check the README</a> for prerequisites.
+
 1. Download/clone this project
 2. [Install MongoDB](http://docs.mongodb.org/manual/installation/#gsc.tab=0).
 3. [Install Node.js](http://nodejs.org/download/).

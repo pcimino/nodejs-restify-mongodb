@@ -3,5 +3,7 @@ set SERVER_HOME=..
 
 cd %SERVER_HOME%
 
+call npm update -g serialport 
+call npm update -g node-gyp 
 call npm update 
 pause

@@ -55,6 +55,8 @@ module.exports = function (app, config, auth, mailHelper) {
       } else {
        return next(new restify.MissingParameterError('Beta Code is required for signup.'));
       }
+    } else {
+      return next();
     }
   }
 
@@ -81,8 +83,10 @@ module.exports = function (app, config, auth, mailHelper) {
          user.save(function (err, user) {
             if (!err) {
               // create a verification code
+              console.log(1);
               mail.generateVerifyCode(req, res, next, user);
               res.send(user);
+              return next();
             } else {
                return next(err);
             }
@@ -294,6 +298,8 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
+
 
 
 

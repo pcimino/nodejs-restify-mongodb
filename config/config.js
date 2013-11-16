@@ -22,7 +22,7 @@ module.exports = {
           mailFrom: 'test@gmail.com'
           , mailService: "Gmail"
           , mailAuth: {user: "test@gmail.com", pass: "testpass"}
-          , sendEmail: false
+          , sendEmail: false // if true need to have the mail service setup properly
           , browserPreview: true
       // see routes-user.js searchUsers
       // the search results only inlcude ObjectId, name, username and email
@@ -75,3 +75,4 @@ module.exports = {
 
 
 
+

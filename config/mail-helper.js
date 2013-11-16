@@ -52,11 +52,11 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
   }
   transport.sendMail(sendOptions, function(error, response) {
     if (error) {
-      console.log(error);
+      console.log('sendMail ' + error);
       // email failed, send to the error log directory
       transportErrorLog.sendMail(sendOptions);
     } else {
-      if (response) console.log("Message sent: " + response.message);
+      if (response) console.log("Message sent: " + JSON.stringify(response));
     }
   });
 };
@@ -81,14 +81,14 @@ function createTransport() {
 
     transport = nodemailer.createTransport('MailPreview', {
       dir: tmpdir,  // defaults to ./tmp/nodemailer
-      browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
+      browser: mailOptions.browserPreview // open sent email in browser
     });
   }
   // For email error logging
   var tmpErr = path.join(__dirname, mailOptions.errDir, 'nodemailer');
   transportErrorLog = nodemailer.createTransport('MailPreview', {
     dir: tmpErr,  // defaults to ./tmp/nodemailer
-    browser: mailOptions.browserPreview // open sent email in browser (mac only, defaults to true)
+    browser: mailOptions.browserPreview // open sent email in browser
   });
 };
 
@@ -280,6 +280,8 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;
+
+
 
 
 

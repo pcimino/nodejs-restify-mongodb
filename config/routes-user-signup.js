@@ -231,9 +231,11 @@ module.exports = function (app, config, auth, mailHelper) {
                  if (!err) {
                    // send the new password
                    var refer = req.toString().substring(req.toString().indexOf('referer:')+8).trim();
-                   var host = req.header('Host');
-                   refer = refer.substring(0, refer.indexOf(host) + host.length);
-                   var fullURL = refer + "/";
+                   var protocol = refer.substring(0, refer.indexOf('//') + 2);
+                   var referHost = refer.substring(refer.indexOf('//') + 2);
+
+                   referHost = referHost.substring(0, referHost.indexOf('/'));
+                   var fullURL = protocol + referHost
                    var messageBody = "Hello " + user.name + ",</br><p>Here is your new password. Please login and change it.</p><p>" + newPass + "</p>";
                    messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>"
 
@@ -298,6 +300,8 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 }
+
+
 
 
 

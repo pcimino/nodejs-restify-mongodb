@@ -7,8 +7,11 @@ var mongoose = require('mongoose')
   , UserList = mongoose.model('UserList')
   , VerifyCode = mongoose.model('VerifyCode')
   , MessageThread = mongoose.model('MessageThread')
+  , SystemMessageArchive = mongoose.model('SystemMessageArchive')
+  , TermsAndConditionsArchive = mongoose.model('TermsAndConditionsArchive')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
+
 
 var mail = {};
 var gUser = {}; // TODO don't want to globalize user, need to figure out a better way to use Promises or Async
@@ -317,7 +320,7 @@ module.exports = function (app, config, auth, mailHelper) {
             var query = SystemMessageArchive.where( 'userId', req.params.id );
             query.exec(function (err, sysMessageArr) {
             });
-            var query2 = TermsAndConditionsArchiveSchema.where( 'userId', req.params.id );
+            var query2 = TermsAndConditionsArchive.where( 'userId', req.params.id );
             query2.exec(function (err, sysMessageArr) {
             });
 
@@ -397,6 +400,8 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
 }
+
+
 
 
 

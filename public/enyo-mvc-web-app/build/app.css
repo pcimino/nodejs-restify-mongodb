@@ -1753,7 +1753,7 @@
 	top: 20px;
 	right: 20px;
 	border-radius: 8px;
-	background: #8CF url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background: #8CF url("http://enyojs.com/lib/onyx/images/gradient.png");
 	background-size: auto 100%;
 	color: black;
 	text-shadow: 0 1px 1px rgba(255,255,255,0.5);
@@ -1801,7 +1801,7 @@
 	height: 26px;
 	line-height: 22px;
 	color: white;
-	background: red url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background: red url("http://enyojs.com/lib/onyx/images/gradient.png");
 	border: 2px solid white;
 	box-shadow: 0 1px 2px rgba(0,0,0,1);
 	background-size: auto 100%;
@@ -1811,6 +1811,7 @@
 	box-sizing: border-box;
 	text-shadow: 0 -1px 1px rgba(0,0,0,0.5);
 }
+
 
 /* lib\macfja\notification\NotificationTheme\css\Bezel.css */
 
@@ -1823,7 +1824,7 @@
 	right: 0;
 	margin: 0 auto;
 	border-radius: 30px;
-	background: rgba(0,0,0,0.5) url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background: rgba(0,0,0,0.5) url("http://enyojs.com/lib/onyx/images/gradient.png");
 	background-size: auto 100%;
 	text-align: center;
 	color: white;
@@ -1849,6 +1850,7 @@
 	text-overflow: ellipsis;
 	height: 3em;
 }
+
 
 /* lib\macfja\notification\NotificationTheme\css\MessageBar.css */
 
@@ -1902,7 +1904,7 @@
 	right: 0;
 	margin: 0 auto;
 	border-radius: 8px;
-	background: rgba(0,32,192,0.75) url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background: rgba(0,32,192,0.75) url("http://enyojs.com/lib/onyx/images/gradient.png");
 	background-size: auto 100%;
 	text-align: center;
 	color: white;
@@ -1936,6 +1938,7 @@
 }
 
 
+
 /* lib\macfja\notification\NotificationTheme\css\PageCurl.css */
 
 /*font-family: "Prelude", Arial, sans-serif;
@@ -1947,7 +1950,7 @@ color: white;
 	background: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl.png') no-repeat;
 	height: 120px;
 	width: 150px;
-	
+
 	top: -120px;
 	right: -150px;
 	/*Curl visible :
@@ -2084,7 +2087,7 @@ color: white;
 
 .onyx-dynamiclist-row:active {
 	background-size: auto 100%;
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient-invert.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient-invert.png");
 	background-color: #888;
 	border-top: 1px solid rgba(0,0,0,0.5);
 	border-bottom: 1px solid #888;
@@ -2108,7 +2111,7 @@ color: white;
 
 .onyx-level-bar .onyx-level-element {
 	background-size: auto 100%;
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient.png");
 	border-radius: 3px;
 	height: 100%;
 	display: inline-block;
@@ -2123,7 +2126,7 @@ color: white;
 }
 
 .onyx-level-bar .onyx-level-element.off {
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient-invert.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient-invert.png");
 }
 
 .onyx-level-bar .onyx-level-element.warning {
@@ -2194,7 +2197,7 @@ color: white;
 
 .onyx-navigationbar .onyx-navigationbar-item {
 	background-size: auto 100%;
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient.png");
 	height: 36px;
 	margin: 0px 18px 0 0;
 	position: relative;
@@ -2233,7 +2236,7 @@ color: white;
 }
 
 .onyx-navigationbar .onyx-navigationbar-item:active, .onyx-navigationbar .onyx-navigationbar-item.selected {
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient-invert.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient-invert.png");
 	box-shadow: inset 0px 1px 0px rgba(0,0,0,0.1);
 }
 
@@ -2257,7 +2260,7 @@ color: white;
 	border: 1px solid #999;
 	text-align: center;
 	color: #707070;
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient-invert.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient-invert.png");
 	background-size: auto 100%;
 	box-sizing: content-box !important;
 }
@@ -2290,7 +2293,7 @@ color: white;
 
 /* Generic button definition */
 .onyx-updown .onyx-updown-down, .onyx-updown .onyx-updown-up {
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient.png");
 	background-position: bottom;
 	background-repeat: repeat-x;
 	display: inline-block;
@@ -2321,7 +2324,7 @@ color: white;
 
 /* Button pressed style */
 .onyx-updown .onyx-updown-down:active, .onyx-updown .onyx-updown-up:active {
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient-invert.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient-invert.png");
 	background-position: top;
 	box-shadow: inset 0px 1px 0px rgba(0,0,0,0.1);
 	border-top-color: #666;
@@ -2332,7 +2335,7 @@ color: white;
 .onyx-updown .onyx-updown-up.disabled:active,
 .onyx-updown.disabled .onyx-updown-down:active,
 .onyx-updown.disabled .onyx-updown-up:active {
-	background-image: url('http://enyojs.com/lib/onyx/images/gradient.png'');
+	background-image: url("http://enyojs.com/lib/onyx/images/gradient.png");
 	background-position: bottom;
 	box-shadow: inset 0px 1px 0px rgba(255,255,255,0.2);
 	border-top-color: #999;
@@ -2519,6 +2522,7 @@ color: white;
 .bold-text {
   font-weight:bold;
 }
+
 
 
 

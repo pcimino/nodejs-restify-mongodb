@@ -1,6 +1,27 @@
 /**
 * Main application server setup
 */
+var cmdlineEnv = process.argv[2];
+// if command line option given, override NODE_ENV
+console.log(cmdlineEnv)
+if (cmdlineEnv && cmdlineEnv.length > 0) {
+  if (cmdlineEnv == '-d' || cmdlineEnv.toUpperCase() == '--DEVELOPMENT') {
+      process.env.NODE_ENV = 'development';
+  } else if (cmdlineEnv == '-q' || cmdlineEnv.toUpperCase() == '--QA') {
+      process.env.NODE_ENV = 'test';
+  } else if (cmdlineEnv == '-p' || cmdlineEnv.toUpperCase() == '--PRODUCTION') {
+      process.env.NODE_ENV = 'production';
+  } else {
+    console.log("Usage: node app.js");
+    console.log("Default usage uses the Devlopment configuration unless NODE_ENV is defined as [develoopment|test|production]");
+    console.log("The environment variable can be overridden on the command line using one of the following arguments:");
+    console.log("\tnode app.js [-d|-q|-p|--development|--qa|--production]");
+    console.log("Alternatively there are scripts defined in package.json, to use one of these:");
+    console.log("\tnpm run-scripts <dev|qa|prod|database>");
+    console.log("Where database is used to set up the database the first time, and is envirnment specific, probably want to use the scripts.");
+    return false;
+  }
+}
 
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
@@ -121,3 +142,6 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
 
 
 
+
+
+

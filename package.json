@@ -1,13 +1,20 @@
 {
     "name": "rest_test"
   , "description": "A Nodejs app demonstration Restify, Mongoose, Client Sessions, Mail and a simple Web socket"
-  , "version": "0.9.12"
+  , "version": "0.9.13"
   , "private": false
   , "author": "Paul Cimino(https://github.com/pcimino)"
   , "engines": {
         "node": "0.10.13"
       , "npm": "1.3.2"
-    }
+  }
+  , "scripts": {
+      "test": "node node_modules/mocha/bin/mocha"
+      , "dev": "node app.js --development"
+      , "qa": "node app.js --qa"
+      , "prod": "node app.js --production"
+      , "database": "./scripts/create-db.bat"
+  }
   , "dependencies": {
       "restify": "latest"
     , "mongoose": "latest"
@@ -21,7 +28,9 @@
     , "toobusy": "latest"
     , "range_check": "latest"
     , "longjohn": "latest"
+    , "mocha": "latest"
   }
+  , "license": "Apache"
 }
 
 
@@ -32,4 +41,4 @@
 
 
 
-
+

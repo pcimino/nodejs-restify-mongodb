@@ -6,7 +6,7 @@ module.exports = {
       root: require('path').normalize(__dirname + '/..')
       , app: {
           name: 'Nodejs Restify Mongoose Demo'
-        , version: '0.9.12'
+        , version: '0.9.13'
       }
       , openUserSignup: false // set to true to create users and assign a role, if false, API only allows admins to create an Admin role user
       , usernameOrPassword: true // true: Login, password reset and resend email verification can use either password or username, false: only username
@@ -42,7 +42,7 @@ module.exports = {
       , ipRangeCheckFlag: true
       , adminIPRange: ['10.0.0.0/12', '192.0.0.0/16', '192.168.1.0/24', '127.0.0.0/8']
     }
-    , test: {
+    , qa: {
         root: require('path').normalize(__dirname + '/..')
         , app: {
             name: 'Nodejs Restify Mongoose Demo'
@@ -57,6 +57,12 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
+
+
+
+
+
 
 
 

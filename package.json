@@ -1,7 +1,7 @@
 {
     "name": "rest_test"
   , "description": "A Nodejs app demonstration Restify, Mongoose, Client Sessions, Mail and a simple Web socket"
-  , "version": "0.9.13"
+  , "version": "0.9.14"
   , "private": false
   , "author": "Paul Cimino(https://github.com/pcimino)"
   , "engines": {
@@ -34,11 +34,3 @@
 }
 
 
-
-
-
-
-
-
-
-

@@ -21,6 +21,7 @@ var UserSchema = new Schema({
   , role: { type: String, enum: ['User', 'Subscriber', 'Admin'], default: 'User', required: true }
   , hashed_password: { type: String, trim: true }
   , tempPasswordFlag: { type: Boolean, default: false }
+  , avatar: { type: String, trim: true }
 })
 
 
@@ -120,6 +121,7 @@ UserSchema.methods = {
 }
 
 mongoose.model('User', UserSchema)
+
 
 
 

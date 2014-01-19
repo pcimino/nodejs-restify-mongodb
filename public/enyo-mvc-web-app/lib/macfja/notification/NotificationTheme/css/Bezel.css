@@ -7,7 +7,7 @@
 	right: 0;
 	margin: 0 auto;
 	border-radius: 30px;
-	background: rgba(0,0,0,0.5) url(http://enyojs.com/lib/onyx/images/gradient.png);
+	background: rgba(0,0,0,0.5) url("Images/gradient.png");
 	background-size: auto 100%;
 	text-align: center;
 	color: white;
@@ -33,3 +33,5 @@
 	text-overflow: ellipsis;
 	height: 3em;
 }
+
+

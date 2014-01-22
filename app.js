@@ -8,14 +8,16 @@ if (cmdlineEnv && cmdlineEnv.length > 0) {
   if (cmdlineEnv == '-d' || cmdlineEnv.toUpperCase() == '--DEVELOPMENT') {
       process.env.NODE_ENV = 'development';
   } else if (cmdlineEnv == '-q' || cmdlineEnv.toUpperCase() == '--QA') {
-      process.env.NODE_ENV = 'test';
+      process.env.NODE_ENV = 'qa';
   } else if (cmdlineEnv == '-p' || cmdlineEnv.toUpperCase() == '--PRODUCTION') {
       process.env.NODE_ENV = 'production';
+  }  else if (cmdlineEnv == '-u' || cmdlineEnv.toUpperCase() == '--UNIT_TEST') {
+      process.env.NODE_ENV = 'unit_test';
   } else {
     console.log("Usage: node app.js");
     console.log("Default usage uses the Devlopment configuration unless NODE_ENV is defined as [develoopment|test|production]");
     console.log("The environment variable can be overridden on the command line using one of the following arguments:");
-    console.log("\tnode app.js [-d|-q|-p|--development|--qa|--production]");
+    console.log("\tnode app.js [-d|-q|-p|-u|--development|--qa|--production|--unit_test]");
     console.log("Alternatively there are scripts defined in package.json, to use one of these:");
     console.log("\tnpm run-scripts <dev|qa|prod|database>");
     console.log("Where database is used to set up the database the first time, and is envirnment specific, probably want to use the scripts.");
@@ -118,7 +120,7 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
 
     // because we can't have a synchronous DB call, finish up the server setup here
     // restify settings
-    require(config_path + '/restify')(app, config, sessionKey.key);
+    require(config_path + '/restify-server')(app, config, sessionKey.key);
 
     // configure email
     var MailHelper = require(config_path + '/mail-helper.js').MailHelper;
@@ -144,4 +146,5 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
 
 
 
-
+
+

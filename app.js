@@ -133,10 +133,12 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
 
     // Start the app by listening on <port>
     var port = process.env.PORT || config.port;
+
     app.listen(port);
     console.log('App started on port ' + port);
+
   } else {
-    console.log("Failed to start server due to databse issue.");
+    console.log("Failed to start server due to database issue.");
     console.log(err);
   }
 });

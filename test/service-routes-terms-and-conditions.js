@@ -1,20 +1,20 @@
 // init the test client
 var client = restify.createJsonClient({
     version: '*',
-    url: 'http://127.0.0.1:8080'
+    url: 'http://127.0.0.1:3000'
 });
 
-describe('service: hello', function() {
+describe('service: default', function() {
     // Test #1
-    describe('200 response check', function() {
-        it('should get a 200 response', function(done) {
-            client.get('/hello/world', function(err, req, res, data) {
+    describe('default 200 response check', function() {
+        it('default should get a 200 response', function(done) {
+            client.get('/', function(err, req, res, data) {
                 if (err) {
                     throw new Error(err);
                 }
                 else {
-                    if (data.code != 200) {
-                        throw new Error('invalid response from /hello/world');
+                    if (res.body == '') {
+                      throw new Error('invalid response from / ' + res.body);
                     }
                     done();
                 }
@@ -22,4 +22,5 @@ describe('service: hello', function() {
         });
     });
     // Add more tests as needed...
-});
+});
+

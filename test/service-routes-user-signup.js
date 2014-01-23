@@ -7,15 +7,13 @@ var client = restify.createJsonClient({
 describe('User Signup Services ', function() {
   // Test #1
   describe('username exists : Existing user', function() {
-    it('Expect error', function(done) {
+    it('Expect error Username already in use.', function(done) {
       client.get('/api/v1/user/username/exists?username=admin', function(err, req, res, data) {
         if (err) {
-          if (data.message != "Username already in use.") {
-            throw new Error('invalid response from /api/v1/user/username/exists ' + JSON.stringify(data));
-          }
+          assert.equal(data.message, "Username already in use.");
           done();
         } else {
-            throw new Error('invalid response from /api/v1/user/username/exists ' + JSON.stringify(data));
+          throw new Error('invalid response from /api/v1/user/username/exists ' + JSON.stringify(data));
         }
       });
     });
@@ -41,9 +39,7 @@ describe('User Signup Services ', function() {
     it('Expect error', function(done) {
       client.get('/api/v1/user/email/exists?email=user@user.com', function(err, req, res, data) {
         if (err) {
-          if (data.message != 'Email already in use.') {
-            throw new Error('invalid response from /api/v1/user/email/exists ' + JSON.stringify(data));
-          }
+          assert.equal(data.message, "Email already in use.");
           done();
         } else {
             throw new Error('invalid response from /api/v1/user/email/exists ' + JSON.stringify(data));
@@ -88,9 +84,7 @@ describe('User Signup Services ', function() {
     it('Non-matching passwords', function(done) {
       client.post('/api/v1/user', {'username':'user3','name':'user3','email':'user3@user3.com','password':'user3','vPassword':'user2'}, function(err, req, res, data) {
         if (err) {
-          if (data.message != 'Password and Verify Password must match.') {
-            throw new Error(JSON.stringify(err));
-          }
+          assert.equal(data.message, "Password and Verify Password must match.");
           done();
         }
         else {
@@ -104,9 +98,7 @@ describe('User Signup Services ', function() {
     it('Invalid email', function(done) {
       client.post('/api/v1/user', {'username':'user3','name':'user3','email':'user3','password':'user3','vPassword':'user3'}, function(err, req, res, data) {
         if (err) {
-          if (data.message != 'Please enter a valid email address.') {
-            throw new Error(JSON.stringify(err));
-          }
+          assert.equal(data.message, "Please enter a valid email address.");
           done();
         }
         else {

@@ -59,7 +59,7 @@ module.exports = {
             , mailService: "Gmail"
             , mailAuth: {user: "test@gmail.com", pass: "testpass"}
             , sendEmail: false // if true need to have the mail service setup properly
-            , browserPreview: true
+            , browserPreview: false
         // see routes-user.js searchUsers
         // the search results only inlcude ObjectId, name, username and email
         // to further restrict returned fields, each (or all) of these can be set to false

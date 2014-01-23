@@ -95,6 +95,17 @@ var app = restify.createServer({
   version: config.version
 });
 
+
+app.on('error', function(err) {
+    if(err.errno === 'EADDRINUSE') {
+      console.log('Port already in use.');
+      process.exit(1);
+    } else {
+      console.log(err);
+    }
+
+});
+
 // allows authenticated cross domain requests
 preflightEnabler(app);
 
@@ -142,7 +153,6 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
-
 
 
 

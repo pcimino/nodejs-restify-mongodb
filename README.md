@@ -40,10 +40,6 @@ But I do discuss bits and pieces about where you can find info and how I'd like 
 ## Resources ##
 
 
-## TODO ##
-
-- DTrace logging
-- Unit tests 
 
 
 

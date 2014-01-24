@@ -5,7 +5,7 @@
 
 var restify = require('restify')
    , mongoose = require('mongoose')
-   // , toobusy = require('toobusy')
+   , toobusy = require('toobusy')
    , clientSessions = require("client-sessions")
    , longjohn = require("longjohn");
 
@@ -23,14 +23,11 @@ module.exports = function (app, config, sessionKey) {
    app.use(restify.gzipResponse());
    app.use(restify.bodyParser());
 
-
     // send a 503 if the server is too busy
-    /* Would like to use this, having trouble with npm module on one of my machines
     app.use(function(req, res, next) {
       if (toobusy()) res.send(503, "I'm busy right now, sorry.");
       else next();
     });
-    */
 
    app.use(clientSessions({
      cookieName: 'session'    // defaults to session_state

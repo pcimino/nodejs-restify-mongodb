@@ -41,6 +41,8 @@
     , "range_check": "latest"
     , "longjohn": "latest"
     , "mocha": "latest"
+    , "superagent": "latest"
+    , "should": "latest"
   }
   , "license": "Apache"
 }

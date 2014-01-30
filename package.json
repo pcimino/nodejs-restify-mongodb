@@ -25,7 +25,7 @@
            , "However getting some unit tests working is trumping this for now ans I will have to revisit later"
          ]
       , "test": "START /B node app.js --unit_test & sleep 2 & node node_modules/mocha/bin/mocha"
-      , "posttest": "%MONGODB%/bin/mongo unit_test_database ./scripts/unittest-database-teardown.js"
+      , "posttest": "%MONGODB%/bin/mongo unit_test_database ./scripts/unittest-database-teardown.js --globals superAgent,userAgent,should"
   }
   , "dependencies": {
       "restify": "latest"

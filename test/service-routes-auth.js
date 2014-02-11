@@ -1,3 +1,4 @@
+// https://github.com/hunterloftis/component-test/blob/master/lib/users/test/controller.test.js
 describe('User controller', function() {
   describe('/login', function() {
     describe('with good credentials', function() {
@@ -45,6 +46,7 @@ describe('User controller', function() {
     });
   });
 });
+
 
 
 

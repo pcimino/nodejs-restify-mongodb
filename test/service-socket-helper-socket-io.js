@@ -1,9 +1,9 @@
-
+// TODO
 describe('service: default', function() {
     // Test #1
     describe('default 200 response check', function() {
         it('default should get a 200 response', function(done) {
-            client.get('/', function(err, req, res, data) {
+            client.get('/', function(err, res) {
                 if (err) {
                     throw new Error(err);
                 }
@@ -18,5 +18,6 @@ describe('service: default', function() {
     });
     // Add more tests as needed...
 });
+
 
 

@@ -1,4 +1,3 @@
-
 describe('User Signup Services ', function() {
   // Test #1
   describe('username exists : Existing user', function() {
@@ -167,5 +166,6 @@ describe('User Signup Services ', function() {
     });
   });
 });
+
 
 

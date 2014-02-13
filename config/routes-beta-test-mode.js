@@ -1,6 +1,6 @@
 /**
 * Beta test Routes Module
-*   Requires authenticated users
+*   Requires authenticated users, for some the Administrator
 */
 var mongoose = require('mongoose')
   , Beta = mongoose.model('Beta')
@@ -125,7 +125,7 @@ module.exports = function (app, config, auth, mailHelper) {
     /**
      * Post a Beta Invite
      *
-     * @param path
+     * @param path {email : 'email address' }
      * @param promised callback check admin access
      * @param promised 2nd callback post
      */
@@ -134,7 +134,7 @@ module.exports = function (app, config, auth, mailHelper) {
     /**
      * Turn beta mode on/off using 'status'
      *
-     * @param path
+     * @param path {status: true|false}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -143,7 +143,7 @@ module.exports = function (app, config, auth, mailHelper) {
     /**
      * Get a Beta status, if betaCode is included return registered email or throw exception
      *
-     * @param path
+     * @param path {}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -152,7 +152,7 @@ module.exports = function (app, config, auth, mailHelper) {
     /**
      * clear a used betaCode
      *
-     * @param path
+     * @param path {betaCode:'code'}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -190,4 +190,5 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
 
-
+
+

@@ -1,23 +1,16 @@
-
-describe('service: default', function() {
-    // Test #1
-    describe('default 200 response check', function() {
-        it('default should get a 200 response', function(done) {
-            client.get('/', function(err, req, res, data) {
-                if (err) {
-                    throw new Error(err);
-                }
-                else {
-                    if (res.body == '') {
-                      throw new Error('invalid response from / ' + res.body);
-                    }
-                    done();
-                }
-            });
-        });
+// TODO
+describe('User controller', function() {
+  describe('/logout', function() {
+    var agent = superAgent.agent();
+    it('should start with signin', loginUser(agent, 'user', 'user'));
+    it('should sign the user out', function(done) {
+      agent.get(baseUrl + '/api/v1/session/logout').end(function(err, res) {
+        // console.log(convertObject(res));
+        res.should.have.status(200);
+        res.text.should.include('{}');
+        return done();
+      });
     });
-    // Add more tests as needed...
+  });
 });
-
-
 

@@ -9,7 +9,6 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
-
 module.exports = function (app, config, auth) {
    /**
    * Post a terms & conditions message
@@ -165,7 +164,7 @@ module.exports = function (app, config, auth) {
      /**
      * Post a Terms and Conditions message
      *
-     * @param path
+     * @param path {message : '<message>', subject: '<subject>'}
      * @param promised callback check admin access
      * @param promised 2nd callback post
      */
@@ -174,7 +173,7 @@ module.exports = function (app, config, auth) {
      /**
      * Get a terms & conditions thread
      *
-     * @param path
+     * @param path {}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -183,7 +182,7 @@ module.exports = function (app, config, auth) {
      /**
      * Accept a Terms & Conditions
      *
-     * @param path
+     * @param path {termsAndConditionsId: '<id>'}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -215,4 +214,5 @@ module.exports = function (app, config, auth) {
 
 
 
-
+
+

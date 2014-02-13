@@ -40,18 +40,12 @@ describe('User controller', function() {
     it('should start with signin', loginUser(agent, 'user', 'user'));
     it('success should get an empty response', function(done) {
       agent.get(client.url.host + '/api/v1/timeout').end(function(err, res) {
-        err.body.message.should.include('Success'); // TODO Why does the success come back in the err
+        res.body.message.should.include('Success');
         return done();
       });
     });
   });
 });
-
-
-
-
-
-
 
 
 

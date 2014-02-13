@@ -12,7 +12,6 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
-
 var mail = {};
 var gUser = {}; // TODO don't want to globalize user, need to figure out a better way to use Promises or Async
 var gCheckCurrentPassword = true;
@@ -343,9 +342,16 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
    /**
-   * Search for users
+   * Search for users using the legal values in a userList object:
+   *   name: { type: String, default: '' } // search name
+	 *   email: { type: String, default: '' } // search email
+	 *   username: { type: String, default: '' } // search username
+	 *   itemsPerPage: { type: Number, min: -1, default: -1} // number of records to return, -1 is unlimited
+	 *   pageNumber: { type: Number, min: -1, default: -1} // page number 1-N
+	 *   ascendingSortFlag: { type: Boolean, default: true }
+	 *   sortField: { type: String, default: '' }
    *
-   * @param path
+   * @param path Optional params: {}
    * @param promised callback check authorization
    * @param promised 2nd callback searches for users
    */
@@ -426,4 +432,5 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
 
-
+
+

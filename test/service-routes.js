@@ -49,7 +49,6 @@ describe('service: default', function() {
             });
         });
     });
-
 });
 
 

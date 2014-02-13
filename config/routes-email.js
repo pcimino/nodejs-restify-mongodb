@@ -1,9 +1,8 @@
 /**
 * Email Routes module
-*    All of these routes are exposed (unprotected) See routes-auth.js for examples of authorized routes
+*    Requires authenticated users
 */
 var restify = require('restify');
-
 var mail = {};
 
 module.exports = function (app, config, auth, mailHelper) {
@@ -25,8 +24,6 @@ module.exports = function (app, config, auth, mailHelper) {
    }
 
 
-
-
    // Set up routes
 
    // I looked at versioning via header. Lots of arguments pro/con regarding different types of versioning
@@ -38,7 +35,7 @@ module.exports = function (app, config, auth, mailHelper) {
    /**
    * Create an email
    *
-   * @param path
+   * @param path {to:'email destination', 'subject:'<subject>',message'<text>'}
    * @param promised callback
    * @param promised 2nd callback
    */

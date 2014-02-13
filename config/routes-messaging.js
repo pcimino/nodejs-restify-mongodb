@@ -10,7 +10,6 @@ var mongoose = require('mongoose')
   , ObjectId = mongoose.Types.ObjectId
   , restify = require('restify');
 
-
 module.exports = function (app, config, auth) {
 
    /**
@@ -394,7 +393,7 @@ module.exports = function (app, config, auth) {
      /**
      * Post a message thread
      *
-     * @param path
+     * @param path {message: '<text>', subject: '<subject>'}
      * @param promised callback check authorization
      * @param promised 2nd callback post
      */
@@ -403,7 +402,7 @@ module.exports = function (app, config, auth) {
      /**
      * Update a message thread
      *
-     * @param path
+     * @param path {_id:'', modifyDate: '', fromArchiveFlag: '', toArchiveFlag: '', inappropriateFlag: messages: '' }
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -412,7 +411,7 @@ module.exports = function (app, config, auth) {
      /**
      * Get a message thread
      *
-     * @param path
+     * @param path { archiveFlag : "true|false"}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -421,7 +420,7 @@ module.exports = function (app, config, auth) {
      /**
      * Archive a message thread
      *
-     * @param path
+     * @param path {messageThreadId: '<id>'}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -430,7 +429,7 @@ module.exports = function (app, config, auth) {
      /**
      * Post a system message thread
      *
-     * @param path
+     * @param path {message: '<text>', subject: '<subject>'}
      * @param promised callback check admin access
      * @param promised 2nd callback post
      */
@@ -439,7 +438,7 @@ module.exports = function (app, config, auth) {
      /**
      * Get a message thread
      *
-     * @param path
+     * @param path {archiveFlag : true|false}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -448,7 +447,7 @@ module.exports = function (app, config, auth) {
      /**
      * Archive a message thread
      *
-     * @param path
+     * @param path {systemMessageId: '<id>'}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -457,7 +456,7 @@ module.exports = function (app, config, auth) {
      /**
      * Deletes a System Message by the administrator
      *
-     * @param path
+     * @param path {systemMessageId: '<id>'}
      * @param promised callback check authorization
      * @param promised 2nd callback update
      */
@@ -482,4 +481,5 @@ module.exports = function (app, config, auth) {
 
 
 
-
+
+

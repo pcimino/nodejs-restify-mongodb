@@ -64,6 +64,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * Create a new user model, fill it up and save it to Mongodb
    *
    * @param request
+   * {'username':'user2','name':'user2','email':'user2@user2.com','password':'user2','vPassword':'user2', betaCode: <if required>}
    * @param response
    * @param next method
    */
@@ -83,7 +84,6 @@ module.exports = function (app, config, auth, mailHelper) {
          user.save(function (err, user) {
             if (!err) {
               // create a verification code
-              console.log(1);
               mail.generateVerifyCode(req, res, next, user);
               res.send(user);
               return next();
@@ -137,7 +137,7 @@ module.exports = function (app, config, auth, mailHelper) {
   /**
    * Search for existing username
    * https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
-   * @param request
+   * @param request ?username=<username>
    * @param response
    * @param next method
    */
@@ -166,7 +166,8 @@ module.exports = function (app, config, auth, mailHelper) {
   /**
    * Search for existing email
    * https://fabianosoriani.wordpress.com/2012/03/22/mongoose-validate-unique-field-insensitive/
-   * @param request
+   *
+   * @param request ?email=<email address>
    * @param response
    * @param next method
    */
@@ -314,4 +315,5 @@ module.exports = function (app, config, auth, mailHelper) {
 
 
 
-
+
+

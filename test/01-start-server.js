@@ -1,3 +1,6 @@
+baseUrl = 'http://127.0.0.1:3000';
+webSocketUrl = 'ws://127.0.0.1:3000';
+
 restify = require('restify');
 assert = require('assert');
 
@@ -6,11 +9,10 @@ superAgent = require('superagent');
 userAgent = superAgent.agent();
 should = require('should');
 
-
 // init the test client
 client = restify.createJsonClient({
     version: '*',
-    url: 'http://127.0.0.1:3000'
+    url: baseUrl
 });
 
 /*

@@ -21,7 +21,9 @@ var mailOptions = {
   subject: "", // Subject line
   text: "", // plaintext body
   html: "", // html body
-  service: {},
+  host: null,
+  port: null,
+  service: null,
   auth: {},
   sendEmail: false,
   previewDir: '../mailLog/testPreview',
@@ -40,6 +42,7 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
   if (null === transport) {
     createTransport();
   }
+
   var sendOptions = {};
 
   sendOptions.mailFrom = mailOptions.mailFrom;
@@ -50,6 +53,7 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
   } else {
     sendOptions.text = body;
   }
+
   transport.sendMail(sendOptions, function(error, response) {
     if (error) {
       console.log('sendMail ' + error);
@@ -132,7 +136,12 @@ MailHelper.prototype.initialize = function(appConfig){
 
     mailOptions.from = appConfig.mailFrom;
 
-    mailOptions.service = appConfig.mailSettings.service;
+    if (appConfig.mailSettings.mailService) mailOptions.service = appConfig.mailSettings.service;
+    if (appConfig.mailSettings.host) {
+      mailOptions.host = appConfig.mailSettings.host;
+      mailOptions.port = appConfig.mailSettings.port;
+    }
+
     mailOptions.auth = appConfig.mailSettings.auth;
     mailOptions.sendEmail = appConfig.mailSettings.sendEmail;
     mailOptions.browserPreview = appConfig.mailSettings.browserPreview;
@@ -280,6 +289,7 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;
+
 
 
 

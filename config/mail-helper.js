@@ -127,7 +127,7 @@ var MailHelper = function(config) {
 MailHelper.prototype.initialize = function(appConfig){
     if (!appConfig.mailSettings) throw "no options provided, some are required";
     if (!appConfig.mailSettings.mailFrom) throw "cannot send email without send address";
-    if (!appConfig.mailSettings.mailService) throw "Service required";
+    if (!appConfig.mailSettings.mailService && !appConfig.mailSettings.host && !appConfig.mailSettings.port) throw "mailService or host and port are required";
     if (!appConfig.mailSettings.mailAuth) throw "Authorization required";
 
     mailOptions.from = appConfig.mailFrom;
@@ -280,6 +280,7 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;
+
 
 
 

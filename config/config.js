@@ -19,11 +19,25 @@ module.exports = {
       , ephemeral_cookie: false // if true, session cookie expires when browser closes
       , socket_loglevel: '1' // 0 - error, 1 - warn, 2 - info, 3 - debug
       , mailSettings : {
-          mailFrom: 'test@gmail.com'
-          , mailService: "Gmail"
-          , mailAuth: {user: "test@gmail.com", pass: "testpass"}
-          , sendEmail: false // if true need to have the mail service setup properly
-          , browserPreview: true
+          mailService: null // use mailService (i.e. Gmail) or set up the host and port
+          , from: 'someuser@validdomain.com'
+          , host:'smtp.someserver.com'
+          , port:'465'
+          , secureConnection: true // use SSL
+          , mailAuth: {user: "someuser@validdomain.com", pass: "somepassword"}
+          , sendEmailFlag: false // if false uses email preview
+          , browserPreview: true // if true email preview is shown in a new browser window/tab
+      // see routes-user.js searchUsers
+      // the search results only inlcude ObjectId, name, username and email
+      // to further restrict returned fields, each (or all) of these can be set
+
+      }
+      , searchSettings : { // if any of these are false, that field will not be
+          allowEmail: false
+          , allowName: false
+          , allowUsername: true
+
+
       // see routes-user.js searchUsers
       // the search results only inlcude ObjectId, name, username and email
       // to further restrict returned fields, each (or all) of these can be set to false
@@ -93,6 +107,8 @@ module.exports = {
         , openUserSignup: false
     }
 }
+
+
 
 
 

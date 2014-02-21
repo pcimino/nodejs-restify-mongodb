@@ -25,7 +25,8 @@ var mailOptions = {
   port: null,
   service: null,
   auth: {},
-  sendEmail: false,
+  sendEmailFlag: false,
+  secureConnection: false,
   previewDir: '../mailLog/testPreview',
   errDir: '../mailLog/error'
 }
@@ -45,7 +46,8 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
 
   var sendOptions = {};
 
-  sendOptions.mailFrom = mailOptions.mailFrom;
+  sendOptions = mailOptions;
+  sendOptions.from = mailOptions.from;
   sendOptions.to = recipient;
   sendOptions.subject = subject;
   if (true == htmlFlag) {
@@ -58,7 +60,7 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
     if (error) {
       console.log('sendMail ' + error);
       // email failed, send to the error log directory
-      transportErrorLog.sendMail(sendOptions);
+      transportErrorLog.sendMail(error);
     } else {
       if (response) console.log("Message sent: " + JSON.stringify(response));
     }
@@ -74,10 +76,15 @@ function createTransport() {
     closeConnection();
   }
   require('mail-preview');
-  if (true == mailOptions.sendEmail) {
+  if (true == mailOptions.sendEmailFlag) {
     transport = nodemailer.createTransport("SMTP",{
       service: mailOptions.service,
-      auth: mailOptions.auth
+      host: mailOptions.host,
+      port: mailOptions.port,
+      auth: mailOptions.auth,
+      from: mailOptions.from,
+
+      secureConnection: mailOptions.secureConnection
     });
   } else {
     // For email previews
@@ -130,11 +137,11 @@ var MailHelper = function(config) {
  */
 MailHelper.prototype.initialize = function(appConfig){
     if (!appConfig.mailSettings) throw "no options provided, some are required";
-    if (!appConfig.mailSettings.mailFrom) throw "cannot send email without send address";
+    if (!appConfig.mailSettings.from) throw "cannot send email without send address";
     if (!appConfig.mailSettings.mailService && !appConfig.mailSettings.host && !appConfig.mailSettings.port) throw "mailService or host and port are required";
     if (!appConfig.mailSettings.mailAuth) throw "Authorization required";
 
-    mailOptions.from = appConfig.mailFrom;
+    mailOptions.from = appConfig.mailSettings.from;
 
     if (appConfig.mailSettings.mailService) mailOptions.service = appConfig.mailSettings.service;
     if (appConfig.mailSettings.host) {
@@ -142,8 +149,9 @@ MailHelper.prototype.initialize = function(appConfig){
       mailOptions.port = appConfig.mailSettings.port;
     }
 
-    mailOptions.auth = appConfig.mailSettings.auth;
-    mailOptions.sendEmail = appConfig.mailSettings.sendEmail;
+    mailOptions.auth = appConfig.mailSettings.mailAuth;
+    mailOptions.sendEmailFlag = appConfig.mailSettings.sendEmailFlag;
+    mailOptions.secureConnection = appConfig.mailSettings.secureConnection;
     mailOptions.browserPreview = appConfig.mailSettings.browserPreview;
 
     if (appConfig.mailSettings.previewDir) {
@@ -289,6 +297,7 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
 
 // Export MailHelper constructor
 module.exports.MailHelper = MailHelper;
+
 
 
 

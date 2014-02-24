@@ -10,6 +10,7 @@ var mongoose = require('mongoose')
  */
 var TermsAndConditionsSchema = new Schema({
   id: ObjectId
+  , acceptedDate: { type: Date }
   , createDate: { type: Date }
   , fromUserId: { type: ObjectId }
   , fromUsername: { type: String, trim: true }

@@ -13,20 +13,11 @@ var gStage = {};
 var gCallback = null;
 var gColors = ['blue', 'orange', 'darkgreen', 'BlueViolet', 'crimson'];
 
-function buildCaptcha(ctx, canvasId, seedInput, callBack, width, height) {
+function buildCaptcha(ctx, canvasId, seedInput, callBack) {
   gSeed = seedInput;
   gCallback = callBack;
-  if (width) {
-    gWidth = width;
-  } else {
-    gWidth = ctx.canvas.width;
-  }
-  if (width) {
-    gHeight = height;
-  } else {
-    gHeight = ctx.canvas.height;
-  }
-
+  gWidth = ctx.canvas.width;
+  gHeight = ctx.canvas.height;
   draw(ctx, canvasId);
 }
 function draw(ctx, canvasId) {
@@ -35,6 +26,7 @@ function draw(ctx, canvasId) {
     width: gWidth,
     height: gHeight
   });
+
   gLayer = new Kinetic.Layer();
 
   var boxX = getRandX(boxSide);
@@ -209,6 +201,4 @@ function isBoxOverlapping(layer, box1, box2) {
 
 
 
-
-
-
+

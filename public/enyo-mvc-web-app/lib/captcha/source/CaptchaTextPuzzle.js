@@ -22,10 +22,10 @@ enyo.kind({
     , {content: ".", name: 'valueB'}
     , {content: ".", name: 'valueC'}
     , {content: ".", name: 'valueD', style:'margin-bottom:10px;'}
-    , {kind: "onyx.Input", name: 'inputA', placeholder: "Letter of smallest number", onkeypress: "checkKeyA"}
-    , {kind: "onyx.Input", name: 'inputB', onchange:"inputChanged"}
-    , {kind: "onyx.Input", name: 'inputC', onchange:"inputChanged"}
-    , {kind: "onyx.Input", name: 'inputD', placeholder: "Letter of largest number", onchange:"inputChanged"}
+    , {kind: "onyx.Input", name: 'inputA', placeholder: "Letter of smallest number", onkeyup: "legalKey"}
+    , {kind: "onyx.Input", name: 'inputB', onchange:"inputChanged", onkeyup: "legalKey"}
+    , {kind: "onyx.Input", name: 'inputC', onchange:"inputChanged", onkeyup: "legalKey"}
+    , {kind: "onyx.Input", name: 'inputD', placeholder: "Letter of largest number", onkeyup: "legalKey"}
   ]
   , setupCaptcha: function(keys, values) {
       this.keyArr = keys;
@@ -40,79 +40,60 @@ enyo.kind({
         }
       }
   }
-  , validateSolution: function(result) {
-
-   //     gGraphicThis.bubble('onPuzzleSolved', {data: result});
-
-  }
-  , legalKey: function(val) {
+  , legalKey: function(inSender, inEvent) {
       var legal = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; // should be coming from parent
-      if (legal.indexOf(val) >= 0) {
+      if (inSender.getValue().length == 1 && legal.indexOf(inSender.getValue().toUpperCase()) >= 0) {
+        inSender.setValue(inSender.getValue().toUpperCase());
+        var checkFlag = 0;
+        for (var i = 0; i < this.arraySuffix.length; i++) {
+          var elem = 'input' + this.arraySuffix[i];
+          if (inSender.getName() == elem) {
+            for (var j = 0; j < this.keyArr.length; j++) {
+              if (this.keyArr[j] == inSender.getValue()) {
+                this.inputArr[i] = this.solutionArr[j];
+              }
+            }
+          }
+          if (this.inputArr[i] && this.inputArr[i] > 1) checkFlag++;
+        }
+        if (checkFlag >= this.inputArr.length) {
+          this.validateSolution();
+        }
         return true;
+      } else if (inSender.getValue().length > 1) {
+        inSender.setValue(inSender.getValue().toUpperCase()[0]);
+      } else {
+        inSender.setValue('');
       }
+
+      inEvent.preventDefault(); // not working, shouldn't have to do the else if{} else {} conditions
       return false;
   }
-  , checkKeyA: function(inSender, inEvent) {
-      var keyCode = inEvent.keyCode;
-    console.log(keyCode)
-      if ((keyCode >= 65 && keyCode <= 90) || (keyCode >= 97 && keyCode <= 122)) {
-        this.inputArr[0] = (String.fromCharCode(keyCode)).toUpperCase();
-        this.$.inputA.setValue(this.inputArr[0]);
-        this.$.inputA.render();
-        return true;
-      } else {
-        this.$.inputA.setValue('');
-        this.$.inputA.render();
-        return false;
-      }
+  , compareNumbers: function(x, y) {
+      if (x < y) return -1;
+      if (y < x) return 1;
+      return 0;
   }
-  , inputChanged: function(inSender, inEvent) {
-    console.log('inputChanged ' + inSender.getValue() +":",(inSender))
-      var inputVal = ('' + inSender.getValue()).toUpperCase();
-
-      for (var i = 0; i < this.arraySuffix.length; i++) {
-        var elem = 'input' + this.arraySuffix[i];
-        if (inSender.getName() == elem) {
-          this.inputArr[i] = inputVal;
-        }
-      }
-  }
-  , check: function() {
-		  var enteredValue = '';
-      for (var i = 0; i < this.arraySuffix.length; i++) {
-        var comps = this.getComponents();
-        var elem = 'input' + this.arraySuffix[i];
-        for (var j = 0; j < comps.length; j++) {
-            if (comps[j].getName() == elem) {
-              console.log(elem)
-              enteredValue = enteredValue + comps[j].getValue();
-            }
-        }
-      }
-
-
+  , validateSolution: function() {
       // localMode
       // solve the puzzle and compare. In reality this should be on the server side
       // and only checked upon form submission
-      // start with bubble sort
+      // start with bubble sortr
       var checkArr = this.solutionArr;
-      for (var i = 0; i < checkArr.length - 1; i++) {
-        for (var j = 1; j < checkArr.length; j++) {
-          if (i < j) {
-            if (checkArr[j] < checkArr[i]) {
-              var swap = checkArr[j];
-              checkArr[j] = checkArr[i];
-              checkArr[i] = swap;
-            }
-          }
-        }
-      }
-      var soln = '';
+      checkArr.sort(this.compareNumbers)
+
+      var solved = true;
+      var solution = "";
       for (var i = 0; i < checkArr.length; i++) {
-        soln = soln + checkArr[i];
+        if (this.inputArr[i] != checkArr[i]) solved = false;
+        solution = solution + "" + this.inputArr[i];
       }
-    console.log(enteredValue +":" + soln)
+
+      if (solved) {
+        this.bubble('onPuzzleSolved', {data: solution});
+      } else {
+          this.inputArr = ['', '', '', ''];
+      }
 	}
 });
-
 

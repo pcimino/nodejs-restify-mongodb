@@ -7,7 +7,7 @@
  * submodule is in the path /lib/captcha/
  */
 enyo.kind({
-    name: "tld.Captcha"
+    name: "tld.EnyoCaptcha"
     , kind: "enyo.Control"
     , classes: "onyx drawer-sample"
     , generatedSolution : ''
@@ -17,7 +17,6 @@ enyo.kind({
     , published: {
         local: true
         , passed: false
-        , solved: false
         , serverUrl: ''
         , callback: null
         , solution: ''
@@ -30,7 +29,12 @@ enyo.kind({
         , maxSeed: 4
     }
     , components: [
-        {name: "drawerInstruction", kind: "onyx.Drawer", animated: true, style:'margin-left:10%;margin-bottom:10px;margin-top:10px;', components: [
+        {name: "drawerToggle", kind: "onyx.Drawer", open: true, animated: true, style:'margin-left:10%;', components: [
+            {kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", components: [
+              {content: "Puzzle", active: true, name:'radioButton0'}, {content: "Text", name:'radioButton1'}
+            ]}
+        ]}
+        , {name: "drawerInstruction", kind: "onyx.Drawer", animated: true, style:'margin-left:10%;margin-bottom:10px;margin-top:10px;', components: [
           {content: "Move the shapes into their matching boxes.", classes: "drawer-sample-box drawer-sample-mtb"}
           , {kind:"onyx.Button", content: "Reset", ontap: "reset"}
         ]}
@@ -55,18 +59,7 @@ enyo.kind({
         this.$.captchaGraphicPuzzle.displayCaptcha(this.seedValues);
         this.$.successDisplayContent.setContent(this.successDisplayText);
 
-/* Turned off for now, having issues with text Captcha inputs
-        //  dynamically create the text toggle, for some reason the canvas render interferes
-        var toggle = this.createComponent(
-          {name: "drawerToggle", kind: "onyx.Drawer", open: true, animated: true, style:'margin-left:10%;', components: [
-            {kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", components: [
-              {content: "Puzzle", active: true, name:'radioButton0'}, {content: "Text", name:'radioButton1'}
-            ]}
-          ]}
-        );
-        toggle.render();
         this.$.captchaTextPuzzle.setupCaptcha(this.seedKeys, this.seedValues);
-*/
     }
     , localChanged: function(oldValue) {
 
@@ -101,6 +94,7 @@ enyo.kind({
           this.$.drawerText.setOpen(false);
           this.$.drawerInstruction.setOpen(false);
           this.$.drawerComplete.setOpen(true);
+          this.$.drawerToggle.setOpen(false);
         }
     }
     /**
@@ -110,11 +104,14 @@ enyo.kind({
     */
     , puzzleSolved: function(inSender, inEvent) {
         this.solution = inEvent.data;
+        this.setPassed(true);
+
         if (this.local) {
-            this.solved = true;
             this.activateDrawer(2);
         } else {
+          //TODO Only works in local mode for now
         }
+        if (this.callback) this.callback(inSender, inEvent);
     }
     /**
     * Had a text version, might still use it. The User sees letters next tot he number sets and enters the letters in the proper
@@ -144,7 +141,6 @@ enyo.kind({
     * Resets the captcha
     */
     , reset: function() {
-        this.solved = false;
         this.randomizeSeedArray();
         this.$.captchaGraphicPuzzle.displayCaptcha(this.seedValues);
     }

@@ -1748,7 +1748,7 @@
 }
 
 
-/* lib\macfja\notification\NotificationTheme\css\Badged.css */
+/* source\macfja\notification\NotificationTheme\css\Badged.css */
 
 .notification-badged-bubble {
 	width: 280px;
@@ -1756,7 +1756,7 @@
 	top: 20px;
 	right: 20px;
 	border-radius: 8px;
-	background: #8CF url('../lib/macfja/notification/NotificationTheme/css/Images/gradient.png');
+	background: #8CF url('../source/macfja/notification/NotificationTheme/css/Images/gradient.png');
 	background-size: auto 100%;
 	color: black;
 	text-shadow: 0 1px 1px rgba(255,255,255,0.5);
@@ -1804,7 +1804,7 @@
 	height: 26px;
 	line-height: 22px;
 	color: white;
-	background: red url('../lib/macfja/notification/NotificationTheme/css/Images/gradient.png');
+	background: red url('../source/macfja/notification/NotificationTheme/css/Images/gradient.png');
 	border: 2px solid white;
 	box-shadow: 0 1px 2px rgba(0,0,0,1);
 	background-size: auto 100%;
@@ -1817,7 +1817,7 @@
 
 
 
-/* lib\macfja\notification\NotificationTheme\css\Bezel.css */
+/* source\macfja\notification\NotificationTheme\css\Bezel.css */
 
 .notification-bezel-main {
 	height: 200px;
@@ -1828,7 +1828,7 @@
 	right: 0;
 	margin: 0 auto;
 	border-radius: 30px;
-	background: rgba(0,0,0,0.5) url('../lib/macfja/notification/NotificationTheme/css/Images/gradient.png');
+	background: rgba(0,0,0,0.5) url('../source/macfja/notification/NotificationTheme/css/Images/gradient.png');
 	background-size: auto 100%;
 	text-align: center;
 	color: white;
@@ -1858,7 +1858,7 @@
 
 
 
-/* lib\macfja\notification\NotificationTheme\css\MessageBar.css */
+/* source\macfja\notification\NotificationTheme\css\MessageBar.css */
 
 .notification-messagebar-bar {
 	position: fixed;
@@ -1900,7 +1900,7 @@
 	color: rgba(255,255,255,0.75);
 }
 
-/* lib\macfja\notification\NotificationTheme\css\Pop.css */
+/* source\macfja\notification\NotificationTheme\css\Pop.css */
 
 .notification-pop-bubble {
 	width: 300px;
@@ -1910,7 +1910,7 @@
 	right: 0;
 	margin: 0 auto;
 	border-radius: 8px;
-	background: rgba(0,32,192,0.75) url('../lib/macfja/notification/NotificationTheme/css/Images/gradient.png');
+	background: rgba(0,32,192,0.75) url('../source/macfja/notification/NotificationTheme/css/Images/gradient.png');
 	background-size: auto 100%;
 	text-align: center;
 	color: white;
@@ -1947,7 +1947,7 @@
 
 
 
-/* lib\macfja\notification\NotificationTheme\css\PageCurl.css */
+/* source\macfja\notification\NotificationTheme\css\PageCurl.css */
 
 /*font-family: "Prelude", Arial, sans-serif;
 color: white;
@@ -1955,7 +1955,7 @@ color: white;
 .notification-pagecurl-curl {
 	position: fixed;
 
-	background: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl.png') no-repeat;
+	background: url('../source/macfja/notification/NotificationTheme/css/Images/PageCurl.png') no-repeat;
 	height: 120px;
 	width: 150px;
 	
@@ -1987,7 +1987,7 @@ color: white;
 	top: 0px;
 	padding: 0px;
 	white-space: nowrap;
-	background: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl-Fill.png') repeat-x;
+	background: url('../source/macfja/notification/NotificationTheme/css/Images/PageCurl-Fill.png') repeat-x;
 	height: 80px;
 	overflow: hidden;
 	left: 100%;
@@ -1995,7 +1995,7 @@ color: white;
 }
 .notification-pagecurl-messagebar-close {
 	position: absolute;
-	background-image: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl-Close.png');
+	background-image: url('../source/macfja/notification/NotificationTheme/css/Images/PageCurl-Close.png');
 	top: 24px;
 	left: 9px;
 }
@@ -2009,7 +2009,7 @@ color: white;
 .notification-pagecurl-messagebar-message {
 	width: 230px;
 	height: 60px;
-	background-image: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl-Fix-Message.png');
+	background-image: url('../source/macfja/notification/NotificationTheme/css/Images/PageCurl-Fix-Message.png');
 	position: relative;
 	padding: 10px;
 	padding-left: 14px;
@@ -2047,7 +2047,7 @@ color: white;
 	position: absolute;
 	width: 230px;
 	height: 60px;
-	background-image: url('../lib/macfja/notification/NotificationTheme/css/Images/PageCurl-Temp-Message.png');
+	background-image: url('../source/macfja/notification/NotificationTheme/css/Images/PageCurl-Temp-Message.png');
 	top: 120px;
 	right: 60px;
 	padding: 10px;
@@ -2079,7 +2079,7 @@ color: white;
 	line-height: 16px;
 }
 
-/* lib\macfja\macfja-tools\css\DynamicList.css */
+/* source\macfja\macfja-tools\css\DynamicList.css */
 
 .onyx-dynamiclist {
 	background-color: #e8e8e8;
@@ -2102,14 +2102,14 @@ color: white;
 	color: #fff;
 }
 
-/* lib\macfja\macfja-tools\css\GradientSlider.css */
+/* source\macfja\macfja-tools\css\GradientSlider.css */
 
 .onyx-gradientslider .onyx-progress-bar-bar {
-	background: url('../lib/macfja/macfja-tools/images/Gradient.png') no-repeat;
+	background: url('../source/macfja/macfja-tools/images/Gradient.png') no-repeat;
 	background-size: 100% 100%;
 }
 
-/* lib\macfja\macfja-tools\css\LevelProgress.css */
+/* source\macfja\macfja-tools\css\LevelProgress.css */
 
 .onyx-level-bar {
 	position: relative;
@@ -2161,7 +2161,7 @@ color: white;
 	text-overflow: ellipsis;
 }
 
-/* lib\macfja\macfja-tools\css\Marquee.css */
+/* source\macfja\macfja-tools\css\Marquee.css */
 
 .onyx-marquee {
 	position:  relative;
@@ -2184,7 +2184,7 @@ color: white;
 	margin-top: 30px;
 }
 
-/* lib\macfja\macfja-tools\css\NavigationBar.css */
+/* source\macfja\macfja-tools\css\NavigationBar.css */
 
 .onyx-navigationbar {
 	background-color: #e1e1e1;
@@ -2217,7 +2217,7 @@ color: white;
 
 .onyx-navigationbar .onyx-navigationbar-item:before {
 	background-size: auto 200%;
-	background-image: url('../lib/macfja/macfja-tools/images/navigation-before.png');
+	background-image: url('../source/macfja/macfja-tools/images/navigation-before.png');
 	background-position: top center;
 	background-repeat: no-repeat;
 	width: 18px;
@@ -2231,7 +2231,7 @@ color: white;
 
 .onyx-navigationbar .onyx-navigationbar-item:after {
 	background-size: auto 200%;
-	background-image: url('../lib/macfja/macfja-tools/images/navigation-after.png');
+	background-image: url('../source/macfja/macfja-tools/images/navigation-after.png');
 	background-position: top center;
 	background-repeat: no-repeat;
 	width: 18px;
@@ -2256,7 +2256,7 @@ color: white;
 	box-shadow: inset 0px 1px 0px rgba(0,0,0,0.1);
 }
 
-/* lib\macfja\macfja-tools\css\RatingLevel.css */
+/* source\macfja\macfja-tools\css\RatingLevel.css */
 
 .onyx-rating-bar {
 	padding: 0;
@@ -2274,7 +2274,7 @@ color: white;
 }
 
 .onyx-rating-bar .onyx-rating-element {
-	background-image: url('../lib/macfja/macfja-tools/images/Star.png');
+	background-image: url('../source/macfja/macfja-tools/images/Star.png');
 	background-size: auto 200%;
 	background-position: top center;
 	background-repeat: no-repeat;
@@ -2291,11 +2291,11 @@ color: white;
 }
 
 .onyx-rating-bar .onyx-rating-element.off {
-	background-image: url('../lib/macfja/macfja-tools/images/Null.png');
+	background-image: url('../source/macfja/macfja-tools/images/Null.png');
 	background-size: auto 100%;
 }
 
-/* lib\macfja\macfja-tools\css\UpDown.css */
+/* source\macfja\macfja-tools\css\UpDown.css */
 
 .onyx-updown {}
 

@@ -1,3 +1,4 @@
+
 /**
 * User Routes module
 *    these routes require authenticated users
@@ -44,7 +45,7 @@ module.exports = function (app, config, auth, mailHelper) {
           userList.pageCount = Math.ceil(count / itemsPerPage);
 
           var sortStr = "";
-          if (userList.sortField != null && userList.sortField != '') {
+          if (userList.sortField !== null && userList.sortField !== '') {
             if ('false' === userList.ascendingSortFlag) {
               sortStr = "-" + userList.sortField;
             } else {
@@ -57,16 +58,16 @@ module.exports = function (app, config, auth, mailHelper) {
 
           // This returns partially populated objects preventing client sessions from seeing too much of the user's info
           // if config settings are set to false, then these fields will be excluded
-          if (config.searchSettings.allowEmail) query.select('email');
-          if (config.searchSettings.allowName) query.select('name');
-          if (config.searchSettings.allowUsername) query.select('username');
+          if (config.searchSettings.allowEmail) { query.select('email'); }
+          if (config.searchSettings.allowName) { query.select('name'); }
+          if (config.searchSettings.allowUsername) { query.select('username'); }
 
           // If all selects are 'false' then all fields come back
           // So explicity select the The Object Id so ONLY the Object Id plus any of the selected fields come back
           query.select('_id');
 
           if (sortStr.length > 0) {
-            query = query.sort(sortStr)
+            query = query.sort(sortStr);
           }
           if (itemsPerPage > 0) {
             query = query.limit(itemsPerPage).skip(itemsPerPage * pageNum);
@@ -79,13 +80,13 @@ module.exports = function (app, config, auth, mailHelper) {
               return next();
             } else {
               var errObj = err;
-              if (err.err) errObj = err.err;
+              if (err.err) { errObj = err.err; }
               return next(new restify.InternalError(errObj));
             }
           });
          } else {
              var errObj = err;
-             if (err.err) errObj = err.err;
+             if (err.err) { errObj = err.err; }
              return next(new restify.InternalError(errObj));
          }
       });
@@ -103,14 +104,14 @@ module.exports = function (app, config, auth, mailHelper) {
    function getUser(req, res, next) {
       if (req.session && req.session.user) {
         id = req.session.user;
-        if (req.params.id) id = req.params.id;
+        if (req.params.id) { id = req.params.id; }
         User.findById(id, function (err, user) {
           if (!err) {
             res.send(user);
             return next();
           } else {
              var errObj = err;
-             if (err.err) errObj = err.err;
+             if (err.err) { errObj = err.err; }
              return next(new restify.InternalError(errObj));
           }
        });
@@ -130,7 +131,7 @@ module.exports = function (app, config, auth, mailHelper) {
    function getUserByIdOrUsername(req, res, next) {
      var search = req.url;
      search = search.substring(search.lastIndexOf("/")+1);
-      if (search != null && search != '') {
+      if (search !== null && search !== '') {
          var query = User.where( 'username', new RegExp('^'+search+'$', 'i') );
          query.findOne(function (err, user) {
             if (!err) {
@@ -148,7 +149,7 @@ module.exports = function (app, config, auth, mailHelper) {
                }
             } else {
                   var errObj = err;
-                  if (err.err) errObj = err.err;
+                  if (err.err) { errObj = err.err; }
                   return next(new restify.InternalError(errObj));
             }
          });
@@ -294,7 +295,7 @@ module.exports = function (app, config, auth, mailHelper) {
           return next();
         } else {
           var errObj = err;
-          if (err.err) errObj = err.err;
+          if (err.err) { errObj = err.err; }
           return next(new restify.InternalError(errObj));
         }
       });
@@ -405,7 +406,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param promised 2nd callback deletes
    */
    app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
-}
+};
 
 
 

@@ -1,3 +1,4 @@
+
 /**
 * Email Routes module
 *    Requires authenticated users
@@ -41,4 +42,4 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.post('/api/v1/email', auth.requiresLogin, postEmail);
 
-}
+};

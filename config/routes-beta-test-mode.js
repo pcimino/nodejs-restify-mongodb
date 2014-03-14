@@ -1,3 +1,4 @@
+
 /**
 * Beta test Routes Module
 *   Requires authenticated users, for some the Administrator
@@ -40,7 +41,7 @@ module.exports = function (app, config, auth, mailHelper) {
      */
     function putBetaStatus(req, res, next) {
       var status = req.params.status;
-      if (status != undefined) {
+      if (status !== undefined) {
         // clean up the collection, only need one element
         Beta.remove(function (removeErr) {
           if (!removeErr) {
@@ -48,7 +49,7 @@ module.exports = function (app, config, auth, mailHelper) {
             beta.status = status;
             beta.save(function (err, beta) {
               if (!err) {
-                if (status == true) {
+                if (status === true) {
                   res.send({message:'Beta mode is ON', status:status});
                 } else {
                   res.send({message:'Beta mode is OFF', status:status});
@@ -158,8 +159,7 @@ module.exports = function (app, config, auth, mailHelper) {
      */
     app.del('/api/v1/beta', auth.requiresLogin, deleteBetaInvite);
 
-
-}
+};
 
 
 

@@ -1,3 +1,4 @@
+
 /**
 * Authorization middleware module
 */
@@ -16,7 +17,7 @@ var config = {};
 */
 exports.setConfig = function(appConfig) {
   config = appConfig;
-}
+};
 
 /**
  * checks for client session
@@ -90,7 +91,7 @@ exports.adminAccess = function(req, res, next) {
            if (user.allowAccess('Admin')) {
              // check for IP Range
              if (!range_check.in_range(req.connection.remoteAddress, config.adminIPRange)) {
-               console.log("IP Address " + req.connection.remoteAddress + " is not within the allowed range(s).")
+       //        console.log("IP Address " + req.connection.remoteAddress + " is not within the allowed range(s).")
                return next(new restify.NotAuthorizedError("Access restricted."));
              }
            }

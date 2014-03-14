@@ -16,7 +16,7 @@ var net = require('net')
  */
 var SocketHelper = function(app, config) {
     this.initialize(app, config);
-}
+};
 
 /**
  * Initializes properties
@@ -38,7 +38,7 @@ SocketHelper.prototype.initialize = function(app, appConfig) {
     socket.on('close', function() {
       console.log('stopping client interval');
       clearInterval(id);
-    })
+    });
   });
 };
 

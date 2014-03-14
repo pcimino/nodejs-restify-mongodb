@@ -1,3 +1,4 @@
+
 /**
 * Routes for the user signup flow:
 * - User creates initial information
@@ -80,7 +81,7 @@ module.exports = function (app, config, auth, mailHelper) {
        //TODO allow admin to modify create/modify a user with Admin access
        return next(new restify.MissingParameterError('You cannot create an Administrator.'));
      }
-      if (user.username != null && user.username != '') {
+      if (user.username !== null && user.username !== '') {
          user.save(function (err, user) {
             if (!err) {
               // create a verification code
@@ -121,7 +122,6 @@ module.exports = function (app, config, auth, mailHelper) {
              return next();
            } else if (!user) {
               return next(new restify.NotAuthorizedError("Invalid username."));
-              return next();
            } else {
               mail.generateVerifyCode(req, res, next, user);
               res.send(user);
@@ -142,7 +142,7 @@ module.exports = function (app, config, auth, mailHelper) {
    * @param next method
    */
    function checkUsername(req, res, next) {
-      if (req.params.username != null && req.params.username != '') {
+      if (req.params.username !== null && req.params.username !== '') {
          var query = User.where( 'username', new RegExp('^'+req.params.username+'$', 'i') );
          query.count(function(err, count) {
             if (!err) {
@@ -154,7 +154,7 @@ module.exports = function (app, config, auth, mailHelper) {
                }
             } else {
               var errObj = err;
-              if (err.err) errObj = err.err;
+              if (err.err) { errObj = err.err; }
               return next(new restify.InternalError(errObj));
             }
          });
@@ -173,8 +173,8 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    function checkEmail(req, res, next) {
       var queryTxt = req.params.email;
-      if (req.params.newEmail != null && req.params.newEmail != '') {
-        queryTxt = req.params.newEmail
+      if (req.params.newEmail !== null && req.params.newEmail !== '') {
+        queryTxt = req.params.newEmail;
       }
       if (queryTxt && queryTxt.length > 0) {
           var queryObj;
@@ -189,7 +189,7 @@ module.exports = function (app, config, auth, mailHelper) {
                }
             } else {
               var errObj = err;
-              if (err.err) errObj = err.err;
+              if (err.err) { errObj = err.err; }
               return next(new restify.InternalError(errObj));
             }
          });
@@ -224,7 +224,6 @@ module.exports = function (app, config, auth, mailHelper) {
                return next();
              } else if (!user) {
                 return next(new restify.NotAuthorizedError("Invalid username."));
-               return next();
              } else {
                user.password = newPass;
                user.tempPasswordFlag = true;
@@ -236,9 +235,9 @@ module.exports = function (app, config, auth, mailHelper) {
                    var referHost = refer.substring(refer.indexOf('//') + 2);
 
                    referHost = referHost.substring(0, referHost.indexOf('/'));
-                   var fullURL = protocol + referHost
+                   var fullURL = protocol + referHost;
                    var messageBody = "Hello " + user.name + ",</br><p>Here is your new password. Please login and change it.</p><p>" + newPass + "</p>";
-                   messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>"
+                   messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Login to your account</a>";
 
                    var mailAddress = user.email;
                    mail.sendMail(mailAddress, 'Temporary Password Email', messageBody, true);
@@ -300,7 +299,7 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
-}
+};
 
 
 

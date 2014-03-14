@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -25,8 +24,11 @@ module.exports = function (app, config, sessionKey) {
 
     // send a 503 if the server is too busy
     app.use(function(req, res, next) {
-      if (toobusy()) res.send(503, "I'm busy right now, sorry.");
-      else next();
+      if (toobusy()) {
+        res.send(503, "I'm busy right now, sorry.");
+      } else {
+        next();
+      }
     });
 
    app.use(clientSessions({
@@ -64,7 +66,7 @@ module.exports = function (app, config, sessionKey) {
       }
     }));
    app.use(restify.conditionalRequest());
-}
+};
 
 
 

@@ -1,3 +1,4 @@
+
 /**
 * Messaging Routes Module
 *   Requires authenticated users
@@ -60,7 +61,7 @@ module.exports = function (app, config, auth) {
             });
           } else {
             var errObj = err;
-            if (err.err) errObj = err.err;
+            if (err.err) { errObj = err.err; }
             return next(new restify.InternalError(errObj));
           }
         });
@@ -85,7 +86,7 @@ module.exports = function (app, config, auth) {
          if (!err) {
            var d1 = req.params.modifyDate;
            var d2 = messageThread.modifyDate;
-           if (!d1) d1 = d2;
+           if (!d1) { d1 = d2; }
            if (Date.parse(d1) >= Date.parse(d2)) {
              messageThread.fromArchiveFlag = req.params.fromArchiveFlag;
              messageThread.toArchiveFlag = req.params.toArchiveFlag;
@@ -98,7 +99,7 @@ module.exports = function (app, config, auth) {
                  return next();
                } else {
                  var errObj = err;
-                 if (err.err) errObj = err.err;
+                 if (err.err) { errObj = err.err; }
                  return next(new restify.InternalError(errObj));
                }
              });
@@ -123,7 +124,7 @@ module.exports = function (app, config, auth) {
    function getMessageThread(req, res, next) {
       if (req.session && req.session.user) {
         var noArchived = true;
-        if (req.params.archiveFlag && req.params.archiveFlag == 'true') noArchived = false;
+        if (req.params.archiveFlag && req.params.archiveFlag == 'true') { noArchived = false; }
 
         // TODO is there a way to make a complex query [(A && B) || (C && D)] ?
         var queryFrom = MessageThread.where('fromUserId', req.session.user);
@@ -188,7 +189,7 @@ module.exports = function (app, config, auth) {
                     return next();
                  } else {
                     var errObj = err;
-                    if (err.err) errObj = err.err;
+                    if (err.err) { errObj = err.err; }
                     return next(new restify.InternalError(errObj));
                  }
               });
@@ -231,7 +232,7 @@ module.exports = function (app, config, auth) {
             });
           } else {
             var errObj = err;
-            if (err.err) errObj = err.err;
+            if (err.err) { errObj = err.err; }
             return next(new restify.InternalError(errObj));
           }
         });
@@ -271,7 +272,7 @@ module.exports = function (app, config, auth) {
             // console.log(JSON.stringify(systemMessageArchive))
           } else {
             var errObj = err;
-            if (err.err) errObj = err.err;
+            if (err.err) { errObj = err.err; }
             return next(new restify.InternalError(errObj));
           }
         });
@@ -348,7 +349,7 @@ module.exports = function (app, config, auth) {
               }
             } else {
               var errObj = err;
-              if (err.err) errObj = err.err;
+              if (err.err) { errObj = err.err; }
               return next(new restify.InternalError(errObj));
             }
           });
@@ -462,7 +463,7 @@ module.exports = function (app, config, auth) {
      */
      app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
-}
+};
 
 
 

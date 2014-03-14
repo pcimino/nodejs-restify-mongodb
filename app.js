@@ -1,9 +1,10 @@
+
 /**
 * Main application server setup
 */
 var cmdlineEnv = process.argv[2];
 // if command line option given, override NODE_ENV
-console.log(cmdlineEnv)
+console.log(cmdlineEnv);
 if (cmdlineEnv && cmdlineEnv.length > 0) {
   if (cmdlineEnv == '-d' || cmdlineEnv.toUpperCase() == '--DEVELOPMENT') {
       process.env.NODE_ENV = 'development';
@@ -36,9 +37,9 @@ var restify = require("restify")
   , preflightEnabler = require('se7ensky-restify-preflight');
 
 // Paths
-var models_path = config.root + '/models'
-var utils_path = config.root + '/jsUtil'
-var config_path = config.root + '/config'
+var models_path = config.root + '/models';
+var utils_path = config.root + '/jsUtil';
+var config_path = config.root + '/config';
 
 // Database
 var connectStr = config.db_prefix +'://'+config.host+':'+config.db_port+'/'+config.db_database;

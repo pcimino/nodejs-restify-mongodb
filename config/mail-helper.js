@@ -1,3 +1,4 @@
+
 /**
 * Wrapper functionality for sendmail
 */
@@ -29,7 +30,7 @@ var mailOptions = {
   secureConnection: false,
   previewDir: '../mailLog/testPreview',
   errDir: '../mailLog/error'
-}
+};
 
 /**
  * Helper method available to the MailHelper module
@@ -50,7 +51,7 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
   sendOptions.from = mailOptions.from;
   sendOptions.to = recipient;
   sendOptions.subject = subject;
-  if (true == htmlFlag) {
+  if (true === htmlFlag) {
     sendOptions.html = body;
   } else {
     sendOptions.text = body;
@@ -62,21 +63,21 @@ function sendMailHelper(recipient, subject, body, htmlFlag) {
       // email failed, send to the error log directory
       transportErrorLog.sendMail(error);
     } else {
-      if (response) console.log("Message sent: " + JSON.stringify(response));
+      if (response) { console.log("Message sent: " + JSON.stringify(response)); }
     }
   });
-};
+}
 
 /**
  * Create the transports
  * There are 2 transports, the primary, and the secondary which saves failed emails
  */
 function createTransport() {
-  if (null != transport) {
+  if (null !== transport) {
     closeConnection();
   }
   require('mail-preview');
-  if (true == mailOptions.sendEmailFlag) {
+  if (true === mailOptions.sendEmailFlag) {
     transport = nodemailer.createTransport("SMTP",{
       service: mailOptions.service,
       host: mailOptions.host,
@@ -101,22 +102,22 @@ function createTransport() {
     dir: tmpErr,  // defaults to ./tmp/nodemailer
     browser: mailOptions.browserPreview // open sent email in browser
   });
-};
+}
 
 /**
  * Close the connections
  */
 function closeConnection() {
-  if (null != transport) {
+  if (null !== transport) {
     transport.close(); // shut down the connection pool, no more messages
   }
   transport = null;
 
-  if (null != transportErrorLog) {
+  if (null !== transportErrorLog) {
     transportErrorLog.close(); // shut down the connection pool, no more messages
   }
   transportErrorLog = null;
-};
+}
 
 /**
  * Generates a MailHelper object which is the main 'hub' for managing the
@@ -127,7 +128,7 @@ function closeConnection() {
  */
 var MailHelper = function(config) {
   this.initialize(config);
-}
+};
 
 /**
  * Initializes properties
@@ -136,14 +137,16 @@ var MailHelper = function(config) {
  * @param {Object} options Message options object, see README for the complete list of possible options
  */
 MailHelper.prototype.initialize = function(appConfig){
-    if (!appConfig.mailSettings) throw "no options provided, some are required";
-    if (!appConfig.mailSettings.from) throw "cannot send email without send address";
-    if (!appConfig.mailSettings.mailService && !appConfig.mailSettings.host && !appConfig.mailSettings.port) throw "mailService or host and port are required";
-    if (!appConfig.mailSettings.mailAuth) throw "Authorization required";
+    if (!appConfig.mailSettings) { throw "no options provided, some are required"; }
+    if (!appConfig.mailSettings.from) { throw "cannot send email without send address"; }
+    if (!appConfig.mailSettings.mailService && !appConfig.mailSettings.host && !appConfig.mailSettings.port) {
+      throw "mailService or host and port are required";
+    }
+    if (!appConfig.mailSettings.mailAuth) { throw "Authorization required"; }
 
     mailOptions.from = appConfig.mailSettings.from;
 
-    if (appConfig.mailSettings.mailService) mailOptions.service = appConfig.mailSettings.service;
+    if (appConfig.mailSettings.mailService) { mailOptions.service = appConfig.mailSettings.service; }
     if (appConfig.mailSettings.host) {
       mailOptions.host = appConfig.mailSettings.host;
       mailOptions.port = appConfig.mailSettings.port;
@@ -210,10 +213,10 @@ MailHelper.prototype.generateVerifyCode = function(req, res, next, user) {
       var messageBody;
       if (user.newEmail) {
         messageBody = "Welcome " + user.name + ",</br><p>Please click the link to validate your email address.</p>";
-        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Validate your email address</a>"
+        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Validate your email address</a>";
       } else {
         messageBody = "Welcome " + user.name + ",</br><p>Please click the link to activate your account.</p>";
-        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+        messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>";
       }
       var mailAddress = user.email;
       if (user.newEmail) {
@@ -248,10 +251,10 @@ MailHelper.prototype.generateBetaCode = function(req, res, next, mailAddress) {
       refer = referArr[0];
       var fullURL = refer + "#/userSignup";
       var messageBody = "Hello,</br><p>Here is your Beta code. Please use it to sign up.</p><p>" + betaInvite.betaCode + "</p>";
-      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Create a New Beta user Account Here</a>"
+      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Create a New Beta user Account Here</a>";
 
       sendMailHelper(betaInvite.email, 'Beta User Invite', messageBody, true);
-      res.send({message:'Beta invite sent to ' + mailAddress})
+      res.send({message:'Beta invite sent to ' + mailAddress});
       return next();
     } else {
       return next(err);
@@ -280,7 +283,7 @@ MailHelper.prototype.generateVerifyCodeUpdatedEmail = function(req, res, next, u
       protocol = protocol.substring(0, protocol.indexOf("://") + 3);
       var fullURL = protocol + host + "/api/v1/verify?v=" + verifyCode.key;
       var messageBody = "Hi " + user.name + ",</br><p>Please click the link to validate your new email address.</p>";
-      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>"
+      messageBody = messageBody + "<a href='" + fullURL + "' target='_blank'>Activate your account</a>";
 
       var mailAddress = user.email;
       if (user.newEmail) {

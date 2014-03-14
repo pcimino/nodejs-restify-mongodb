@@ -1,3 +1,4 @@
+
 /**
 * Routes module for authorized (secured) access
 */
@@ -53,7 +54,6 @@ module.exports = function (app, config, auth) {
               return next();
             } else if (!user) {
               return next(new restify.NotAuthorizedError("Invalid username."));
-              return next();
             } else if (user.authenticate(req.params.password)) {
               if (!user.emailValidatedFlag && !user.newEmail) {
                 // user account has never been validated
@@ -240,7 +240,7 @@ module.exports = function (app, config, auth) {
    app.get('/api/v1/timeout', auth.requiresLogin, function (req, res) {
      res.send({'message':'Success', 'timeout':config.session_timeout});
    });
-}
+};
 
 
 

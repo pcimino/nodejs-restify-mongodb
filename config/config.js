@@ -1,3 +1,4 @@
+
 /**
  * Environment dependent configuration properties
  */
@@ -11,10 +12,10 @@ module.exports = {
       , openUserSignup: false // set to true to create users and assign a role, if false, API only allows admins to create an Admin role user
       , usernameOrPassword: true // true: Login, password reset and resend email verification can use either password or username, false: only username
       , host: 'localhost'
-	    , port: '3000'
-	    , db_prefix: 'mongodb'
-  	  , db_port: '27017'
-	    , db_database: 'test_database'
+      , port: '3000'
+      , db_prefix: 'mongodb'
+      , db_port: '27017'
+      , db_database: 'test_database'
       , session_timeout:  1200000 // defaults to 20 minutes, in ms (20 * 60 * 1000)
       , ephemeral_cookie: false // if true, session cookie expires when browser closes
       , socket_loglevel: '1' // 0 - error, 1 - warn, 2 - info, 3 - debug
@@ -33,16 +34,6 @@ module.exports = {
 
       }
       , searchSettings : { // if any of these are false, that field will not be
-          allowEmail: false
-          , allowName: false
-          , allowUsername: true
-
-
-      // see routes-user.js searchUsers
-      // the search results only inlcude ObjectId, name, username and email
-      // to further restrict returned fields, each (or all) of these can be set to false
-      }
-      , searchSettings : { // if any of these are false, that field will not be populated
           allowEmail: false
           , allowName: false
           , allowUsername: true
@@ -106,7 +97,7 @@ module.exports = {
         }
         , openUserSignup: false
     }
-}
+};
 
 
 

@@ -1,3 +1,4 @@
+
 /**
 * Routes module for parsing requests
 */
@@ -6,7 +7,7 @@ var restify = require('restify')
   , mongoose = require('mongoose');
 
 module.exports = function (app, config, auth, smtpTransport) {
-    var config_path = config.root + '/config'
+    var config_path = config.root + '/config';
 
     /**
      * Pre handler filters and modifies (if required) the incoming requests
@@ -46,7 +47,8 @@ module.exports = function (app, config, auth, smtpTransport) {
         res.end();
       });
     });
-
+//TODO fstream.pipe(res)
+  // res.send
     /**
      * Ping the API server
      * Kind of pointless since the server has to be up to even respond, but demonstrates most basic API
@@ -95,10 +97,11 @@ module.exports = function (app, config, auth, smtpTransport) {
     require(config_path + '/routes-terms-and-conditions.js')(app, config, auth, smtpTransport);
     require(config_path + '/routes-beta-test-mode.js')(app, config, auth, smtpTransport);
 
-}
+};
 
 
 
 
 
-
+
+

@@ -1,3 +1,4 @@
+
 /**
 * Terms & Conditions Routes Module
 *   Requires authenticated users
@@ -42,7 +43,7 @@ module.exports = function (app, config, auth) {
             });
           } else {
             var errObj = err;
-            if (err.err) errObj = err.err;
+            if (err.err) { errObj = err.err; }
             return next(new restify.InternalError(errObj));
           }
         });
@@ -77,7 +78,7 @@ module.exports = function (app, config, auth) {
                   filterTermsAndConditions(req, res, termsAndConditionsArchive, req.params.archiveFlag, next);
                 } else {
                   var errObj = err;
-                  if (err.err) errObj = err.err;
+                  if (err.err) { errObj = err.err; }
                   return next(new restify.InternalError(errObj));
                 }
              });
@@ -153,7 +154,7 @@ module.exports = function (app, config, auth) {
               }
             } else {
               var errObj = err;
-              if (err.err) errObj = err.err;
+              if (err.err) { errObj = err.err; }
               return next(new restify.InternalError(errObj));
             }
           });
@@ -187,9 +188,7 @@ module.exports = function (app, config, auth) {
      * @param promised 2nd callback update
      */
      app.del('/api/v1/terms', auth.requiresLogin, archiveTermsAndConditions);
-
-
-}
+};
 
 
 

@@ -8,11 +8,14 @@ var mongoose = require('mongoose')
   , BetaInvite = mongoose.model('BetaInvite')
   , User = mongoose.model('User')
   , ObjectId = mongoose.Types.ObjectId
-  , restify = require('restify');
+  , restify = require('restify')
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
 var mail = {};
 
-module.exports = function (app, config, auth, mailHelper) {
+module.exports = function (app, mailHelper) {
     mail = mailHelper;
 
     /**
@@ -160,17 +163,6 @@ module.exports = function (app, config, auth, mailHelper) {
     app.del('/api/v1/beta', auth.requiresLogin, deleteBetaInvite);
 
 };
-
-
-
-
-
-
-
-
-
-
-
 
 
 

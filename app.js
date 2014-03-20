@@ -28,7 +28,7 @@ if (cmdlineEnv && cmdlineEnv.length > 0) {
 
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
-  , config = require('./config/config')[env];
+  , config = require('./config/config').init(env);
 
 // Modules
 var restify = require("restify")
@@ -132,12 +132,12 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
 
     // because we can't have a synchronous DB call, finish up the server setup here
     // restify settings
-    require(config_path + '/restify-server')(app, config, sessionKey.key);
+    require(config_path + '/restify-server')(app, sessionKey.key);
 
     // configure email
     var MailHelper = require(config_path + '/mail-helper.js').MailHelper;
 
-    require(config_path + '/routes')(app, config, auth, new MailHelper(config));
+    require(config_path + '/routes')(app, new MailHelper(config));
 
     // configure Socket Server
     var SocketHelper_IO = require(config_path + '/socket-helper-socket-io.js').SocketHelper;
@@ -154,7 +154,6 @@ SessionKey.findOne({ key: /./ }, function (err, sessionKeyResult) {
     console.log(err);
   }
 });
-
 
 
 

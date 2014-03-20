@@ -11,14 +11,17 @@ var mongoose = require('mongoose')
   , SystemMessageArchive = mongoose.model('SystemMessageArchive')
   , TermsAndConditionsArchive = mongoose.model('TermsAndConditionsArchive')
   , ObjectId = mongoose.Types.ObjectId
-  , restify = require('restify');
+  , restify = require('restify')
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
 var mail = {};
 var gUser = {}; // TODO don't want to globalize user, need to figure out a better way to use Promises or Async
 var gCheckCurrentPassword = true;
 var gCheckRoleRestriction = true;
 
-module.exports = function (app, config, auth, mailHelper) {
+module.exports = function (app, mailHelper) {
    mail = mailHelper;
 
   /**
@@ -407,11 +410,6 @@ module.exports = function (app, config, auth, mailHelper) {
    */
    app.del('/api/v1/admin/user', auth.adminAccess, deleteUser);
 };
-
-
-
-
-
 
 
 

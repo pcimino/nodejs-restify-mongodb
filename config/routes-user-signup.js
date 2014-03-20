@@ -12,12 +12,15 @@ var mongoose = require('mongoose')
   , BetaInvite = mongoose.model('BetaInvite')
   , VerifyCode = mongoose.model('VerifyCode')
   , restify = require('restify')
-  , ObjectId = mongoose.Types.ObjectId;
+  , ObjectId = mongoose.Types.ObjectId
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
 var mail = {};
 var gBetaFlag = false;
 
-module.exports = function (app, config, auth, mailHelper) {
+module.exports = function (app, mailHelper) {
    mail = mailHelper;
 
   /**
@@ -300,9 +303,6 @@ module.exports = function (app, config, auth, mailHelper) {
    app.get('/api/v1/password/sendNew', sendNewPassword);
 
 };
-
-
-
 
 
 

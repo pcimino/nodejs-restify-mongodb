@@ -8,9 +8,12 @@ var mongoose = require('mongoose')
   , TermsAndConditionsArchive = mongoose.model('TermsAndConditionsArchive')
   , User = mongoose.model('User')
   , ObjectId = mongoose.Types.ObjectId
-  , restify = require('restify');
+  , restify = require('restify')
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
-module.exports = function (app, config, auth) {
+module.exports = function (app) {
    /**
    * Post a terms & conditions message
    *
@@ -189,19 +192,6 @@ module.exports = function (app, config, auth) {
      */
      app.del('/api/v1/terms', auth.requiresLogin, archiveTermsAndConditions);
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

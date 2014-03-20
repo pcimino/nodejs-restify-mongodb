@@ -3,6 +3,14 @@
  * Environment dependent configuration properties
  */
 module.exports = {
+  singletonRef: null,
+  init: function(env) {
+    this.singletonRef = this[env];
+    return this.singletonRef;
+  },
+  get: function() {
+    return this.singletonRef;
+  },
     development: {
       root: require('path').normalize(__dirname + '/..')
       , app: {
@@ -98,9 +106,6 @@ module.exports = {
         , openUserSignup: false
     }
 };
-
-
-
 
 
 

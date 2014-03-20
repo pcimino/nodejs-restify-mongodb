@@ -9,9 +9,12 @@ var mongoose = require('mongoose')
   , SystemMessageArchive = mongoose.model('SystemMessageArchive')
   , User = mongoose.model('User')
   , ObjectId = mongoose.Types.ObjectId
-  , restify = require('restify');
+  , restify = require('restify')
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
-module.exports = function (app, config, auth) {
+module.exports = function (app) {
 
    /**
    * Post a message thread
@@ -464,16 +467,6 @@ module.exports = function (app, config, auth) {
      app.del('/api/v1/systemMessage/delete', auth.adminAccess, purgeSystemMessage);
 
 };
-
-
-
-
-
-
-
-
-
-
 
 
 

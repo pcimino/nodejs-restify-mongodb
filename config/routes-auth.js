@@ -6,11 +6,14 @@ var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , VerifyCode = mongoose.model('VerifyCode')
   , restify = require('restify')
-  , clientSessions = require("client-sessions");
+  , clientSessions = require("client-sessions")
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
 var gUser = {};
 
-module.exports = function (app, config, auth) {
+module.exports = function (app) {
   /**
    * Return a list of available Roles
    * Must match what's defined in the User.js object
@@ -241,8 +244,6 @@ module.exports = function (app, config, auth) {
      res.send({'message':'Success', 'timeout':config.session_timeout});
    });
 };
-
-
 
 
 

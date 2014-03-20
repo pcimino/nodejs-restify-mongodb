@@ -4,9 +4,12 @@
 */
 var restify = require('restify')
   , fs = require('fs')
-  , mongoose = require('mongoose');
+  , mongoose = require('mongoose')
+  , config = require('./config').get()
+  , config_path = config.root + '/config'
+  , auth = require(config_path + '/middlewares/authorization.js');
 
-module.exports = function (app, config, auth, smtpTransport) {
+module.exports = function (app, smtpTransport) {
     var config_path = config.root + '/config';
 
     /**
@@ -87,19 +90,17 @@ module.exports = function (app, config, auth, smtpTransport) {
     });
 
     // load the remaining paths, broken up (somewhat) by functionality)
-    require(config_path + '/routes-user.js')(app, config, auth, smtpTransport);
-    require(config_path + '/routes-user-signup.js')(app, config, auth, smtpTransport);
+    require(config_path + '/routes-user.js')(app, smtpTransport);
+    require(config_path + '/routes-user-signup.js')(app, smtpTransport);
 
-    require(config_path + '/routes-email.js')(app, config, auth, smtpTransport);
-    require(config_path + '/routes-auth.js')(app, config, auth);
+    require(config_path + '/routes-email.js')(app, smtpTransport);
+    require(config_path + '/routes-auth.js')(app);
 
     require(config_path + '/routes-messaging.js')(app, config, auth);
-    require(config_path + '/routes-terms-and-conditions.js')(app, config, auth, smtpTransport);
-    require(config_path + '/routes-beta-test-mode.js')(app, config, auth, smtpTransport);
+    require(config_path + '/routes-terms-and-conditions.js')(app, smtpTransport);
+    require(config_path + '/routes-beta-test-mode.js')(app, smtpTransport);
 
 };
-
-
 
 
 

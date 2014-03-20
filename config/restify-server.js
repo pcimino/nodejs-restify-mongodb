@@ -6,10 +6,12 @@ var restify = require('restify')
    , mongoose = require('mongoose')
    , toobusy = require('toobusy')
    , clientSessions = require("client-sessions")
-   , longjohn = require("longjohn");
+   , longjohn = require("longjohn")
+   , config = require('./config').get()
+   , config_path = config.root + '/config';
 
 
-module.exports = function (app, config, sessionKey) {
+module.exports = function (app, sessionKey) {
 
    longjohn.async_trace_limit = 5;  // defaults to 10
    longjohn.empty_frame = 'ASYNC CALLBACK';
@@ -67,8 +69,6 @@ module.exports = function (app, config, sessionKey) {
     }));
    app.use(restify.conditionalRequest());
 };
-
-
 
 
 

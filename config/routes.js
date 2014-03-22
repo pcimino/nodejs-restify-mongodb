@@ -1,4 +1,3 @@
-
 /**
 * Routes module for parsing requests
 */
@@ -43,15 +42,9 @@ module.exports = function (app, smtpTransport) {
      */
     app.get(/\/public\/?.*/, function (req, res) {
       var fileStream = fs.createReadStream(config.root + req.url);
-      fileStream.on('data', function (data) {
-        res.write(data);
-      });
-      fileStream.on('end', function() {
-        res.end();
-      });
+      fileStream.pipe(res);
     });
-//TODO fstream.pipe(res)
-  // res.send
+
     /**
      * Ping the API server
      * Kind of pointless since the server has to be up to even respond, but demonstrates most basic API

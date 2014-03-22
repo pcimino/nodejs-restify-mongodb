@@ -13,14 +13,14 @@ users
 verifycodes
 
 > db.users.find({name:'admin'})
-{ "_id" : ObjectId("5240c9dba58a7e5f58000007"), "username" : "admin", "name" : "admin", "email" : "pcimino@gmail.com", "hashed_password" : "1938643c2aaa6513b9c3b73aabe231bf4219f917", "tempPasswordFlag" : false, "role" : "User", "emailValidatedFlag" : true, "newEmail" : "", "__v" : 0 }
+{ "_id" : ObjectId("5240c9dba58a7e5f58000007"), "username" : "admin", "name" : "admin", "email" : "rest@gmail.com", "hashed_password" : "1938643c2aaa6513b9c3b73aabe231bf4219f917", "tempPasswordFlag" : false, "role" : "User", "emailValidatedFlag" : true, "newEmail" : "", "__v" : 0 }
 >
 > user = db.users.findOne({name:'admin'})
 {
 	"_id" : ObjectId("5240c9dba58a7e5f58000007"),
 	"username" : "admin",
 	"name" : "admin",
-	"email" : "pcimino@gmail.com",
+	"email" : "rest@gmail.com",
 	"hashed_password" : "1938643c2aaa6513b9c3b73aabe231bf4219f917",
 	"tempPasswordFlag" : false,
 	"role" : "User",
@@ -41,7 +41,7 @@ Admin
 	"_id" : ObjectId("5240c9dba58a7e5f58000007"),
 	"username" : "admin",
 	"name" : "admin",
-	"email" : "pcimino@gmail.com",
+	"email" : "rest@gmail.com",
 	"hashed_password" : "1938643c2aaa6513b9c3b73aabe231bf4219f917",
 	"tempPasswordFlag" : false,
 	"role" : "Admin",

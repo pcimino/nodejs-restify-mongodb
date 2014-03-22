@@ -1,0 +1,3 @@
+Running into issues with Microsoft.cpp building nodegyp or installing toobusy on a Windows machine
+Need to install Windows SDK
+https://github.com/TooTallNate/node-gyp/#installation

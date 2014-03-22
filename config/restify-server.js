@@ -4,7 +4,6 @@
 
 var restify = require('restify')
    , mongoose = require('mongoose')
-   , toobusy = require('toobusy')
    , clientSessions = require("client-sessions")
    , longjohn = require("longjohn")
    , config = require('./config').get()
@@ -24,14 +23,22 @@ module.exports = function (app, sessionKey) {
    app.use(restify.gzipResponse());
    app.use(restify.bodyParser());
 
-    // send a 503 if the server is too busy
-    app.use(function(req, res, next) {
+   var os = require('os');
+   console.log(os.platform() + ", " + os.release());
+   // having issues on WIndows with nodegyp and toobusy, Windows SDK solution works on some platforms
+   // https://github.com/TooTallNate/node-gyp/#installation
+   if (os.platform().indexOf('win') < 0) {
+     console.log("Loading toobusy");
+     // send a 503 if the server is too busy
+     var toobusy = require('toobusy')
+     app.use(function(req, res, next) {
       if (toobusy()) {
         res.send(503, "I'm busy right now, sorry.");
       } else {
         next();
       }
-    });
+     });
+   }
 
    app.use(clientSessions({
      cookieName: 'session'    // defaults to session_state

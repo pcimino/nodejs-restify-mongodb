@@ -4,7 +4,8 @@
 */
 var cmdlineEnv = process.argv[2];
 // if command line option given, override NODE_ENV
-console.log(cmdlineEnv);
+console.log('Env :' + cmdlineEnv);
+
 if (cmdlineEnv && cmdlineEnv.length > 0) {
   if (cmdlineEnv == '-d' || cmdlineEnv.toUpperCase() == '--DEVELOPMENT') {
       process.env.NODE_ENV = 'development';
@@ -16,7 +17,7 @@ if (cmdlineEnv && cmdlineEnv.length > 0) {
       process.env.NODE_ENV = 'unit_test';
   } else {
     console.log("Usage: node app.js");
-    console.log("Default usage uses the Devlopment configuration unless NODE_ENV is defined as [develoopment|test|production]");
+    console.log("Default usage uses the Devlopment configuration unless NODE_ENV is defined as [development|test|production]");
     console.log("The environment variable can be overridden on the command line using one of the following arguments:");
     console.log("\tnode app.js [-d|-q|-p|-u|--development|--qa|--production|--unit_test]");
     console.log("Alternatively there are scripts defined in package.json, to use one of these:");
